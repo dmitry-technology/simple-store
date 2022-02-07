@@ -4,9 +4,12 @@ import ErrorType from "../models/error-types";
 import { UserData } from "../models/user-data";
 import { errorCodeReducer, userDataReducer } from "./reducers";
 
-type StoreType = {userData: UserData, errorCode: ErrorType};
+type StoreType = {
+    userData: UserData,
+    errorCode: ErrorType
+};
 
-const reducers = combineReducers<StoreType> ({
+const reducers = combineReducers<StoreType>({
     userData: userDataReducer,
     errorCode: errorCodeReducer
 });
