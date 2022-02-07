@@ -2,14 +2,38 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { routes } from './config/routing';
-import { authService } from './config/servicesConfig';
+import { authService, orederStore } from './config/servicesConfig';
 import ErrorType from './models/error-types';
+import { Order, OrderStatus } from './models/order-type';
 import { RouteType } from './models/route-type';
 import { UserData } from './models/user-data';
 import { setErrorCode, setUserData } from './redux/actions';
 import { userDataSelector } from './redux/store';
 
 function App() {
+
+  
+
+  const order:Order = {
+    userId: 10203040,
+    status: OrderStatus.WORKING,
+    products: [{productId: 100001, count: 5},{productId: 100002, count: 3},{productId: 100003, count: 1}],
+    totalPrice: 500,
+    dateCreate: new Date().toISOString()
+  }
+  
+  orederStore.add(order).then((e)=>console.log(e)).catch((e)=>console.log("error="+e));
+
+  // useEffect( () => {
+  //   // orederStore.get(1000999).then((e)=> {
+  //   //   console.log(e);
+  //   // });
+  //   orederStore.add(order).then((e)=>console.log(e)).catch((e)=>console.log("error="+e));
+  //   orederStore.update(114301, order)
+  // }, []);
+
+
+  
 
   const dispatch = useDispatch();
   const [relevantRoutes, setRelevantRoutes] = useState<RouteType[]>(routes);
@@ -32,8 +56,7 @@ function App() {
         } else {
           dispatch(setErrorCode(ErrorType.NO_ERROR));
           dispatch(setUserData(ud));
-          console.log(relevantRoutes);
-          
+          console.log(relevantRoutes); 
         }
       }
     })
