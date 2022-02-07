@@ -1,0 +1,4 @@
+{
+    "adminEmail" : "admin@tel-ran.co.il",
+    "socialLoginProviders": ["Google", "Facebook", "Twitter"]
+}

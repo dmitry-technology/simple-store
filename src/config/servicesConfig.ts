@@ -1,3 +1,3 @@
-import AuthServiceFake from "../services/auth/auth-service-fake";
-
-export const authService = new AuthServiceFake();
+import storeConfig from '../config/store-config.json';
+import AuthServiceFire from "../services/auth/auth-service-fire";
+export const authService = new AuthServiceFire(storeConfig.adminEmail);
