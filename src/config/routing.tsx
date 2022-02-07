@@ -1,12 +1,12 @@
 import { RouteType } from "../models/route-type";
-import Index from "../pages";
-import Catalog from "../pages/admin/catalog";
-import OrdersList from "../pages/admin/ordersList";
-import Login from "../pages/login";
-import Logout from "../pages/logout";
-import Orders from "../pages/orders";
-import Profile from "../pages/profile";
-import ShoppingCart from "../pages/shopping-cart";
+import Index from "../components/pages";
+import Catalog from "../components/pages/admin/catalog";
+import OrdersList from "../components/pages/admin/ordersList";
+import Login from "../components/pages/login";
+import Logout from "../components/pages/logout";
+import Orders from "../components/pages/orders";
+import Profile from "../components/pages/profile";
+import ShoppingCart from "../components/pages/shopping-cart";
 
 // Common routes (available without authorization)
 export const PATH_INDEX = "/";
