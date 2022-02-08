@@ -43,5 +43,5 @@ export const authRoutes: RouteType[] = [
 ];
 
 export const routes: RouteType[] = [
-    ...menuRoutes
+    ...menuRoutes, ...systemRoutes, ...authRoutes
 ];

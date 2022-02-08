@@ -38,7 +38,7 @@ const NavigatorTabs: FC<NavigatorTabsProps> = ({ orientation, items }) => {
                     label={item.label}
                     // icon={item.icon}
                     iconPosition='start'
-                    sx={{ display: 'flex', justifyContent: 'left' }}
+                    sx={{ display: 'flex' }}
                 />
             ))}
         </Tabs>
