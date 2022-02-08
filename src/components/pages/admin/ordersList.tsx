@@ -117,11 +117,12 @@ const OrdersList: FC = () => {
         return orders.map(order => {
 
             if (clients.length > 0 && orders.length > 0) {
-                console.log("true");
+                // console.log("true");
                 const client = getClient(order.userId);
                 const product = order.products.map(product => {
                     return [getProduct(product.productId), product.count];
                 })
+                // console.log(product);
                 return {
                     id: order.id,
                     client: client!.name,
