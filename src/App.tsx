@@ -14,15 +14,15 @@ function App() {
 
   
 
-  const order:Order = {
-    userId: 10203040,
-    status: OrderStatus.WORKING,
-    products: [{productId: 100001, count: 5},{productId: 100002, count: 3},{productId: 100003, count: 1}],
-    totalPrice: 500,
-    dateCreate: new Date().toISOString()
-  }
+  // const order:Order = {
+  //   userId: 10203040,
+  //   status: OrderStatus.WORKING,
+  //   products: [{productId: 100001, count: 5},{productId: 100002, count: 3},{productId: 100003, count: 1}],
+  //   totalPrice: 500,
+  //   dateCreate: new Date().toISOString()
+  // }
   
-  orederStore.add(order).then((e)=>console.log(e)).catch((e)=>console.log("error="+e));
+  // orederStore.add(order).then((e)=>console.log(e)).catch((e)=>console.log("error="+e));
 
   // useEffect( () => {
   //   // orederStore.get(1000999).then((e)=> {
