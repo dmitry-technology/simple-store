@@ -2,7 +2,7 @@ import { Box, Paper } from '@mui/material';
 import { FC, useMemo, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Order } from '../../../models/order-type';
-import { clientSelector, ordersSelector } from '../../../redux/store';
+import { clientSelector, ordersSelector, productsSelector } from '../../../redux/store';
 import { useMediaQuery } from "react-responsive";
 import { DataGrid, GridActionsCellItem, GridColDef, GridRowId, GridRowParams, GridRowsProp } from '@mui/x-data-grid';
 import { getOrdersListFields, OrderListFields } from '../../../config/orders-list-columns';
@@ -10,6 +10,7 @@ import { Delete } from '@mui/icons-material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import { Client } from '../../../models/client-type';
+import { Product } from '../../../models/product';
 
 
 
@@ -18,6 +19,14 @@ const OrdersList: FC = () => {
     const dispatch = useDispatch();
     const orders: Order[] = useSelector(ordersSelector);
     const clients: Client[] = useSelector(clientSelector);
+    const products: Product[] = useSelector(productsSelector);
+    // console.log("order");
+    // console.log(orders);
+    // console.log("client");
+    // console.log(clients);
+
+
+
 
     //********************Mobile or desktop********************//
     const isMobile = useMediaQuery({ maxWidth: 600, orientation: 'portrait' });
@@ -95,69 +104,39 @@ const OrdersList: FC = () => {
     }
 
     //rows data gread
-    const rows = useMemo(() => getRows(orders), [orders]);
+    const [rows, setRows] = useState<GridRowsProp>([]);
+
+    useEffect(() => setRows(getRows(orders)), [orders]);
 
     function getRows(orders: Order[]): GridRowsProp {
-        // return orders.map(order => {
-        //     const index: number = clients.findIndex(e => e.id === order.id);
-        //     const client = clients[index];
 
-        //     return {
-        //         id: order.id,
-        //         client: client.name,
-        //         address: client.address,
-        //         products: order.products,  //TODO need from bd products. List with product name, option name, count
-        //         status: order.status,
-        //         date: order.dateCreate,
-        //         price: order.totalPrice
-        //     }
-        // });
-        return [
-            {
-                id: 100000,
-                client: "Avraam",
-                address: "Yelim st",
-                product: "Big pizza mazzarela salami salat israeli pepsi",
-                option: "big",
-                count: 5,
-                status: "waiting",
-                date: "10.10.2000",
-                price: 1000,
-            },
-            {
-                id: 100001,
-                client: "Avraam",
-                address: "Yelim st",
-                product: "Big pizza",
-                option: "big",
-                count: 5,
-                status: "waiting",
-                date: "10.10.2000",
-                price: 1000,
-            },
-            {
-                id: 100002,
-                client: "Avraam",
-                address: "Yelim st",
-                product: "Big pizza",
-                option: "big",
-                count: 5,
-                status: "waiting",
-                date: "10.10.2000",
-                price: 1000,
-            },
-            {
-                id: 100003,
-                client: "Avraam",
-                address: "Yelim st",
-                product: "Big pizza",
-                option: "big",
-                count: 5,
-                status: "waiting",
-                date: "10.10.2000",
-                price: 1000,
+        return orders.map(order => {
+            
+            if (clients.length > 0 && orders.length > 0) {
+                console.log("true");
+
+                const client = clients[clients.findIndex(e => e.id === order.userId)];
+                const product = order.products.map(e => {
+                    const product = products[products.findIndex(p => p.id === e.productId)];
+                    return [product, e.count];
+                })
+                return { 
+                    id: order.id,
+                    client: client.name,
+                    address: client.address,
+                    products: product,  //TODO need from bd products. List with product name, option name, count
+                    status: order.status,
+                    date: order.dateCreate,
+                    price: order.totalPrice
+                }
+            } else {
+                console.log("else");
+                
+                return order;
             }
-        ]
+        });
+
+
     }
 
 
