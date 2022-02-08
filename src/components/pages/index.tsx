@@ -1,7 +1,10 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Link, Typography } from '@mui/material';
 import { FC } from 'react';
 import {ProductCategory} from '../../models/product-category';
 import ProductCard, {ProductCardProps} from '../../components/product-card';
+import { useSelector } from 'react-redux';
+import { UserData } from '../../models/user-data';
+import { userDataSelector } from '../../redux/store';
 
 const categories: ProductCategory[] = [
     {title: 'Meat Pizza', order: 1},
@@ -20,7 +23,12 @@ const products: ProductCardProps[] = [
 ]
 
 const Index: FC = () => {
+
+    const userData: UserData = useSelector(userDataSelector);
+
     return  <Box>
+                {"user:" + userData.displayName}
+                {<Link href='/logout'> (logout)</Link>}
                 {categories.map(cat => <Box key={cat.title} component="div">
                     <Typography sx={{ m:1, fontFamily: 'Cooper'}} variant='h3'>
                         {cat.title}
