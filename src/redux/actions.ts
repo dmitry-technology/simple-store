@@ -31,11 +31,11 @@ export const setCategories: ActionType<Category[]> = categories => (
     { payload: categories, type: SET_CATEGORIES }
 )
 
-export const setOrder: ActionType<Order> = order => (
+export const setOrders: ActionType<Order[]> = order => (
     { payload: order, type: SET_ORDER_DATA }
 )
 
-export const setClient: ActionType<Client> = client => (
+export const setClients: ActionType<Client[]> = client => (
     { payload: client, type: SET_CLIENT_DATA }
 )
 
