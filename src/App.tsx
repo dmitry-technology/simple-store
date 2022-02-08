@@ -1,5 +1,5 @@
 import { Alert, AlertTitle, LinearProgress } from '@mui/material';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { routes } from './config/routing';
@@ -9,6 +9,7 @@ import { RouteType } from './models/route-type';
 import { nonAuthorisedUser, UserData } from './models/user-data';
 import { setErrorCode, setUserData } from './redux/actions';
 import { errorCodeSelector, userDataSelector } from './redux/store';
+import Navigator from './components/UI/common/navigator';
 
 function App() {
 
@@ -34,7 +35,7 @@ function App() {
   useEffect( () => handleErrorCallback(), [handleErrorCallback] )
 
   // Update relevant routes
-  useEffect( () => setRelevantRoutes(getRelevantRoutes((userData))), [userData])
+  useMemo( () => setRelevantRoutes(getRelevantRoutes((userData))), [userData])
 
   // Subscribe User Token
   useEffect(() => {
@@ -51,7 +52,6 @@ function App() {
         } else {
           dispatch(setErrorCode(ErrorType.NO_ERROR));
           dispatch(setUserData(ud));
-          console.log(relevantRoutes); 
         }
       }
     })
@@ -67,10 +67,13 @@ function App() {
                     </Alert> 
                     <LinearProgress sx={{width: '100%'}} />
                   </React.Fragment> 
-                : <Routes>
-                  {getRoutes(relevantRoutes)}
-                  <Route path={'*'} element={<Navigate to={relevantRoutes[0].path}/>}></Route>
-                  </Routes>
+                : <React.Fragment>
+                    <Navigator items={relevantRoutes} />
+                    <Routes>
+                    {getRoutes(relevantRoutes)}
+                    <Route path={'*'} element={<Navigate to={relevantRoutes[0].path}/>}></Route>
+                    </Routes>
+                  </React.Fragment>
               }
           </BrowserRouter>
 }
@@ -87,11 +90,19 @@ function getRelevantRoutes(userData: UserData): RouteType[] {
   const isUser = (!!userData.displayName && !userData.isAdmin);
   const isAdmin = userData.isAdmin;
 
-  return routes.filter(route => 
+  console.log("isGuest:" + isGuest + " isUser:" + isUser + " isAdmin:" + isAdmin);
+  
+  const res = routes.filter(route => 
     (route.isAdmin && route.isUser && route.isGuest) ||
     (isGuest && route.isGuest) || 
     ((isUser || isAdmin) && route.isUser && route.isAdmin) ||
     (isUser && route.isUser && !route.isAdmin) || 
-    (isAdmin && route.isAdmin)
+    (isAdmin && route.isAdmin) ||
+    (isUser && route.isUser)
     )
+
+    console.log(res);
+    
+
+    return res;
 }
