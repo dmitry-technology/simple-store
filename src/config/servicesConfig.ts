@@ -9,10 +9,10 @@ import ProductStore from "../services/products/product-store";
 import config from "./store-config.json"
 
 export const authService = new AuthServiceFake();
-
+//const product service
 const productService = new DataProviderFire<Product>('products');
 export const productStore = new ProductStore(productService);
-
+//const categories service
 const categoriesService = new DataProviderFire<Category>('categories');
 export const categoriesStore = new CategoriesStore(categoriesService);
 //const order service
