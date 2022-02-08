@@ -1,8 +1,10 @@
 import { Category } from "../models/category-type";
+import { Client } from "../models/client-type";
 import { Order } from "../models/order-type";
 import { Product } from "../models/product";
 import AuthServiceFake from "../services/auth/auth-service-fake";
 import CategoriesStore from "../services/categories/categories-store";
+import ClientStore from "../services/clients/client-store";
 import DataProviderFire from "../services/common/data-provider-fire";
 import OrderStore from "../services/order/order-store";
 import ProductStore from "../services/products/product-store";
@@ -18,3 +20,6 @@ export const categoriesStore = new CategoriesStore(categoriesService);
 //const order service
 const orderProvider = new DataProviderFire<Order>("orders", config.minId, config.maxId);
 export const orederStore = new OrderStore(orderProvider);
+//const client service
+const clientProvider = new DataProviderFire<Client>("clients", config.minId, config.maxId);
+export const clientStore = new ClientStore(clientProvider);
