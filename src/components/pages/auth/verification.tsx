@@ -12,7 +12,7 @@ function getAlertType(auth: EmailVerify): {type: any, message: string} {
     }
 }
 
-const EmailVerication: FC = () => {
+const EmailVerification: FC = () => {
     const [loginStatus, setLoginStatus] = useState<EmailVerify>(EmailVerify.IN_PROGRESS);
 
     useEffect( () => {
@@ -26,4 +26,4 @@ const EmailVerication: FC = () => {
             </React.Fragment>;
 }
 
-export default EmailVerication;
+export default EmailVerification;

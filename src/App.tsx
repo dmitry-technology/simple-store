@@ -1,11 +1,12 @@
 import { Alert, AlertTitle, LinearProgress } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Subscription } from 'rxjs';
-import { routes } from './config/routing';
 import { authService, orederStore, clientStore, productStore } from './config/servicesConfig';
 import { Client } from './models/client-type';
+import { authRoutes, menuRoutes, routes } from './config/routing';
+import { Category } from './models/category-type';
 import ErrorType from './models/error-types';
 import { Order } from './models/order-type';
 import { Product } from './models/product';
@@ -18,27 +19,28 @@ import Navigator from './components/UI/common/navigator';
 function App() {
 
   const dispatch = useDispatch();
-  const [relevantRoutes, setRelevantRoutes] = useState<RouteType[]>(routes);
+
   const userData: UserData = useSelector(userDataSelector);
+
+  const relevantRoutes = useMemo(() => getRelevantRoutes(routes, userData), [userData]);
+  const menuItems = useMemo(() => getRelevantRoutes(menuRoutes, userData), [userData]);
+  const authItems = useMemo(() => getRelevantRoutes(authRoutes, userData), [userData]);
 
   // Error Handling
   const code: ErrorType = useSelector(errorCodeSelector);
   const [serverUnavailable, setServerUnavailable] = useState(false);
-  const handleErrorCallback = useCallback(handleError, [code]);
+  useMemo(() => handleError(), [code]);
+
   function handleError() {
     if (code === ErrorType.NO_ERROR) {
-      setServerUnavailable(false);
+      serverUnavailable && setServerUnavailable(false);
     } else if (code === ErrorType.AUTH_ERROR) {
-      if (!!userData.userName) { authService.logout() }
-      setServerUnavailable(false)
+      if (!!userData.userName) { authService.logout(); console.log('auth error') }
+      serverUnavailable && setServerUnavailable(false);
     } else {
-      setServerUnavailable(true);
+      !serverUnavailable && setServerUnavailable(true);
     }
   }
-  useEffect( () => handleErrorCallback(), [handleErrorCallback] )
-
-  // Update relevant routes
-  useMemo( () => setRelevantRoutes(getRelevantRoutes((userData))), [userData])
 
   // Subscribe User Token
   useEffect(() => {
@@ -50,7 +52,9 @@ function App() {
     return authService.getUserData().subscribe({
       next(ud) {
         if (ud.displayName === '') {
-          dispatch(setErrorCode(ErrorType.AUTH_ERROR));
+          if (userData.displayName) {
+            dispatch(setErrorCode(ErrorType.AUTH_ERROR));
+          }
           dispatch(setUserData(nonAuthorisedUser));
         } else {
           dispatch(setErrorCode(ErrorType.NO_ERROR));
@@ -132,25 +136,27 @@ function App() {
     // })
 
 
-  return  <BrowserRouter>
-            {/* Show Alert if Connection refused*/}
-            {serverUnavailable 
-                ? <React.Fragment> 
-                    <Alert severity="error">
-                      <AlertTitle>Error connecting to the database.</AlertTitle>
-                        <strong>Trying to reconnect...</strong>
-                    </Alert> 
-                    <LinearProgress sx={{width: '100%'}} />
-                  </React.Fragment> 
-                : <React.Fragment>
-                    <Navigator items={relevantRoutes} />
-                    <Routes>
-                    {getRoutes(relevantRoutes)}
-                    <Route path={'*'} element={<Navigate to={relevantRoutes[0].path}/>}></Route>
-                    </Routes>
-                  </React.Fragment>
-              }
-          </BrowserRouter>
+  return (
+    <BrowserRouter>
+      {/* Show Alert if Connection refused*/}
+      {serverUnavailable
+        ? <React.Fragment>
+          <Alert severity="error">
+            <AlertTitle>Error connecting to the database.</AlertTitle>
+            <strong>Trying to reconnect...</strong>
+          </Alert>
+          <LinearProgress sx={{ width: '100%' }} />
+        </React.Fragment>
+        : <React.Fragment>
+          <Navigator logo={'BEST PIZZA B7'} menuItems={menuItems} authItems={authItems} />
+          <Routes>
+            {getRoutes(relevantRoutes)}
+            <Route path={'*'} element={<Navigate to={relevantRoutes[0].path} />}></Route>
+          </Routes>
+        </React.Fragment>
+      }
+    </BrowserRouter>
+  )
 }
 
 export default App;
@@ -160,24 +166,24 @@ function getRoutes(routes: RouteType[]): React.ReactNode[] {
   return routes.map(el => <Route key={el.label} path={el.path} element={el.element} ></Route>)
 }
 
-function getRelevantRoutes(userData: UserData): RouteType[] {
+function getRelevantRoutes(items: RouteType[], userData: UserData): RouteType[] {
   const isGuest = !userData.displayName;
   const isUser = (!!userData.displayName && !userData.isAdmin);
   const isAdmin = userData.isAdmin;
 
-  console.log("isGuest:" + isGuest + " isUser:" + isUser + " isAdmin:" + isAdmin);
-  
-  const res = routes.filter(route => 
+  // console.log("isGuest:" + isGuest + " isUser:" + isUser + " isAdmin:" + isAdmin);
+
+  const res = items.filter(route =>
     (route.isAdmin && route.isUser && route.isGuest) ||
-    (isGuest && route.isGuest) || 
+    (isGuest && route.isGuest) ||
     ((isUser || isAdmin) && route.isUser && route.isAdmin) ||
-    (isUser && route.isUser && !route.isAdmin) || 
+    (isUser && route.isUser && !route.isAdmin) ||
     (isAdmin && route.isAdmin) ||
     (isUser && route.isUser)
-    )
+  )
 
-    console.log(res);
-    
+  // console.log(res);
 
-    return res;
+
+  return res;
 }
