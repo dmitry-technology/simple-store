@@ -4,25 +4,26 @@ import { ProductOptions } from '../models/product-options';
 import TuneIcon from '@mui/icons-material/Tune';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 
+const defaultProductUrl = 
+    'https://avatars.mds.yandex.net/i?id=49d5c7a497611ddd9621e9d43f7513a9-4304165-images-thumbs&n=13';
+
 type ProductCardProps = {
     title: string,
     basePrice: number,
     description?: string,
-    pictureUrl?: string
+    picture?: string
     options?: ProductOptions
 }
-export type { ProductCardProps };
 
 const ProductCard: FC<ProductCardProps> = props => {
 
-    const { title, basePrice, description, pictureUrl, options } = props;
+    const { title, basePrice, description, picture, options } = props;
 
-    return <Card sx={{ width: 270, height: 400, display: 'inline-block', m: 1 }}>
+    return <Card sx={{ width: 270, minHeight: 350, display: 'inline-block', m: 1 }}>
         <CardMedia component="img" height="240"
-            image={!!pictureUrl ? pictureUrl
-                : 'https://avatars.mds.yandex.net/i?id=49d5c7a497611ddd9621e9d43f7513a9-4304165-images-thumbs&n=13'}
+            image={!!picture ? picture : defaultProductUrl}
             alt={title} />
-        <CardContent sx={{height: 75}}>
+        <CardContent>
             <Typography gutterBottom variant="h5">
                 {title}
             </Typography>

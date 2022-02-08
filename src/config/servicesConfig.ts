@@ -17,4 +17,4 @@ const categoriesService = new DataProviderFire<Category>('categories');
 export const categoriesStore = new CategoriesStore(categoriesService);
 //const order service
 const orderProvider = new DataProviderFire<Order>("orders", config.minId, config.maxId);
-export const orederStore = new OrderStore(orderProvider);
+export const orderStore = new OrderStore(orderProvider);
