@@ -1,12 +1,12 @@
 import { Alert, Avatar, Box, Button, createTheme, CssBaseline, Grid, IconButton, Link, Paper, TextField, ThemeProvider, Typography } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
-// import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { LoginData, LoginType } from '../../models/login-data';
 import storeConfig from '../../config/store-config.json'
 import TwitterIcon from '@mui/icons-material/Twitter';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
-import AuthErrorType, { getAuthErrorMessage } from '../../models/auth-error-types';
+import AuthErrorType, { getAuthErrorMessage } from '../../models/auth-types';
 
 type LoginFormProps = {
   loginFn: (loginData: LoginData) => Promise<AuthErrorType>;
@@ -95,7 +95,7 @@ const LoginForm: FC<LoginFormProps> = (props) => {
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box sx={{ my: 8, mx: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Avatar sx={{ m: 1, bgcolor: '#ff6f04' }}>
-              {/* <LockOutlinedIcon /> */}
+              <LockOutlinedIcon />
             </Avatar>
             <Typography component="h1" variant="h5">
               BEST PIZZA B7

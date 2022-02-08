@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { LoginData } from '../../../models/login-data';
 import LoginForm from '../../UI/login-from';
 import { authService } from '../../../config/servicesConfig';
-import AuthErrorType from '../../../models/auth-error-types';
+import AuthErrorType from '../../../models/auth-types';
 
 const Login: FC = () => {
 
