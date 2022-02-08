@@ -1,12 +1,14 @@
-import { FC, useEffect } from 'react';
-import { getAdditionalUserInfo, getAuth, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
+import React, { FC, useEffect, useState } from 'react';
+import { getAuth, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
+import { Alert } from '@mui/material';
 
 const EmailVerify: FC = () => {
     const auth = getAuth();
+
+    const [loginStatus, setLoginStatus] = useState<boolean>(false);
+
     useEffect( () => {
         if (isSignInWithEmailLink(auth, window.location.href)) {
-            console.log("2");
-
             let email = window.localStorage.getItem('emailForSignIn');
             if (!email) {
                 // User opened the link on a different device. To prevent session fixation
@@ -26,14 +28,13 @@ const EmailVerify: FC = () => {
                 })
                 .catch((error) => {
                     console.log("error: " + error);
-                    // Some error occurred, you can inspect the code: error.code
-                    // Common errors could be invalid email and invalid or expired OTPs.
                 });
         }
     }, [] )    
 
-    // return <Navigate to={PATH_INDEX} />;
-    return <div>Email Link Verification</div>;
+    return  <React.Fragment>
+                {/* <Alert severity={loginErrMsg === getAuthErrorMessage(AuthErrorType.AWAITING_CONFIRMATION) ? 'success' : 'error'} sx={{mb: 2}}>{loginErrMsg}</Alert> */}
+            </React.Fragment>;
 }
 
 export default EmailVerify;

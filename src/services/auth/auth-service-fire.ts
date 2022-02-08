@@ -16,7 +16,7 @@ const providersList = new Map([
 ]);
 
 const actionCodeSettings = {
-    url: 'https://backlinkb7.page.link/verify',
+    url: 'http://localhost:3000/login/verify',
     handleCodeInApp: true,
     dynamicLinkDomain: 'backlinkb7.page.link'
 };

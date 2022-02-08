@@ -108,18 +108,13 @@ const LoginForm: FC<LoginFormProps> = (props) => {
                 && <TextField value={loginData.password} margin="normal" required fullWidth name="password" label="Password" type="password" id="password" autoComplete="current-password" onChange={passwordHandler} />}
 
               <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }} color={'success'} disabled={!isValid}>
-                Sign In
+                Log in / Sign Up
               </Button>
 
               {!!loginErrMsg && <Alert severity={loginErrMsg === getAuthErrorMessage(AuthErrorType.AWAITING_CONFIRMATION) ? 'success' : 'error'} sx={{mb: 2}}>{loginErrMsg}</Alert>}
               <Grid container>
                 <Grid item xs>
                   {storeConfig.socialLoginProviders.map(name => socialButtons.get(name))}
-                </Grid>
-                <Grid item>
-                  <Link href="#" variant="body2" sx={{ color: '#ff6f04' }}>
-                    {"Don't have an account? Sign Up!"}
-                  </Link>
                 </Grid>
               </Grid>
               <Copyright sx={{ mt: 5 }} />
@@ -136,8 +131,8 @@ export default LoginForm;
 function Copyright(props: any) {
   return (
     <Typography variant="body2" color="text.secondary" align="center" {...props}>
-      {'Copyright © '}
-      <Link color="inherit" href="http://localhost">
+      {' © '}
+      <Link color="inherit" href="http://localhost:3000">
         Best Pizza B7
       </Link>{' '}
       {new Date().getFullYear()}
