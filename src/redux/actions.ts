@@ -3,11 +3,15 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import ErrorType from "../models/error-types";
 import { Product } from "../models/product";
 import { Category } from "../models/category-type";
+import { Order } from "../models/order-type";
+import { Client } from "../models/client-type";
 
 export const SET_USER_DATA = "set_user_data";
 export const SET_PRODUCTS = "set_products";
 export const SET_ERROR_CODE = "set_error_code";
 export const SET_CATEGORIES = "set_categories";
+export const SET_ORDER_DATA = "set_order_data";
+export const SET_CLIENT_DATA = "set_client_data";
 
 type ActionType<T> = (data: T) => PayloadAction<T>;
 
@@ -26,4 +30,14 @@ export const setProducts: ActionType<Product[]> = products => (
 export const setCategories: ActionType<Category[]> = categories => (
     { payload: categories, type: SET_CATEGORIES }
 )
+
+export const setOrder: ActionType<Order> = order => (
+    { payload: order, type: SET_ORDER_DATA }
+)
+
+export const setClient: ActionType<Client> = client => (
+    { payload: client, type: SET_CLIENT_DATA }
+)
+
+
 

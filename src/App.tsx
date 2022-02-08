@@ -11,6 +11,7 @@ import { userDataSelector } from './redux/store';
 
 function App() {
 
+
   const dispatch = useDispatch();
   const [relevantRoutes, setRelevantRoutes] = useState<RouteType[]>(routes);
   const userData: UserData = useSelector(userDataSelector);
@@ -32,8 +33,7 @@ function App() {
         } else {
           dispatch(setErrorCode(ErrorType.NO_ERROR));
           dispatch(setUserData(ud));
-          console.log(relevantRoutes);
-          
+          console.log(relevantRoutes); 
         }
       }
     })

@@ -1,5 +1,6 @@
 import DataProvider from "./data-provider";
 import { Observable } from "rxjs";
+import { Product } from "../../models/product";
 import { collection, doc, getDoc, setDoc, deleteDoc, getFirestore, CollectionReference } from 'firebase/firestore';
 import fireApp from "../../config/firebase-config";
 import { collectionData } from "rxfire/firestore";
@@ -56,7 +57,6 @@ export default class DataProviderFire<T> implements DataProvider<T> {
 
     async update(id: number, newObj: T): Promise<T> {
         const obj = await this.get(id);
-        (newObj as any).id = id;
         await this.setObj(id, newObj);
         return obj as T;
     }
