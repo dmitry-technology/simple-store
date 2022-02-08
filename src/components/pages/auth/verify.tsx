@@ -1,38 +1,22 @@
 import React, { FC, useEffect, useState } from 'react';
-import { getAuth, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { Alert } from '@mui/material';
+import { EmailVerify } from '../../../models/auth-types';
+import { authService } from '../../../config/servicesConfig';
 
-enum Status {
-    IN_PROGRESS = '123', 
-    SUCCESS = '333', 
-    ERROR = '443'
-}
 
-function getAlertType(auth: Status): {type: any, message: string} {
+function getAlertType(auth: EmailVerify): {type: any, message: string} {
     switch (auth) {
-        case Status.IN_PROGRESS: return {type: 'info', message: 'Checking credentials...'};
-        case Status.SUCCESS: return {type: 'success', message: 'Successful authorization!'};
-        case Status.ERROR: return {type: 'error', message: 'Wrong credentials.'};
+        case EmailVerify.IN_PROGRESS: return {type: 'info', message: 'Checking credentials...'};
+        case EmailVerify.ERROR: return {type: 'error', message: 'Wrong credentials.'};
         default: return {type: 'info', message: 'Checking credentials...'};
     }
 }
 
-const EmailVerify: FC = () => {
-    const auth = getAuth();
-    const [loginStatus, setLoginStatus] = useState<Status>(Status.IN_PROGRESS);
+const EmailVerication: FC = () => {
+    const [loginStatus, setLoginStatus] = useState<EmailVerify>(EmailVerify.IN_PROGRESS);
 
     useEffect( () => {
-        if (isSignInWithEmailLink(auth, window.location.href)) {
-            let email = window.localStorage.getItem('emailForSignIn');
-            signInWithEmailLink(auth, email!, window.location.href)
-                .then(() => {
-                    setLoginStatus(Status.SUCCESS)
-                    window.localStorage.removeItem('emailForSignIn');
-                })
-                .catch(() => {
-                    setLoginStatus(Status.ERROR);
-                });
-        }
+        authService.verifyEmail(window.location.href).then(res => {res === EmailVerify.ERROR && setLoginStatus(res)});
     }, [] )    
 
     return  <React.Fragment>
@@ -42,4 +26,4 @@ const EmailVerify: FC = () => {
             </React.Fragment>;
 }
 
-export default EmailVerify;
+export default EmailVerication;

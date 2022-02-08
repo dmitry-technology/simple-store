@@ -1,13 +1,13 @@
 import { from, of, Observable } from "rxjs";
 import { mergeMap } from 'rxjs/operators';
 import AuthService from "./auth-service";
-import { getAuth, signInWithEmailAndPassword, signInWithPopup, sendSignInLinkToEmail, signOut, User } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, sendSignInLinkToEmail, signOut, User, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { authState } from 'rxfire/auth';
 import fireApp from "../../config/firebase-config";
 import { FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider } from "firebase/auth";
 import { nonAuthorisedUser, UserData } from "../../models/user-data";
 import { LoginData, LoginType } from "../../models/login-data";
-import AuthErrorType from "../../models/auth-error-types";
+import AuthErrorType, { EmailVerify } from "../../models/auth-types";
 
 const providersList = new Map([
     ["Google", { service: GoogleAuthProvider }],
@@ -25,8 +25,22 @@ export default class AuthServiceFire implements AuthService {
 
     private auth = getAuth(fireApp);
 
-
     constructor(private adminEmail: string) { }
+
+    async verifyEmail(link: string): Promise<EmailVerify> {
+        if (isSignInWithEmailLink(this.auth, link)) {
+            const email = window.localStorage.getItem('emailForSignIn');
+            try {
+                await signInWithEmailLink(this.auth, email!, link);
+                window.localStorage.removeItem('emailForSignIn');
+                return EmailVerify.SUCCESS;
+            } catch (err) {
+                return EmailVerify.ERROR;
+            }
+        } else {
+            return EmailVerify.ERROR;
+        }
+    }
 
     getUserData(): Observable<UserData> {
         return authState(this.auth).pipe(

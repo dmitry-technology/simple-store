@@ -2,6 +2,8 @@ enum AuthErrorType {
     NO_ERROR, INVALID_EMAIL, INVALID_CREDENTIAL, SERVER_UNAVAILABLE, AWAITING_CONFIRMATION
 };
 
+export enum EmailVerify { IN_PROGRESS, SUCCESS, ERROR }
+
 export function getAuthErrorMessage(error: AuthErrorType): string {
     switch (error) {
         case AuthErrorType.AWAITING_CONFIRMATION: return 'Now check your mailbox and follow the link in the email.';
