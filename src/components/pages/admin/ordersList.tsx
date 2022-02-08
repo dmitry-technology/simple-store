@@ -1,16 +1,20 @@
-import { Box, Paper } from '@mui/material';
+import { Box, IconButton, ListItem, Paper, Typography } from '@mui/material';
 import { FC, useMemo, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Order } from '../../../models/order-type';
 import { clientSelector, ordersSelector, productsSelector } from '../../../redux/store';
 import { useMediaQuery } from "react-responsive";
-import { DataGrid, GridActionsCellItem, GridColDef, GridRowId, GridRowParams, GridRowsProp } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowId, GridRowParams, GridRowsProp } from '@mui/x-data-grid';
 import { getOrdersListFields, OrderListFields } from '../../../config/orders-list-columns';
 import { Delete } from '@mui/icons-material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import { Client } from '../../../models/client-type';
 import { Product } from '../../../models/product';
+import List from '@mui/material/List';
+import ListItemText from '@mui/material/ListItemText';
+import CommentIcon from '@mui/icons-material/Comment';
+
 
 
 
@@ -58,13 +62,13 @@ const OrdersList: FC = () => {
     function getColums(): any[] {
         return [
             {
-                field: "id", headerName: "Id order", flex: 100, align: 'center', headerAlign: 'center'
+                field: "id", headerName: "Id order", flex: 50, align: 'center', headerAlign: 'center'
             },
             {
                 field: "client", headerName: "Client", flex: 150, align: 'center', headerAlign: 'center'
             },
             {
-                field: "address", headerName: "Address", flex: 150, align: 'center', headerAlign: 'center'
+                field: "address", headerName: "Address", flex: 150, align: 'center', headerAlign: 'center',
             },
             {
                 field: "product", headerName: "Product", flex: 150, align: 'center', headerAlign: 'center'
@@ -111,19 +115,17 @@ const OrdersList: FC = () => {
     function getRows(orders: Order[]): GridRowsProp {
 
         return orders.map(order => {
-            
+
             if (clients.length > 0 && orders.length > 0) {
                 console.log("true");
-
-                const client = clients[clients.findIndex(e => e.id === order.userId)];
-                const product = order.products.map(e => {
-                    const product = products[products.findIndex(p => p.id === e.productId)];
-                    return [product, e.count];
+                const client = getClient(order.userId);
+                const product = order.products.map(product => {
+                    return [getProduct(product.productId), product.count];
                 })
-                return { 
+                return {
                     id: order.id,
-                    client: client.name,
-                    address: client.address,
+                    client: client!.name,
+                    address: client!.address,
                     products: product,  //TODO need from bd products. List with product name, option name, count
                     status: order.status,
                     date: order.dateCreate,
@@ -131,12 +133,19 @@ const OrdersList: FC = () => {
                 }
             } else {
                 console.log("else");
-                
                 return order;
             }
         });
 
 
+    }
+
+    function getProduct(id: number): Product | undefined {
+        return products[products.findIndex(product => product.id === id)];
+    }
+
+    function getClient(id: number): Client | undefined {
+        return clients[clients.findIndex(client => client.id === id)];
     }
 
 
