@@ -1,5 +1,6 @@
 {
     "minId": 100000,
     "maxId": 999999,
-    "adminEmail": "admin@tel-ran.co.il"
+    "adminEmail": "admin@tel-ran.co.il",
+    "socialLoginProviders": ["Google", "Facebook", "Twitter"]
 }
