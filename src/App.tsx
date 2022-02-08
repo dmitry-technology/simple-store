@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { routes } from './config/routing';
 import { authService } from './config/servicesConfig';
 import ErrorType from './models/error-types';
@@ -51,7 +51,7 @@ export default App;
 // Routes managment
 
 function getRoutes(routes: RouteType[]): React.ReactNode[] {
-  return routes.map(el => <Route key={el.path} path={el.path} element={el.element} ></Route>)
+  return routes.map(el => <Route key={el.label} path={el.path} element={el.element} ></Route>)
 }
 
 function getRelevantRoutes(userData: UserData): RouteType[] {
