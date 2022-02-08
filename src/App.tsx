@@ -87,11 +87,12 @@ function getRelevantRoutes(userData: UserData): RouteType[] {
   const isUser = (!!userData.displayName && !userData.isAdmin);
   const isAdmin = userData.isAdmin;
 
-  return routes.filter(route => 
-    (route.isAdmin && route.isUser && route.isGuest) ||
-    (isGuest && route.isGuest) || 
-    ((isUser || isAdmin) && route.isUser && route.isAdmin) ||
-    (isUser && route.isUser && !route.isAdmin) || 
-    (isAdmin && route.isAdmin)
+  return routes.filter(route => true
+    // (route.isAdmin && route.isUser && route.isGuest) ||
+    // (isGuest && route.isGuest) || 
+    // ((isUser || isAdmin) && route.isUser && route.isAdmin) ||
+    // (isUser && route.isUser && !route.isAdmin) || 
+    // (isAdmin && route.isAdmin)
     )
 }
+
