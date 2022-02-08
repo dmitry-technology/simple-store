@@ -14,3 +14,4 @@ export const setUserData: ActionType<UserData> = userData => (
 export const setErrorCode: ActionType<ErrorType> = errorCode => (
     {payload: errorCode, type: SET_ERROR_CODE}
 )
+

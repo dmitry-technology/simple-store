@@ -10,3 +10,4 @@ export const userDataReducer = (userData: UserData = nonAuthorisedUser, action: 
 export const errorCodeReducer = (errorCode: ErrorType = ErrorType.NO_ERROR, action: PayloadAction<ErrorType>): ErrorType => {
     return action.type === SET_ERROR_CODE ? action.payload : errorCode;
 }
+

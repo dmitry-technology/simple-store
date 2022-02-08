@@ -1,24 +1,32 @@
 import { from, of, Observable } from "rxjs";
 import { mergeMap } from 'rxjs/operators';
 import AuthService from "./auth-service";
-import { getAuth, signInWithEmailAndPassword, signInWithPopup, signOut, User } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, signInWithPopup, sendSignInLinkToEmail, signOut, User } from "firebase/auth";
 import { authState } from 'rxfire/auth';
 import fireApp from "../../config/firebase-config";
 import { FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider } from "firebase/auth";
 import { nonAuthorisedUser, UserData } from "../../models/user-data";
-import { LoginData } from "../../models/login-data";
+import { LoginData, LoginType } from "../../models/login-data";
+import AuthErrorType from "../../models/auth-error-types";
 
 const providersList = new Map([
-    ["Google", {service: GoogleAuthProvider}],
-    ["Twitter", {service: TwitterAuthProvider}],
-    ["Facebook", {service: FacebookAuthProvider}]
-  ]);
+    ["Google", { service: GoogleAuthProvider }],
+    ["Twitter", { service: TwitterAuthProvider }],
+    ["Facebook", { service: FacebookAuthProvider }]
+]);
+
+const actionCodeSettings = {
+    url: 'https://backlinkb7.page.link/verify',
+    handleCodeInApp: true,
+    dynamicLinkDomain: 'backlinkb7.page.link'
+};
 
 export default class AuthServiceFire implements AuthService {
 
     private auth = getAuth(fireApp);
 
-    constructor(private adminEmail: string) {}
+
+    constructor(private adminEmail: string) { }
 
     getUserData(): Observable<UserData> {
         return authState(this.auth).pipe(
@@ -38,18 +46,40 @@ export default class AuthServiceFire implements AuthService {
         };
     }
 
-    async login(loginData: LoginData): Promise<boolean> {
-        if (!!loginData.email && !!loginData.password) {
-            return signInWithEmailAndPassword(this.auth, loginData.email, loginData.password).then( () => true ).catch( () => false );
-        } else {
-            const currentProvider = providersList.get(loginData.email)
-            if (currentProvider) {
-                return signInWithPopup(this.auth, new currentProvider.service()).then( () => true ).catch( () => false );
-            } else {
-                return false;
-            }
-        }
+    private loginWithPassword(loginData: LoginData): Promise<AuthErrorType> {
+        return signInWithEmailAndPassword(this.auth, loginData.email, loginData.password)
+                .then(() => AuthErrorType.NO_ERROR)
+                .catch(() => AuthErrorType.INVALID_CREDENTIAL);
+    }
 
+    private loginWithEmailLink(loginData: LoginData): Promise<AuthErrorType> {
+        return sendSignInLinkToEmail(this.auth, loginData.email, actionCodeSettings)
+                .then(() => {
+                    window.localStorage.setItem('emailForSignIn', loginData.email);
+                    return AuthErrorType.AWAITING_CONFIRMATION;
+                })
+                .catch((error) => {
+                    window.localStorage.removeItem('emailForSignIn');
+                    const errorCode = error.code;
+                    return (errorCode === 'auth/invalid-email') ? AuthErrorType.INVALID_EMAIL : AuthErrorType.SERVER_UNAVAILABLE
+                });
+    }
+
+    private loginWithSocialProvider(loginData: LoginData): Promise<AuthErrorType> {
+        const currentProvider = providersList.get(loginData.email)
+                return signInWithPopup(this.auth, new currentProvider!.service())
+                    .then(() => AuthErrorType.NO_ERROR)
+                    .catch(() => AuthErrorType.INVALID_CREDENTIAL);
+    }
+
+
+    async login(loginData: LoginData): Promise<AuthErrorType> {
+        switch (loginData.loginType) {
+            case LoginType.WITH_PASSWORD: return this.loginWithPassword(loginData);
+            case LoginType.WITH_EMAIL_LINK: return this.loginWithEmailLink(loginData);
+            case LoginType.WITH_SOCIAL_PROVIDER: return this.loginWithSocialProvider(loginData);
+            default: return AuthErrorType.SERVER_UNAVAILABLE;
+        }
     }
 
     async logout(): Promise<boolean> {
@@ -60,5 +90,4 @@ export default class AuthServiceFire implements AuthService {
             return false;
         }
     }
-
 }

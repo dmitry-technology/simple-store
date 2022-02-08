@@ -1,5 +1,6 @@
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import thunk from "redux-thunk";
+import AuthErrorType from "../models/auth-error-types";
 import ErrorType from "../models/error-types";
 import { UserData } from "../models/user-data";
 import { errorCodeReducer, userDataReducer } from "./reducers";
