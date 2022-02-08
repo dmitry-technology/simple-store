@@ -6,7 +6,7 @@ import storeConfig from '../../config/store-config.json'
 import TwitterIcon from '@mui/icons-material/Twitter';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
-import AuthErrorType, { getAuthErrorMessage } from '../../models/auth-error-types';
+import AuthErrorType, { getAuthErrorMessage } from '../../models/auth-types';
 
 type LoginFormProps = {
   loginFn: (loginData: LoginData) => Promise<AuthErrorType>;
