@@ -54,8 +54,10 @@ export default class AuthServiceFire implements AuthService {
 
     private async getUser(user: User) {
         return {
-            userName: user.uid,
-            displayName: (user.displayName || user.email!),
+            id: user.uid,
+            email: user.email ? user.email : '',
+            name: user.displayName ? user.displayName : '',
+            photoURL: user.photoURL? user.photoURL : '',
             isAdmin: user.email === this.adminEmail
         };
     }
@@ -96,12 +98,11 @@ export default class AuthServiceFire implements AuthService {
         }
     }
 
-    async logout(): Promise<boolean> {
+    async logout() {
         try {
             await signOut(this.auth);
-            return true;
-        } catch {
-            return false;
+        } catch(err) {
+            console.log("catch" + err);
         }
     }
 }

@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Subscription } from 'rxjs';
-import { authRoutes, menuRoutes, routes } from './config/routing';
+import { authRoutes, menuRoutes, PATH_REDIRECT, routes } from './config/routing';
 import { authService, categoriesStore, clientStore, productStore, orderStore } from './config/servicesConfig';
 import { Category } from './models/category-type';
 import ErrorType from './models/error-types';
@@ -35,7 +35,7 @@ function App() {
     if (code === ErrorType.NO_ERROR) {
       serverUnavailable && setServerUnavailable(false);
     } else if (code === ErrorType.AUTH_ERROR) {
-      if (!!userData.userName) { authService.logout(); console.log('auth error') }
+      if (!!userData.id) { authService.logout(); console.log('auth error') }
       serverUnavailable && setServerUnavailable(false);
     } else {
       !serverUnavailable && setServerUnavailable(true);
@@ -51,8 +51,8 @@ function App() {
   function subscribeToUserToken() {
     return authService.getUserData().subscribe({
       next(ud) {
-        if (ud.displayName === '') {
-          if (userData.displayName) {
+        if (ud.id === '') {
+          if (userData.id) {
             dispatch(setErrorCode(ErrorType.AUTH_ERROR));
           }
           dispatch(setUserData(nonAuthorisedUser));
@@ -135,7 +135,7 @@ function App() {
           <Navigator logo={'BEST PIZZA B7'} menuItems={menuItems} authItems={authItems} />
           <Routes>
             {getRoutes(relevantRoutes)}
-            <Route path={'*'} element={<Navigate to={relevantRoutes[0].path} />}></Route>
+            <Route path={'*'} element={<Navigate to={PATH_REDIRECT} />}></Route>
           </Routes>
         </React.Fragment>
       }
@@ -151,8 +151,8 @@ function getRoutes(routes: RouteType[]): React.ReactNode[] {
 }
 
 function getRelevantRoutes(items: RouteType[], userData: UserData): RouteType[] {
-  const isGuest = !userData.displayName;
-  const isUser = (!!userData.displayName && !userData.isAdmin);
+  const isGuest = !userData.id;
+  const isUser = (!!userData.id && !userData.isAdmin);
   const isAdmin = userData.isAdmin;
 
   // console.log("isGuest:" + isGuest + " isUser:" + isUser + " isAdmin:" + isAdmin);

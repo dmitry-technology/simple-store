@@ -11,15 +11,15 @@ export default class AuthServiceFake implements AuthService {
     }
 
     getUserData(): Observable<UserData> {
-        return of({userName: 'admin@tel-ran.co.il', displayName: 'Admin', isAdmin: true});
+        return of({id: 'admin' ,email: 'admin@tel-ran.co.il', name: 'Admin', isAdmin: true});
     }
 
     login(loginData: LoginData): Promise<AuthErrorType> {
         return Promise.resolve(AuthErrorType.NO_ERROR);
     }
 
-    logout(): Promise<boolean> {
-        return Promise.resolve(true);
+    logout() {
+        Promise.resolve(true);
     }
     
 }
