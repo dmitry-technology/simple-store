@@ -1,9 +1,10 @@
 export type UserData = {
-    id: string,
-    email?: string,
-    name?: string,
+    id: string;
+    email?: string;
+    name?: string;
+    phoneNumber?: string;
     deliveryAddress?: DeliveryAddress;
-    isAdmin?: boolean
+    isAdmin?: boolean;
 }
 
 export type DeliveryAddress = {
