@@ -4,99 +4,93 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 import fireApp from '../../config/firebase-config';
 import { Product } from '../../models/product';
 import { Category } from '../../models/category-type';
+import { useDispatch } from 'react-redux';
 
 type FormAddProductProps = {
-    uploadProductData: (product: Product) => void;
+    uploadProductData: (product: Product, picture: File) => void;
     categories: Category[];
+    defaultPicture: string;
+    existId: (id: number) => Promise<boolean>;
 }
 
 const FormAddProduct: FC<FormAddProductProps> = (props) => {
 
-    const { uploadProductData, categories } = props;
+    const { uploadProductData, categories, defaultPicture, existId } = props;
 
-    const [id, setId] = useState<number>();
-    const [name, setName] = useState<string>('');
-    const [category, setCategory] = useState<string>('');
-    const [price, setPrice] = useState<number>();
-    const [active, setActive] = useState<number>(1);
-    const [picturePath, setPicturePath] = useState<string>('');
+    const [id, setId] = useState<number>(0);
+    const [title, setTitle] = useState<string>('');
+    const [category, setCategory] = useState<number>(categories[0].id);
+    const [basePrice, setBasePrice] = useState<number>(0);
+    const [active, setActive] = useState<boolean>(true);
+    const [previewPath, setPreviewPath] = useState<string>(defaultPicture);
+    const [picture, setPicture] = useState<File>();
     const [description, setDescription] = useState<string>('');
+
+    const [idError, setIdError] = useState<string>('');
+    const [priceError, setPriceError] = useState<string>('');
 
     const [flValid, setFlValid] = useState<boolean>(false);
 
-
     useEffect(() => {
-        console.log(picturePath);
-    }, [picturePath]);
+        validateData();
+    }, [id, title, category, basePrice, picture, description]);
+
+    function idHandle(event: any) {
+        const id = event.target.value;
+        setId(id);
+        setIdError(id < 1 ? 'id must be greater than 0' : '');
+    }
+
+    function priceHandle(event: any) {
+        const price = event.target.value;
+        setBasePrice(price);
+        setPriceError(price < 1 ? 'price must be greater than 0' : '');
+    }
 
     function pictureHandle(event: any) {
         const pictureFile = event.target.files[0];
         if (pictureFile) {
             const reader = new FileReader();
             reader.onloadend = function () {
-                setPicturePath(reader.result as string);
+                setPreviewPath(reader.result as string);
             }
             reader.readAsDataURL(pictureFile);
+            setPicture(pictureFile);
         }
     }
 
-    function onChange(event: any) {
-        const storage = getStorage(fireApp);
-
-        console.log(event.target.files[0]);
-        const file = event.target.files[0];
-        const metadata = {
-            contentType: 'image/jpeg'
-        };
-
-        // Upload file and metadata to the object 'images/mountains.jpg'
-        const storageRef = ref(storage, 'images/' + file.name);
-        const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-
-        // Listen for state changes, errors, and completion of the upload.
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log('Upload is ' + progress + '% done');
-                switch (snapshot.state) {
-                    case 'paused':
-                        console.log('Upload is paused');
-                        break;
-                    case 'running':
-                        console.log('Upload is running');
-                        break;
-                }
-            },
-            (error) => {
-                switch (error.code) {
-                    case 'storage/unauthorized':
-                        console.log('unauthorized');
-                        // User doesn't have permission to access the object
-                        break;
-                    case 'storage/canceled':
-                        console.log('canceled');
-                        // User canceled the upload
-                        break;
-                    case 'storage/unknown':
-                        console.log('unknown');
-                        // Unknown error occurred, inspect error.serverResponse
-                        break;
-                }
-            },
-            () => {
-                // Upload completed successfully, now we can get the download URL
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    console.log('File available at', downloadURL);
-                });
-            }
-        );
+    function validateData() {
+        const isValid = id && !idError &&
+            title &&
+            category &&
+            basePrice && !priceError;
+        setFlValid(!!isValid);
     }
 
     async function onSubmit(event: any) {
         event.preventDefault();
+        const idIsExist = await existId(id);
+        if (!idIsExist) {
+            const product: Product = { id, title, category, description, basePrice, active };
+            await uploadProductData(product, picture as File);
+            onReset();
+        } else {
+            setIdError('such id alredy exist');
+        }
     }
 
+    function onReset() {
+        setId(0);
+        setTitle('');
+        setCategory(categories[0].id);
+        setBasePrice(0);
+        setActive(true);
+        setPreviewPath(defaultPicture);
+        setPicture(undefined);
+        setDescription('');
+    }
+
+    // Styles of form items
     const inputStyle: SxProps<Theme> = {
         width: { md: '28vw' }
     }
@@ -118,7 +112,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     }
 
     const textAreaStyle: CSSProperties = {
-        width: '100%', 
+        width: '100%',
         fontSize: '1.1rem'
     }
 
@@ -138,6 +132,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
         <Box
             component='form'
             onSubmit={onSubmit}
+            onReset={onReset}
         >
             <FormGroup>
                 <Box sx={boxRowStyle as any}>
@@ -146,21 +141,19 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         label="Id"
                         variant="outlined"
                         type="number"
-                        // error={!!hoursError}
-                        // helperText={hoursError}
-                        onChange={e => setId(+e.target.value)}
+                        error={!!idError}
+                        helperText={idError}
+                        onChange={idHandle}
                         sx={inputStyle}
                         margin='normal'
                         required
                     />
                     <TextField
-                        value={name}
+                        value={title}
                         label="Name"
                         variant="outlined"
                         type="text"
-                        // error={!!hoursError}
-                        // helperText={hoursError}
-                        onChange={e => setName(e.target.value)}
+                        onChange={e => setTitle(e.target.value)}
                         sx={inputStyle}
                         margin='normal'
                         required
@@ -172,22 +165,22 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         <Select
                             value={category}
                             label="Category"
-                            onChange={e => setCategory(e.target.value)}
+                            onChange={e => setCategory(+e.target.value)}
                             required
                         >
                             {categories.map(cat => (
-                                <MenuItem value={cat.name} key={cat.name}>{cat.name}</MenuItem>
+                                <MenuItem value={cat.id} key={cat.id}>{cat.name}</MenuItem>
                             ))}
                         </Select>
                     </FormControl>
                     <TextField
-                        value={price}
+                        value={basePrice}
                         label="Price"
                         variant="outlined"
                         type="number"
-                        // error={!!hoursError}
-                        // helperText={hoursError}
-                        onChange={e => setPrice(+e.target.value)}
+                        error={!!priceError}
+                        helperText={priceError}
+                        onChange={priceHandle}
                         sx={inputStyle}
                         margin='normal'
                         required
@@ -195,24 +188,17 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                 </Box>
                 <Box sx={boxRowStyle as any}>
                     <Box sx={boxPreviewStyle}>
-                        {/* <Typography>
-                            Picture:
-                        </Typography> */}
                         <img
                             style={{ width: '300px', height: '300px' }}
-                            src={picturePath || 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e'}
+                            src={previewPath}
                         />
                     </Box>
                     <TextField
-                        // value={picture}
                         variant="outlined"
                         type="file"
-                        // error={!!hoursError}
-                        // helperText={hoursError}
                         onChange={pictureHandle}
                         sx={inputStyle}
                         margin='normal'
-                        required
                     />
                 </Box>
                 <Box sx={boxRowStyle as any}>
@@ -221,9 +207,8 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         onChange={e => setDescription(e.target.value)}
                         aria-label="Description"
                         minRows={4}
-                        placeholder="Description"
+                        placeholder="Description (not necessary)"
                         style={textAreaStyle}
-                        required
                     />
                 </Box>
                 <Box sx={boxButtonStyle}>
@@ -232,8 +217,8 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         <RadioGroup
                             row
                             aria-label="active"
-                            value={active}
-                            onChange={e => setActive(+e.target.value)}
+                            value={+active}
+                            onChange={e => setActive(!!+e.target.value)}
                         >
                             <FormControlLabel value={1} control={<Radio />} label={'yes'} key={1} />
                             <FormControlLabel value={0} control={<Radio />} label={'no'} key={0} />
@@ -241,7 +226,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                     </FormControl>
                 </Box>
                 <Box sx={boxButtonStyle}>
-                    <Button type='submit' variant='contained' sx={buttonStyle}>
+                    <Button type='submit' variant='contained' disabled={!flValid} sx={buttonStyle}>
                         Submit
                     </Button>
                     <Button type='reset' sx={buttonStyle}>
