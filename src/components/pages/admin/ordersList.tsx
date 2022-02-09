@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Order } from '../../../models/order-type';
 import { clientSelector, ordersSelector, productsSelector } from '../../../redux/store';
 import { useMediaQuery } from "react-responsive";
-import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowId, GridRowParams, GridRowsProp } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowHeightParams, GridRowId, GridRowParams, GridRowsProp } from '@mui/x-data-grid';
 import { getOrdersListFields, OrderListFields } from '../../../config/orders-list-columns';
 import { Delete } from '@mui/icons-material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -14,11 +14,44 @@ import { Product } from '../../../models/product';
 import List from '@mui/material/List';
 import ListItemText from '@mui/material/ListItemText';
 import CommentIcon from '@mui/icons-material/Comment';
+import { Subscription } from 'rxjs';
+import { clientStore, orderStore } from '../../../config/servicesConfig';
+import { setClients, setOrders } from '../../../redux/actions';
 
 
 
 
 const OrdersList: FC = () => {
+
+    //subscriber clients
+  useEffect(() => {
+    const subscription = subscribeToClients();
+    return () => subscription.unsubscribe();
+  }, [])
+
+  function subscribeToClients(): Subscription {
+    return clientStore.getAll().subscribe({
+      next(clients: Client[]) {
+        dispatch(setClients(clients));
+      }
+    })
+  }
+
+  //subscriber orders
+  useEffect(() => {
+    const subscription = subscribeToOrders();
+    return () => subscription.unsubscribe();
+  }, [])
+
+  function subscribeToOrders(): Subscription {
+    return orderStore.getAll().subscribe({
+      next(orders: Order[]) {
+        dispatch(setOrders(orders));
+      }
+    })
+  }
+
+  
     //*************************Redux***************************//
     const dispatch = useDispatch();
     const orders: Order[] = useSelector(ordersSelector);
@@ -71,13 +104,23 @@ const OrdersList: FC = () => {
                 field: "address", headerName: "Address", flex: 150, align: 'center', headerAlign: 'center',
             },
             {
-                field: "product", headerName: "Product", flex: 150, align: 'center', headerAlign: 'center'
+                field: "product", headerName: "Product", flex: 150, align: 'center', headerAlign: 'center',
+                getRowHeight: (params: GridRowHeightParams) => {
+                    console.log(params);
+                    return params;
+                    
+                }
             },
             {
                 field: "status", headerName: "Status", flex: 150, align: 'center', headerAlign: 'center'
             },
             {
-                field: "date", headerName: "Date", flex: 150, align: 'center', headerAlign: 'center'
+                field: "date", headerName: "Date", flex: 150, align: 'center', headerAlign: 'center', type: 'date',
+                preProcessEditCellProps: (params: any) => {
+                    const date = params.props.value;
+                    console.log((date as Date).getFullYear());
+                    return { ...params.props};
+                  }
             },
             {
                 field: "price", headerName: "Price", flex: 100, align: 'center', headerAlign: 'center'
@@ -87,11 +130,6 @@ const OrdersList: FC = () => {
                 getActions: (params: GridRowParams) => {
                     return [
                         <GridActionsCellItem
-                            icon={<Delete />}
-                            label="Delete"
-                            onClick={() => rmOrder(params.id)}
-                        />,
-                        <GridActionsCellItem
                             icon={<VisibilityIcon />}
                             label="Show Details"
                             onClick={() => showOrder(params.id)}
@@ -100,6 +138,11 @@ const OrdersList: FC = () => {
                             icon={<EditIcon />}
                             label="Edit Order"
                             onClick={() => editOrder(params.id)}
+                        />,
+                        <GridActionsCellItem
+                            icon={<Delete />}
+                            label="Delete"
+                            onClick={() => rmOrder(params.id)}
                         />
                     ]
                 }

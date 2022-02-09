@@ -12,7 +12,6 @@ import ProductStore from "../services/products/product-store";
 import config from "./store-config.json"
 
 export const authService = new AuthServiceFire(config.adminEmail);
-// export const authService = new AuthServiceFake();
 
 //const product service
 const productService = new DataProviderFire<Product>('products');

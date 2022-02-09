@@ -74,34 +74,6 @@ function App() {
     productStore.fetch().then((products) => dispatch(setProducts(products))) 
   });
 
-  //subscriber clients
-  useEffect(() => {
-    const subscription = subscribeToClients();
-    return () => subscription.unsubscribe();
-  }, [])
-
-  function subscribeToClients(): Subscription {
-    return clientStore.getAll().subscribe({
-      next(clients: Client[]) {
-        dispatch(setClients(clients));
-      }
-    })
-  }
-
-  //subscriber orders
-  useEffect(() => {
-    const subscription = subscribeToOrders();
-    return () => subscription.unsubscribe();
-  }, [])
-
-  function subscribeToOrders(): Subscription {
-    return orderStore.getAll().subscribe({
-      next(orders: Order[]) {
-        dispatch(setOrders(orders));
-      }
-    })
-  }
-
   return (
     <BrowserRouter>
       {/* Show Alert if Connection refused*/}
