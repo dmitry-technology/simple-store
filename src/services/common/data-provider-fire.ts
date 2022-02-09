@@ -1,6 +1,6 @@
 import DataProvider from "./data-provider";
-import { Observable } from "rxjs";
-import { collection, doc, getDoc, setDoc, deleteDoc, getFirestore, CollectionReference } from 'firebase/firestore';
+import { from, lastValueFrom, Observable } from "rxjs";
+import { collection, getDocs, doc, getDoc, setDoc, deleteDoc, getFirestore, CollectionReference, Firestore } from 'firebase/firestore';
 import fireApp from "../../config/firebase-config";
 import { collectionData } from "rxfire/firestore";
 import { catchError } from 'rxjs/operators'
@@ -13,6 +13,14 @@ export default class DataProviderFire<T> implements DataProvider<T> {
 
     constructor(collectionName: string, private minId?: number, private maxId?: number) {
         this.fireCollection = collection(getFirestore(fireApp), collectionName);
+
+    }
+
+    async fetch(): Promise<T[]> {
+        const querySnapshot = await getDocs(this.fireCollection);
+        const qDocs = querySnapshot.docs;
+        const res = qDocs.map((doc)=>doc.data());
+        return res as T[];
     }
 
     async add(obj: T): Promise<T> {

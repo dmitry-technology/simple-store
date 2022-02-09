@@ -119,15 +119,18 @@ const OrdersList: FC = () => {
             if (clients.length > 0 && orders.length > 0) {
                 // console.log("true");
                 const client = getClient(order.userId);
+                let productStr="";
                 const product = order.products.map(product => {
+                    const p = getProduct(product.productId)
+                    productStr += p!.title;
                     return [getProduct(product.productId), product.count];
                 })
-                // console.log(product);
+                console.log(productStr);
                 return {
                     id: order.id,
                     client: client!.name,
                     address: client!.address,
-                    products: product,  //TODO need from bd products. List with product name, option name, count
+                    product: productStr,  //TODO need from bd products. List with product name, option name, count
                     status: order.status,
                     date: order.dateCreate,
                     price: order.totalPrice

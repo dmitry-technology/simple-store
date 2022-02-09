@@ -64,33 +64,15 @@ function App() {
     })
   }
 
-  // Subscribe to categories
+  // get categories
   useEffect(() => {
-    const subscription = subscribeToCategories();
-    return () => subscription.unsubscribe();
-  }, [])
+    categoriesStore.fetch().then((cat) => dispatch(setCategories(cat))) 
+  });
 
-  function subscribeToCategories(): Subscription {
-    return categoriesStore.getAll().subscribe({
-      next(cat: Category[]) {
-        dispatch(setCategories(cat));
-      }
-    })
-  }
-
-  // Subscribe to products
+  // get categories
   useEffect(() => {
-    const subscription = subscribeToProduct();
-    return () => subscription.unsubscribe();
-  }, [])
-
-  function subscribeToProduct(): Subscription {
-    return productStore.getAll().subscribe({
-      next(prod: Product[]) {
-        dispatch(setProducts(prod));
-      }
-    })
-  }
+    productStore.fetch().then((products) => dispatch(setProducts(products))) 
+  });
 
   //subscriber clients
   useEffect(() => {

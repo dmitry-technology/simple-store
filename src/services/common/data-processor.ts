@@ -20,6 +20,10 @@ export default abstract class DataProcessor<T> {
         return (this.dataProvider.get() as Observable<T[]>);
     }
 
+    fetch(): Promise<T[]> {
+        return (this.dataProvider.fetch() as Promise<T[]>);
+    }
+
     get(id: number): Promise<T> {
         return this.dataProvider.get(id) as Promise<T>;
     }
