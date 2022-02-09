@@ -1,8 +1,7 @@
 import { Category } from "../models/category-type";
-import { Client } from "../models/client-type";
 import { Order } from "../models/order-type";
 import { Product } from "../models/product";
-import AuthServiceFake from "../services/auth/auth-service-fake";
+import { UserData } from "../models/user-data";
 import AuthServiceFire from "../services/auth/auth-service-fire";
 import CategoriesStore from "../services/categories/categories-store";
 import ClientStore from "../services/clients/client-store";
@@ -23,5 +22,5 @@ export const categoriesStore = new CategoriesStore(categoriesService);
 const orderProvider = new DataProviderFire<Order>("orders", config.minId, config.maxId);
 export const orderStore = new OrderStore(orderProvider);
 //const client service
-const clientProvider = new DataProviderFire<Client>("clients", config.minId, config.maxId);
+const clientProvider = new DataProviderFire<UserData>("clients");
 export const clientStore = new ClientStore(clientProvider);

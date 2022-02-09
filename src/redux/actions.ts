@@ -4,7 +4,6 @@ import ErrorType from "../models/error-types";
 import { Product } from "../models/product";
 import { Category } from "../models/category-type";
 import { Order } from "../models/order-type";
-import { Client } from "../models/client-type";
 
 export const SET_USER_DATA = "set_user_data";
 export const SET_PRODUCTS = "set_products";
@@ -35,7 +34,7 @@ export const setOrders: ActionType<Order[]> = order => (
     { payload: order, type: SET_ORDER_DATA }
 )
 
-export const setClients: ActionType<Client[]> = client => (
+export const setClients: ActionType<UserData[]> = client => (
     { payload: client, type: SET_CLIENT_DATA }
 )
 

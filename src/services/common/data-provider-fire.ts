@@ -32,7 +32,7 @@ export default class DataProviderFire<T> implements DataProvider<T> {
         return obj;
     }
 
-    async remove(id: number): Promise<T> {
+    async remove(id: string): Promise<T> {
         const obj = await this.get(id);
         const docRef = doc(this.fireCollection, id.toString());
         try {
@@ -43,13 +43,13 @@ export default class DataProviderFire<T> implements DataProvider<T> {
         return obj as T;
     }
 
-    async exists(id: number): Promise<boolean> {
+    async exists(id: string): Promise<boolean> {
         const docRef = doc(this.fireCollection, id.toString());
         const docSnap = await getDoc(docRef);
         return docSnap.exists();
     }
 
-    get(id?: number): Promise<T> | Observable<T[]> {
+    get(id?: string): Promise<T> | Observable<T[]> {
         if (id !== undefined) {
             const docRef = doc(this.fireCollection, id.toString())
             return getDoc(docRef).then(docSnap => docSnap.data() as T);
@@ -62,16 +62,16 @@ export default class DataProviderFire<T> implements DataProvider<T> {
             }));
     }
 
-    async update(id: number, newObj: T): Promise<T> {
+    async update(id: string, newObj: T): Promise<T> {
         const obj = await this.get(id);
         (newObj as any).id = id;
         await this.setObj(id, newObj);
         return obj as T;
     }
 
-    private async setObj(id: number, newObj: T) {
+    private async setObj(id: string, newObj: T) {
         try {
-            await setDoc(doc(this.fireCollection, id.toString()), newObj);
+            await setDoc(doc(this.fireCollection, id), newObj);
         } catch (err) {
             throw ErrorType.AUTH_ERROR;
         }
@@ -81,7 +81,7 @@ export default class DataProviderFire<T> implements DataProvider<T> {
         let res: number;
         do {
             res = getRandomInteger(this.minId!, this.maxId!);
-        } while (await this.exists(res))
+        } while (await this.exists(res.toString()))
         return res;
     }
 

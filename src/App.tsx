@@ -13,7 +13,6 @@ import { nonAuthorisedUser, UserData } from './models/user-data';
 import { setCategories, setErrorCode, setProducts, setUserData, setClients, setOrders } from './redux/actions';
 import { errorCodeSelector, userDataSelector } from './redux/store';
 import Navigator from './components/UI/common/navigator';
-import { Client } from './models/client-type';
 import { Order } from './models/order-type';
 
 function App() {

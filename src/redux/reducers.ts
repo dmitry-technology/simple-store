@@ -1,6 +1,5 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { Category } from "../models/category-type";
-import { Client } from "../models/client-type";
 import ErrorType from "../models/error-types";
 import { Order } from "../models/order-type";
 import { Product } from "../models/product";
@@ -27,6 +26,6 @@ export const ordersReducer = (orders: Order[] = [], action: PayloadAction<Order[
     return action.type === SET_ORDER_DATA ? action.payload : orders;
 }
 
-export const clientsReducer = (clients: Client[] = [], action: PayloadAction<Client[]>): Client[] => {
+export const clientsReducer = (clients: UserData[] = [], action: PayloadAction<UserData[]>): UserData[] => {
     return action.type === SET_CLIENT_DATA ? action.payload : clients;
 }

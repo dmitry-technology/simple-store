@@ -8,11 +8,11 @@ export default abstract class DataProcessor<T> {
         return this.dataProvider.add(obj);
     }
 
-    remove(id: number): Promise<T> {
+    remove(id: string): Promise<T> {
         return this.dataProvider.remove(id);
     }
 
-    update(id: number, newObj: T): Promise<T> {
+    update(id: string, newObj: T): Promise<T> {
         return this.dataProvider.update(id, newObj);
     }
 
@@ -24,7 +24,7 @@ export default abstract class DataProcessor<T> {
         return (this.dataProvider.fetch() as Promise<T[]>);
     }
 
-    get(id: number): Promise<T> {
+    get(id: string): Promise<T> {
         return this.dataProvider.get(id) as Promise<T>;
     }
 }

@@ -1,7 +1,6 @@
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import thunk from "redux-thunk";
 import { Category } from "../models/category-type";
-import { Client } from "../models/client-type";
 import ErrorType from "../models/error-types";
 import { Order } from "../models/order-type";
 import { Product } from "../models/product";
@@ -14,7 +13,7 @@ type StoreType = {
     products: Product[],
     categories: Category[],
     orders: Order[],
-    clients: Client[],
+    clients: UserData[],
 };
 
 const reducers = combineReducers<StoreType>({
@@ -35,4 +34,4 @@ export const errorCodeSelector = (state: StoreType): ErrorType => state.errorCod
 export const productsSelector = (state: StoreType): Product[] => state.products;
 export const categoriesSelector = (state: StoreType): Category[] => state.categories;
 export const ordersSelector = (state: StoreType): Order[] => state.orders;
-export const clientSelector = (state: StoreType): Client[] => state.clients;
+export const clientSelector = (state: StoreType): UserData[] => state.clients;
