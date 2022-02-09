@@ -23,5 +23,5 @@ const Index: FC = () => {
                     </Box>)}
             </Box>;
 }
- 
+
 export default Index;

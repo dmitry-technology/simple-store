@@ -15,7 +15,7 @@ const Navigator: FC<NavigatorProps> = (props) => {
     const { logo, menuItems, authItems } = props;
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100vw' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
             <Toolbar
                 sx={{
                     display: 'flex',
