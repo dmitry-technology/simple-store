@@ -5,7 +5,6 @@ import fireApp from '../../config/firebase-config';
 import { Product } from '../../models/product';
 import { Category } from '../../models/category-type';
 import { useDispatch } from 'react-redux';
-import { uploadImageAction } from '../../redux/actions';
 
 type FormAddProductProps = {
     uploadProductData: (product: Product, picture: File) => void;

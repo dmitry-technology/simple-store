@@ -20,7 +20,7 @@ const Catalog: FC = () => {
     }
 
     async function existId(id: number): Promise<boolean> {
-        return await productStore.exists(id);
+        return await productStore.exists(id.toString());
     }
 
     return (
