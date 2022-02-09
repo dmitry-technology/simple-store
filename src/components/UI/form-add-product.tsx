@@ -4,6 +4,8 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/
 import fireApp from '../../config/firebase-config';
 import { Product } from '../../models/product';
 import { Category } from '../../models/category-type';
+import { useDispatch } from 'react-redux';
+import { uploadImageAction } from '../../redux/actions';
 
 type FormAddProductProps = {
     uploadProductData: (product: Product) => void;
@@ -19,78 +21,34 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     const [category, setCategory] = useState<string>('');
     const [price, setPrice] = useState<number>();
     const [active, setActive] = useState<number>(1);
-    const [picturePath, setPicturePath] = useState<string>('');
+    const [previewPath, setPreviewPath] = useState<string>('');
+    const [picture, setPicture] = useState<string>('');
     const [description, setDescription] = useState<string>('');
+
+    const [idError, setIdError] = useState<string>('');
 
     const [flValid, setFlValid] = useState<boolean>(false);
 
-
     useEffect(() => {
-        console.log(picturePath);
-    }, [picturePath]);
+        const flValid = id && id > 0 &&
+            name &&
+            category &&
+            price && price > 0 &&
+            picture &&
+            description;
+        setFlValid(!!flValid);
+    }, [id, name, category, price, picture, description]);
 
     function pictureHandle(event: any) {
         const pictureFile = event.target.files[0];
         if (pictureFile) {
             const reader = new FileReader();
             reader.onloadend = function () {
-                setPicturePath(reader.result as string);
+                setPreviewPath(reader.result as string);
             }
             reader.readAsDataURL(pictureFile);
+            setPicture(pictureFile);
         }
-    }
-
-    function onChange(event: any) {
-        const storage = getStorage(fireApp);
-
-        console.log(event.target.files[0]);
-        const file = event.target.files[0];
-        const metadata = {
-            contentType: 'image/jpeg'
-        };
-
-        // Upload file and metadata to the object 'images/mountains.jpg'
-        const storageRef = ref(storage, 'images/' + file.name);
-        const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-
-        // Listen for state changes, errors, and completion of the upload.
-        uploadTask.on('state_changed',
-            (snapshot) => {
-                // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                console.log('Upload is ' + progress + '% done');
-                switch (snapshot.state) {
-                    case 'paused':
-                        console.log('Upload is paused');
-                        break;
-                    case 'running':
-                        console.log('Upload is running');
-                        break;
-                }
-            },
-            (error) => {
-                switch (error.code) {
-                    case 'storage/unauthorized':
-                        console.log('unauthorized');
-                        // User doesn't have permission to access the object
-                        break;
-                    case 'storage/canceled':
-                        console.log('canceled');
-                        // User canceled the upload
-                        break;
-                    case 'storage/unknown':
-                        console.log('unknown');
-                        // Unknown error occurred, inspect error.serverResponse
-                        break;
-                }
-            },
-            () => {
-                // Upload completed successfully, now we can get the download URL
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    console.log('File available at', downloadURL);
-                });
-            }
-        );
     }
 
     async function onSubmit(event: any) {
@@ -118,7 +76,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     }
 
     const textAreaStyle: CSSProperties = {
-        width: '100%', 
+        width: '100%',
         fontSize: '1.1rem'
     }
 
@@ -200,7 +158,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         </Typography> */}
                         <img
                             style={{ width: '300px', height: '300px' }}
-                            src={picturePath || 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e'}
+                            src={previewPath || 'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e'}
                         />
                     </Box>
                     <TextField

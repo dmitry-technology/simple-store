@@ -5,6 +5,7 @@ import { Product } from "../models/product";
 import { Category } from "../models/category-type";
 import { Order } from "../models/order-type";
 import { Client } from "../models/client-type";
+import { productPictureStore } from "../config/servicesConfig";
 
 export const SET_USER_DATA = "set_user_data";
 export const SET_PRODUCTS = "set_products";
@@ -38,6 +39,19 @@ export const setOrders: ActionType<Order[]> = order => (
 export const setClients: ActionType<Client[]> = client => (
     { payload: client, type: SET_CLIENT_DATA }
 )
+
+export const uploadImageAction = function (file: File): (dispatch: any) => void {
+    return async dispatch => {
+        await productPictureStore.uploadFile(file);
+        // try {
+        //     await college.addCourse(course);
+        //     dispatch(setErrorCode(ErrorCode.NO_ERROR));
+        // } catch (err: any) {
+        //     dispatch(setErrorCode(err))
+        // }
+
+    }
+}
 
 
 

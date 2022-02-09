@@ -7,6 +7,8 @@ import AuthServiceFire from "../services/auth/auth-service-fire";
 import CategoriesStore from "../services/categories/categories-store";
 import ClientStore from "../services/clients/client-store";
 import DataProviderFire from "../services/common/data-provider-fire";
+import StorageProcessor from "../services/common/storage-processor";
+import StorageProviderFire from "../services/common/storage-provider-fire";
 import OrderStore from "../services/order/order-store";
 import ProductStore from "../services/products/product-store";
 import config from "./store-config.json"
@@ -25,3 +27,6 @@ export const orderStore = new OrderStore(orderProvider);
 //const client service
 const clientProvider = new DataProviderFire<Client>("clients", config.minId, config.maxId);
 export const clientStore = new ClientStore(clientProvider);
+
+const productPictureProvider = new StorageProviderFire(config.productPictureFolder);
+export const productPictureStore = new StorageProcessor(productPictureProvider);

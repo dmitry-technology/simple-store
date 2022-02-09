@@ -13,15 +13,15 @@ const Index: FC = () => {
     const categories: Category[] = useSelector(categoriesSelector);
     const categoriesSorted = _.sortBy(categories, ['sortOrder']);
 
-    return  <Box>
-                {categoriesSorted.map(cat => <Box key={cat.name} component="div">
-                    <Typography sx={{ m:1, fontFamily: 'Cooper'}} variant='h3'>
-                        {cat.name}
-                    </Typography>
-                    {products.filter(prod => prod.active && prod.category === cat.id)
-                        .map(prod => <ProductCard key={prod.title} {...prod}/>)}
-                    </Box>)}
-            </Box>;
+    return <Box>
+        {categoriesSorted.map(cat => <Box key={cat.name} component="div">
+            <Typography sx={{ m: 1, fontFamily: 'Cooper' }} variant='h3'>
+                {cat.name}
+            </Typography>
+            {products.filter(prod => prod.active && prod.category === cat.id)
+                .map((prod, index) => <ProductCard key={prod.title + index} {...prod} />)}
+        </Box>)}
+    </Box>;
 }
- 
+
 export default Index;
