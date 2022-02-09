@@ -1,7 +1,9 @@
 export type UserData = {
-    userName: string,
-    displayName: string,
-    isAdmin: boolean
+    id: string,
+    email?: string,
+    name?: string,
+    photoURL?: string,
+    isAdmin?: boolean
 }
 
-export const nonAuthorisedUser: UserData = {userName: '', displayName: '', isAdmin: false};
+export const nonAuthorisedUser: UserData = {id: ''};

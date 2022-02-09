@@ -6,4 +6,5 @@ export default class ClientStore extends DataProcessor<Client> {
     constructor(dataProvider: DataProviderFire<Client>) {
         super(dataProvider);
     }
+
 }

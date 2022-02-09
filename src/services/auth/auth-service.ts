@@ -7,5 +7,5 @@ export default interface AuthService {
     getUserData(): Observable<UserData>;
     login(loginData: LoginData): Promise<AuthErrorType>;
     verifyEmail(link: string): Promise<EmailVerify> ;
-    logout(): Promise<boolean>;
+    logout(): void;
 }

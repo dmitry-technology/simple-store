@@ -19,7 +19,7 @@ const Index: FC = () => {
                         {cat.name}
                     </Typography>
                     {products.filter(prod => prod.active && prod.category === cat.id)
-                        .map(prod => <ProductCard key={prod.title} {...prod}/>)}
+                        .map((prod, index) => <ProductCard key={index + prod.title} {...prod}/>)}
                     </Box>)}
             </Box>;
 }

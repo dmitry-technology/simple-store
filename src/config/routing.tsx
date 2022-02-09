@@ -8,12 +8,14 @@ import Orders from "../components/pages/orders";
 import Profile from "../components/pages/profile";
 import ShoppingCart from "../components/pages/shopping-cart";
 import EmailVerification from "../components/pages/auth/verification";
+import RedirectPage from "../components/pages/auth/complete";
 
-// Common routes (available without authorization)
+// Common routes 
 export const PATH_INDEX = "/";
 export const PATH_LOGIN = "/login";
 export const PATH_LOGOUT = "/logout";
 export const PATH_EMAIL_VERIFY = "/login/verify";
+export const PATH_REDIRECT = "/redirect";
 
 // User routes
 export const PATH_PROFILE = "/user/profile";
@@ -34,7 +36,8 @@ export const menuRoutes: RouteType[] = [
 ];
 
 export const systemRoutes: RouteType[] = [
-    { path: PATH_EMAIL_VERIFY, element: <EmailVerification />, label: 'Email Verify', isGuest: true }
+    { path: PATH_EMAIL_VERIFY, element: <EmailVerification />, label: 'Email Verify', isGuest: true },
+    { path: PATH_REDIRECT, element: <RedirectPage />, label: 'Redirect', isGuest: true, isUser: true, isAdmin: true }
 ];
 
 export const authRoutes: RouteType[] = [
