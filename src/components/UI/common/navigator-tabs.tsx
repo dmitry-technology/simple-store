@@ -21,7 +21,7 @@ const NavigatorTabs: FC<NavigatorTabsProps> = ({ orientation, items }) => {
     useEffect(() => {
         const curActiveIndex = getActiveTabIndex(path, items);
         setActiveTab(curActiveIndex);
-        document.title = items[curActiveIndex].label;
+        document.title = items[curActiveIndex].label!;
     }, [items, path]);
 
     return (
