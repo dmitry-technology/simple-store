@@ -36,13 +36,13 @@ export const menuRoutes: RouteType[] = [
 ];
 
 export const systemRoutes: RouteType[] = [
-    { path: PATH_EMAIL_VERIFY, element: <EmailVerification />, label: 'Email Verify', isGuest: true },
-    { path: PATH_REDIRECT, element: <RedirectPage />, label: 'Redirect', isGuest: true, isUser: true, isAdmin: true }
+    { path: PATH_EMAIL_VERIFY, element: <EmailVerification />, isGuest: true },
+    { path: PATH_REDIRECT, element: <RedirectPage />, isGuest: true, isUser: true, isAdmin: true }
 ];
 
 export const authRoutes: RouteType[] = [
     { path: PATH_LOGIN, element: <Login />, label: 'Sign in', isGuest: true },
-    { path: PATH_LOGOUT, element: <Logout />, label: 'Sign out', isUser: true, isAdmin: true }
+    { path: PATH_LOGOUT, element: <Logout />, isUser: true, isAdmin: true }
 ];
 
 export const routes: RouteType[] = [
