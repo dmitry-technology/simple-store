@@ -1,6 +1,6 @@
 import { Box, Card, CardActions, CardContent, CardMedia, IconButton, Typography } from '@mui/material';
 import { FC } from 'react';
-import { ProductOptions } from '../../models/product-options';
+import { ProductOption } from '../../models/product-options';
 import TuneIcon from '@mui/icons-material/Tune';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import storeConfig from '../../config/store-config.json';
@@ -10,7 +10,7 @@ type ProductCardProps = {
     basePrice: number,
     description?: string,
     picture?: string
-    options?: ProductOptions[]
+    options?: ProductOption[]
 }
 
 const ProductCard: FC<ProductCardProps> = props => {
