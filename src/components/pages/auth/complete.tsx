@@ -1,6 +1,6 @@
 import { FC, Fragment, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { UserData } from "../../../models/user-data";
+import { emptyAddress, UserData } from "../../../models/user-data";
 import { userDataSelector } from "../../../redux/store";
 import { Navigate } from 'react-router-dom';
 import { PATH_ADMIN_ORDERS_LIST, PATH_INDEX, PATH_PROFILE } from "../../../config/routing";
@@ -32,7 +32,7 @@ const RedirectPage: FC = () => {
                 } else { 
                     // User created just now - saving data to Firestore
                     delete userData.isAdmin;
-                    clientStore.add({...userData});
+                    clientStore.add({...userData, deliveryAddress: emptyAddress});
                     return PATH_PROFILE;
                 }
             } else {
