@@ -13,6 +13,7 @@ import ProductStore from "../services/products/product-store";
 import config from "./store-config.json"
 
 export const authService = new AuthServiceFire(config.adminEmail);
+export const localPhoneValidationRegex = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
 
 //const product service
 const productService = new DataProviderFire<Product>('products');

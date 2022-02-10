@@ -1,12 +1,12 @@
 import { Alert, Avatar, Box, Button, createTheme, CssBaseline, Grid, IconButton, Link, Paper, TextField, ThemeProvider, Typography } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { LoginData, LoginType } from '../../models/login-data';
 import storeConfig from '../../config/store-config.json'
 import TwitterIcon from '@mui/icons-material/Twitter';
 import GoogleIcon from '@mui/icons-material/Google';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import AuthErrorType, { getAuthErrorMessage } from '../../models/auth-types';
+import { isEmailValid } from '../../utils/common/validation-utils';
 
 type LoginFormProps = {
   loginFn: (loginData: LoginData) => Promise<AuthErrorType>;
@@ -18,7 +18,7 @@ const LoginForm: FC<LoginFormProps> = (props) => {
   const [passwordFiledsIsHidden, setPasswordFiledsHiddenStatus] = useState(true);
   const [loginErrMsg, setLoginErrMsg] = useState('');
   const [emailHelperText, setEmailHelperText] = useState('');
-  const [isValid, setValid] = useState<boolean>(true);
+  const [isValid, setValid] = useState<boolean>(false);
   const theme = createTheme();
 
   // Activate Login button if user entered email
@@ -48,9 +48,9 @@ const LoginForm: FC<LoginFormProps> = (props) => {
   }
 
   const socialButtons = new Map([
-    ["Google", <IconButton key="Google" onClick={() => loginWithSocialProvider("Google")}><GoogleIcon /></IconButton>],
-    ["Twitter", <IconButton key="Twitter" onClick={() => loginWithSocialProvider("Twitter")}><TwitterIcon /></IconButton>],
-    ["Facebook", <IconButton key="Facebook" onClick={() => loginWithSocialProvider("Facebook")}><FacebookIcon /></IconButton>]
+    ["Google", <GoogleIcon />],
+    ["Twitter", <TwitterIcon />],
+    ["Facebook", <FacebookIcon />]
   ]);
 
   function isAdmin(email: string) {
@@ -95,7 +95,7 @@ const LoginForm: FC<LoginFormProps> = (props) => {
         <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box sx={{ my: 8, mx: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <Avatar sx={{ m: 1, bgcolor: '#ff6f04' }}>
-              <LockOutlinedIcon />
+              <img src="logo192.png" width="30px" alt="BEST PIZZA B7" />
             </Avatar>
             <Typography component="h1" variant="h5">
               BEST PIZZA B7
@@ -114,7 +114,10 @@ const LoginForm: FC<LoginFormProps> = (props) => {
               {!!loginErrMsg && <Alert severity={loginErrMsg === getAuthErrorMessage(AuthErrorType.AWAITING_CONFIRMATION) ? 'success' : 'error'} sx={{mb: 2}}>{loginErrMsg}</Alert>}
               <Grid container>
                 <Grid item xs>
-                  {storeConfig.socialLoginProviders.map(name => socialButtons.get(name))}
+                  { storeConfig.socialLoginProviders.length > 0 && 
+                    <Typography color="text.secondary" display={'inline'} sx={{paddingRight: 1}}>Or login with:</Typography> }
+                  { storeConfig.socialLoginProviders.map(name => 
+                    <IconButton key={name} onClick={ () => loginWithSocialProvider(name) }>{ socialButtons.get(name) }</IconButton>) }
                 </Grid>
               </Grid>
               <Copyright sx={{ mt: 5 }} />
@@ -139,9 +142,4 @@ function Copyright(props: any) {
       {'.'}
     </Typography>
   );
-}
-
-function isEmailValid(email: string): boolean {
-  const regularExpression = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-  return regularExpression.test(String(email).toLowerCase());
 }

@@ -57,7 +57,8 @@ export default class AuthServiceFire implements AuthService {
             id: user.uid,
             email: user.email ? user.email : '',
             name: user.displayName ? user.displayName : '',
-            photoURL: user.photoURL? user.photoURL : '',
+            phoneNumber: user.phoneNumber ? user.phoneNumber : '',
+            photoURL: user.photoURL ? user.photoURL : '',
             isAdmin: user.email === this.adminEmail
         };
     }
