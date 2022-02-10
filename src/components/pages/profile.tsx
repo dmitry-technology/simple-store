@@ -12,7 +12,7 @@ const fieldStyle = { width: { xs: '100%', md: '33%' }};
 const Profile: FC = () => {
 
     const userData: UserData = useSelector(userDataSelector);
-    const [profileError, setProfileError] = useState({name: '', email: '', phone: '', address: ''});
+    const [profileError, setProfileError] = useState({name: '', email: '', phone: ''});
     const [isValid, setValid] = useState<boolean>(false);
     const [newUserData, setNewUserData] = useState<UserData>(userData)
 
@@ -28,12 +28,11 @@ const Profile: FC = () => {
         const phoneValid: boolean = isPhoneNumberValid(newUserData.phoneNumber);
         const addressValid: boolean =  (!!newUserData.deliveryAddress?.street && !!newUserData.deliveryAddress?.house);
         const isFormValid = userNameValid && emailValid && phoneValid && addressValid;
-        setValid(isFormValid);
+        setValid(isFormValid && (JSON.stringify(userData) !== JSON.stringify(newUserData)) );
         setProfileError({
             name: userNameValid ? '' : 'Enter your name',
             email: emailValid ? '' : 'Incorrect email',
-            phone: phoneValid ? '' : 'Invalid phone number',
-            address: addressValid ? '' : 'Fill in the delivery address'
+            phone: phoneValid ? '' : 'Invalid phone number'
         })
     }
     
@@ -44,7 +43,6 @@ const Profile: FC = () => {
     }
 
     function addressHandler(address: DeliveryAddress) {
-        setProfileError({...profileError, address: ''})
         setNewUserData({...newUserData, deliveryAddress: address});
     }
 
@@ -77,6 +75,7 @@ const Profile: FC = () => {
                                 type={"email"}
                                 error={!!profileError.email}
                                 required
+                                disabled
                                 margin='normal'
                                 onChange={ event => fieldHandler('email', event) }
                                 sx={fieldStyle}
