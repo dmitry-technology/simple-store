@@ -1,16 +1,23 @@
-import { Box, Button, FormControl, FormGroup, InputLabel, Select, TextField, SxProps, Theme, MenuItem, RadioGroup, FormControlLabel, Radio, FormLabel, Typography, TextareaAutosize } from '@mui/material';
+import { Box, Button, FormControl, FormGroup, InputLabel, Select, TextField, SxProps, Theme, MenuItem, RadioGroup, FormControlLabel, Radio, FormLabel, Typography, TextareaAutosize, IconButton } from '@mui/material';
 import { CSSProperties, FC, useEffect, useState } from 'react';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import fireApp from '../../config/firebase-config';
 import { Product } from '../../models/product';
 import { Category } from '../../models/category-type';
 import { useDispatch } from 'react-redux';
+import { ProductOptions } from '../../models/product-options';
+import { Delete } from '@mui/icons-material';
 
 type FormAddProductProps = {
     uploadProductData: (product: Product, picture: File) => void;
     categories: Category[];
     defaultPicture: string;
     existId: (id: number) => Promise<boolean>;
+}
+
+const defaultOption: ProductOptions = {
+    optionTitle: '',
+    optionData: [{ name: '', extraPay: 0 }, { name: '', extraPay: 0 }]
 }
 
 const FormAddProduct: FC<FormAddProductProps> = (props) => {
@@ -25,6 +32,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     const [previewPath, setPreviewPath] = useState<string>(defaultPicture);
     const [picture, setPicture] = useState<File>();
     const [description, setDescription] = useState<string>('');
+    const [options, setOptions] = useState<ProductOptions[]>([]);
 
     const [idError, setIdError] = useState<string>('');
     const [priceError, setPriceError] = useState<string>('');
@@ -59,6 +67,16 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
         }
     }
 
+    function addOption() {
+        options.push(defaultOption);
+        setOptions([...options]);
+    }
+
+    function optionHandle(event: any, index: number) {
+        console.log(event.target.value, ' ', index);
+
+    }
+
     function validateData() {
         const isValid = id && !idError &&
             title &&
@@ -91,16 +109,20 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     }
 
     // Styles of form items
-    const inputStyle: SxProps<Theme> = {
-        width: { md: '28vw' }
+    const formStyle: SxProps<Theme> = {
+        width: { xs: '100%', md: '58%' },
+        marginBottom: '10px'
     }
 
     const boxRowStyle: SxProps<Theme> = {
         display: 'flex',
         flexDirection: { xs: 'column', md: 'row' },
         alignItems: 'stretch',
-        justifyContent: 'space-between',
-        width: { xs: '95vw', md: '58vw' }
+        justifyContent: 'space-between'
+    }
+
+    const inputStyle: SxProps<Theme> = {
+        width: { md: '28vw' }
     }
 
     const boxPreviewStyle: SxProps<Theme> = {
@@ -119,7 +141,6 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     const boxButtonStyle: SxProps<Theme> = {
         display: 'flex',
         justifyContent: 'space-between',
-        width: { xs: '95vw', md: '58vw' },
         marginTop: '20px'
     }
 
@@ -133,6 +154,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
             component='form'
             onSubmit={onSubmit}
             onReset={onReset}
+            sx={formStyle}
         >
             <FormGroup>
                 <Box sx={boxRowStyle as any}>
@@ -210,6 +232,55 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         placeholder="Description (not necessary)"
                         style={textAreaStyle}
                     />
+                </Box>
+                <Box>
+                    <Button sx={{ width: '100%', margin: '10px 0' }} variant='contained' onClick={addOption}>Add option</Button>
+                    {options.map((option, i) => (
+                        <Box key={i}>
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                <TextField
+                                    value={option.optionTitle}
+                                    label="Option name"
+                                    variant="outlined"
+                                    type="text"
+                                    onChange={e => optionHandle(e, i)}
+                                    sx={{ flex: '1 0 auto' }}
+                                    margin='dense'
+                                    required
+                                />
+                                <IconButton>
+                                    <Delete />
+                                </IconButton>
+                            </Box>
+                            {option.optionData.map(item => (
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                    <TextField
+                                        value={item.name}
+                                        label="Option item name"
+                                        variant="outlined"
+                                        type="text"
+                                        onChange={e => optionHandle(e, i)}
+                                        sx={{ flex: '1 0 auto' }}
+                                        margin='dense'
+                                        required
+                                    />
+                                    <TextField
+                                        value={item.extraPay}
+                                        label="Extra pay value"
+                                        variant="outlined"
+                                        type="number"
+                                        onChange={e => optionHandle(e, i)}
+                                        sx={{ flex: '1 0 auto' }}
+                                        margin='dense'
+                                        required
+                                    />
+                                    <IconButton>
+                                        <Delete />
+                                    </IconButton>
+                                </Box>
+                            ))}
+                        </Box>
+                    ))}
                 </Box>
                 <Box sx={boxButtonStyle}>
                     <FormControl component="fieldset" fullWidth>

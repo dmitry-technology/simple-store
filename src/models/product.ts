@@ -1,3 +1,5 @@
+import { ProductOptions } from "./product-options";
+
 export type Product = {
     id: number;
     title: string;
@@ -5,6 +7,6 @@ export type Product = {
     picture?: string;
     description?: string;
     basePrice: number;
-    options?: Object;
+    options?: ProductOptions[];
     active: boolean;
 }

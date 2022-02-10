@@ -1,8 +1,9 @@
 export type ProductOptions = {
-    size?: OptionData[],
-    dough?: OptionData[]
+    optionTitle: string,
+    optionData: OptionData[]
 }
+
 type OptionData = {
-    title: string,
+    name: string,
     extraPay: number
 }

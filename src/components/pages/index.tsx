@@ -14,13 +14,13 @@ const Index: FC = () => {
     const categoriesSorted = _.sortBy(categories, ['sortOrder']);
 
     return  <Box>
-                {categoriesSorted.map(cat => <Box key={cat.name} component="div">
+                {/* {categoriesSorted.map(cat => <Box key={cat.name} component="div">
                     <Typography sx={{ m:1, fontFamily: 'Cooper'}} variant='h3'>
                         {cat.name}
                     </Typography>
                     {products.filter(prod => prod.active && prod.category === cat.id)
                         .map((prod, index) => <ProductCard key={index + prod.title} {...prod}/>)}
-                    </Box>)}
+                    </Box>)} */}
             </Box>;
 }
 
