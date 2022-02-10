@@ -2,5 +2,8 @@
     "minId": 100000,
     "maxId": 999999,
     "adminEmail": "admin@tel-ran.co.il",
-    "socialLoginProviders": ["Google", "Facebook", "Twitter"]
+    "socialLoginProviders": ["Google", "Facebook", "Twitter"],
+    "statusOrder": ["waiting", "working", "complite"],
+    "defaultPictureProductUrl": "https://firebasestorage.googleapis.com/v0/b/simple-store-fbe1f.appspot.com/o/defaultProductPicture.png?alt=media&token=bae3afe5-d9c9-483a-9eeb-bcbdfcda321a",
+    "productPictureFolder": "images"
 }

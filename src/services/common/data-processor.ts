@@ -27,4 +27,8 @@ export default abstract class DataProcessor<T> {
     get(id: string): Promise<T> {
         return this.dataProvider.get(id) as Promise<T>;
     }
+
+    exists(id: string): Promise<boolean> {
+        return this.dataProvider.exists(id);
+    }
 }

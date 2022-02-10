@@ -34,4 +34,4 @@ export const errorCodeSelector = (state: StoreType): ErrorType => state.errorCod
 export const productsSelector = (state: StoreType): Product[] => state.products;
 export const categoriesSelector = (state: StoreType): Category[] => state.categories;
 export const ordersSelector = (state: StoreType): Order[] => state.orders;
-export const clientSelector = (state: StoreType): UserData[] => state.clients;
+export const clientsSelector = (state: StoreType): UserData[] => state.clients;

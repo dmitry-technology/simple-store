@@ -68,7 +68,7 @@ function App() {
     categoriesStore.fetch().then((cat) => dispatch(setCategories(cat))) 
   });
 
-  // get categories
+  // get product
   useEffect(() => {
     productStore.fetch().then((products) => dispatch(setProducts(products))) 
   });
