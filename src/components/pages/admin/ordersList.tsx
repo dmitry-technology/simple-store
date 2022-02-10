@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Popper, Box, IconButton, ListItem, Paper, Typography } from '@mui/material';
-import { FC, useMemo, useState, useEffect } from 'react';
+import { Popper, Box, IconButton, ListItem, Paper, Typography, Button } from '@mui/material';
+import { FC, useMemo, useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Order } from '../../../models/order-type';
+import { Order, OrderStatus } from '../../../models/order-type';
 import { clientsSelector, ordersSelector, productsSelector } from '../../../redux/store';
 import { useMediaQuery } from "react-responsive";
 import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowHeightParams, GridRowId, GridRowParams, GridRowsProp, GridValueFormatterParams } from '@mui/x-data-grid';
@@ -20,6 +20,10 @@ import { setClients, setOrders } from '../../../redux/actions';
 import { DeliveryAddress, UserData } from '../../../models/user-data';
 import storeConfig from "../../../config/store-config.json"
 import _ from 'lodash';
+import { ConfirmationData, emptyConfirmationData } from '../../../models/common/confirmation-type';
+import DialogConfirm from '../common/dialog';
+import { getRandomInteger } from '../../../utils/common/random';
+import ModalInfo from '../common/modal-info';
 
 interface GridCellExpandProps {
   value: string;
@@ -33,6 +37,24 @@ const colotState = new Map([
 ]);
 
 const OrdersList: FC = () => {
+
+  /* dialog confirmation */
+  const confirmationData = React.useRef<ConfirmationData>(emptyConfirmationData);
+  const [dialogVisible, setdialogVisible] = useState(false);
+
+  /* dialog modal */
+  const textModal = useRef<string[]>(['']);
+  const [modalVisible, setModalVisible] = useState(false);
+
+  function showDetails(id: GridRowId) {
+    const order = orders.find(e => e.id === +id);
+    if (!!order) {
+      textModal.current = getInfoOrder(order);
+    } else {
+      textModal.current = ["Not found"];
+    }
+    setModalVisible(true);
+  }
 
   //subscriber clients
   useEffect(() => {
@@ -160,7 +182,7 @@ const OrdersList: FC = () => {
         <Box
           ref={cellValue}
           sx={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}
-        > 
+        >
           {value}
         </Box>
         {showPopper && (
@@ -222,13 +244,13 @@ const OrdersList: FC = () => {
         field: "status", headerName: "Status", flex: 50, align: 'center', headerAlign: 'center',
         editable: "true", type: "singleSelect", valueOptions: storeConfig.statusOrder,
         renderCell: (params: GridRenderCellParams) => {
-            return (
-                <Box sx={{ backgroundColor: colotState.get(params.value), color: 'white', width: '80%', textAlign: 'center' }}>
-                    <Typography>{params.value}</Typography>
-                </Box>
-            )
+          return (
+            <Box sx={{ backgroundColor: colotState.get(params.value), color: 'white', width: '80%', textAlign: 'center' }}>
+              <Typography>{params.value}</Typography>
+            </Box>
+          )
         }
-        
+
       },
       {
         field: "date", headerName: "Date", flex: 50, align: 'center', headerAlign: 'center', type: 'date',
@@ -305,6 +327,45 @@ const OrdersList: FC = () => {
     return res;
   }
 
+ 
+
+
+  //call back actions
+  function rmOrder(id: GridRowId) {
+    console.log("remove order " + id);
+    const order = getOrder(+id);
+    console.log(order);
+
+    if (!!order) {
+      confirmationData.current.title = `remove order`;
+      confirmationData.current.message = `Do you want remove order ID ${order?.id}`;
+      confirmationData.current.handle = handleRemove.bind(undefined, +id);
+      setdialogVisible(true);
+    }
+  }
+
+  function showOrder(id: GridRowId) {
+    console.log("show order " + id);
+    //TODO  
+  }
+
+  function editOrder(id: GridRowId) {
+    console.log("edit order " + id);
+    //TODO
+  }
+
+  function handleRemove(id: number, status: boolean): void {
+    if (status) {
+      dispatch(orderStore.remove(id.toString()));
+    }
+    setdialogVisible(false);
+  }
+
+  //********************************************************* */
+
+
+  //*****************************Utils **********************************/
+
   function getClientAddressInfo(deliveryAddress: DeliveryAddress): string {
     let res = `${deliveryAddress.street} ${deliveryAddress.house}`;
     return res;
@@ -314,32 +375,85 @@ const OrdersList: FC = () => {
     return products[products.findIndex(product => product.id === id)];
   }
 
+  function getOrder(id: number): Order | undefined {
+    return orders[orders.findIndex(order => order.id === id)];
+  }
+
   function getClient(id: string): UserData | undefined {
     return clients[clients.findIndex(client => client.id === id)];
   }
 
+  function getInfoOrder(order: Order): string[] {
+    const res: string[] = [
+      `Order ID  : ${order.id}`,
+      `Client: ${getInfoClient(order.userId)}`,
+      `Product: ${getInfoProduct(order.products)}`,
+      `Total price: ${order.totalPrice}`,
+      `Data create: ${order.dateCreate}`
+    ];
+    return res;
+  }
+  
+  function getInfoClient(id: string){
+    const client = getClient(id);
 
-  //call back actions
-  function rmOrder(id: GridRowId) {
-    console.log("remove order " + id);
-    //TODO
+    return `Client: ${client?.name} Phone: ${client?.phoneNumber} Address: ${client?.deliveryAddress}`;
   }
-  function showOrder(id: GridRowId) {
-    console.log("show order " + id);
-    //TODO  
+  
+  function getInfoProduct(products: any){
+
+    return '';
   }
-  function editOrder(id: GridRowId) {
-    console.log("edit order " + id);
-    //TODO
-  }
+
+  //   function useGenerateOrder(): Order {
+
+  //     function getOptionsProduct() {
+  //         return { name: "extra", extraPay: 20 };
+  //     }
+
+  //     function getUserId() {
+  //         const arrId = clients.map(e => e.id);
+  //         return arrId[getRandomInteger(0, arrId.length)];
+  //     }
+
+  //     function getProductId() {
+  //         const arrId = products.map(e => e.id);
+  //         return arrId[getRandomInteger(0, arrId.length)];
+  //     }
+
+  //     function getOrderStatus() {
+  //         const arr = [OrderStatus.COMPLIT, OrderStatus.WAITING, OrderStatus.COMPLIT];
+  //         return arr[getRandomInteger(0, arr.length)];
+  //     }
+
+  //     return {
+  //         userId: getUserId(),
+  //         status: getOrderStatus(),
+  //         products: [{ productId: getProductId(), options: getOptionsProduct(), count: getRandomInteger(1, 10) }],
+  //         totalPrice: getRandomInteger(30, 200),
+  //         dateCreate: new Date().toISOString()
+  //     }
+  // }
+
+  // const btnClk = () => dispatch(orderStore.add(useGenerateOrder()));
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-        <Paper sx={{ width: { xs: '100vw', sm: '80vw' }, height: '80vh', marginTop: '2vh' }}>
-            <DataGrid columns={columns} rows={rows}
-            />
-        </Paper>
+      <Paper sx={{ width: { xs: '100vw', sm: '80vw' }, height: '80vh', marginTop: '2vh' }}>
+        <DataGrid columns={columns} rows={rows}
+        />
+      </Paper>
+      <DialogConfirm visible={dialogVisible} title={confirmationData.current.title} message={confirmationData.current.message} onClose={confirmationData.current.handle} />
+      <ModalInfo title={"Detailed information about the orers"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
+
+      {/* <Button onClick={()=>btnClk()} >add order</Button> */}
     </Box>
-)
+
+  )
 }
+
+
+
+
 
 export default OrdersList;
