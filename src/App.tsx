@@ -9,11 +9,11 @@ import { Category } from './models/category-type';
 import ErrorType from './models/error-types';
 import { Product } from './models/product';
 import { RouteType } from './models/route-type';
-import { nonAuthorisedUser, UserData } from './models/user-data';
+import { nonAuthorisedUser, UserData, userDataSimple } from './models/user-data';
 import { setCategories, setErrorCode, setProducts, setUserData, setClients, setOrders } from './redux/actions';
 import { errorCodeSelector, userDataSelector } from './redux/store';
 import Navigator from './components/UI/common/navigator';
-import { Order } from './models/order-type';
+import { Order, orderSimple } from './models/order-type';
 
 function App() {
 
@@ -65,13 +65,41 @@ function App() {
 
   // get categories
   useEffect(() => {
-    categoriesStore.fetch().then((cat) => dispatch(setCategories(cat))) 
+    categoriesStore.fetch().then((cat) => dispatch(setCategories(cat)))
   });
 
   // get product
   useEffect(() => {
-    productStore.fetch().then((products) => dispatch(setProducts(products))) 
+    productStore.fetch().then((products) => dispatch(setProducts(products)))
   });
+
+  //subscriber clients
+  useEffect(() => {
+    const subscription = subscribeToClients();
+    return () => subscription.unsubscribe();
+  }, [])
+
+  function subscribeToClients(): Subscription {
+    return clientStore.getAll().subscribe({
+      next(clients: UserData[]) {
+        dispatch(setClients(clients));
+      }
+    })
+  }
+
+  //subscriber orders
+  useEffect(() => {
+    const subscription = subscribeToOrders();
+    return () => subscription.unsubscribe();
+  }, [])
+
+  function subscribeToOrders(): Subscription {
+    return orderStore.getAll().subscribe({
+      next(orders: Order[]) {
+        dispatch(setOrders(orders));
+      }
+    })
+  }
 
   return (
     <BrowserRouter>

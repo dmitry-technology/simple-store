@@ -19,8 +19,8 @@ const Catalog: FC = () => {
         productStore.add(product);
     }
 
-    async function existId(id: number): Promise<boolean> {
-        return await productStore.exists(id.toString());
+    async function existId(id: string): Promise<boolean> {
+        return await productStore.exists(id);
     }
 
     return (

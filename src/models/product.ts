@@ -1,7 +1,7 @@
 import { ProductOption, ProductOptionConfigured } from "./product-options";
 
 export type Product = {
-    id: number;
+    id: string;
     title: string;
     category: number;
     picture?: string;

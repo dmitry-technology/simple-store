@@ -16,5 +16,13 @@ export type DeliveryAddress = {
     comment?: string
 }
 
+export const userDataSimple: UserData = {
+    id: "ycd8mLBJBUSTp18S15Fi2mlQT1g1",
+    email: "google@mail.com",
+    name: "Jeff Bezos",
+    phoneNumber: "88001009090",
+    deliveryAddress: {street: 'Yitzhack I. Rager Blvd', house: '55', flat: '100', floor: '1', comment: ''}
+}
+
 export const nonAuthorisedUser: UserData = {id: ''};
 export const emptyAddress: DeliveryAddress = {street: '', house: '', flat: '', floor: '', comment: ''};
