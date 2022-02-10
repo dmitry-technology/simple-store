@@ -1,3 +1,5 @@
+import { ProductOption, ProductOptionConfigured } from "./product-options";
+
 export type Product = {
     id: number;
     title: string;
@@ -5,6 +7,11 @@ export type Product = {
     picture?: string;
     description?: string;
     basePrice: number;
-    options?: Object;
+    options?: ProductOption[];
     active: boolean;
+}
+
+export type ProductConfigured = {
+    base: Product,
+    optionsConfigured: ProductOptionConfigured[]
 }
