@@ -5,7 +5,8 @@ export type UserData = {
     phoneNumber?: string,
     deliveryAddress?: DeliveryAddress,
     photoURL?: string,
-    isAdmin?: boolean
+    isAdmin?: boolean,
+    isFirstLogin?: boolean
 }
 
 export type DeliveryAddress = {

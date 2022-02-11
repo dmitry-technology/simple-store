@@ -16,7 +16,7 @@ const EmailVerification: FC = () => {
     const [loginStatus, setLoginStatus] = useState<EmailVerify>(EmailVerify.IN_PROGRESS);
 
     useEffect( () => {
-        authService.verifyEmail(window.location.href).then(res => {res === EmailVerify.ERROR && setLoginStatus(res)});
+        authService.verifyEmailLoginLink(window.location.href).then(res => {res === EmailVerify.ERROR && setLoginStatus(res)});
     }, [] )    
 
     return  <React.Fragment>

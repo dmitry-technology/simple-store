@@ -1,7 +1,9 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { FC, Fragment, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { DeliveryAddress, UserData } from '../../models/user-data';
+import { setUserData, updateProfile } from '../../redux/actions';
 import { userDataSelector } from '../../redux/store';
 import { isEmailValid, isPhoneNumberValid } from '../../utils/common/validation-utils';
 import AddressForm from '../UI/common/address-form';
@@ -11,15 +13,17 @@ const fieldStyle = { width: { xs: '100%', md: '33%' }};
 
 const Profile: FC = () => {
 
+    const dispatch = useDispatch();
     const userData: UserData = useSelector(userDataSelector);
-    const [profileError, setProfileError] = useState({name: '', email: '', phone: '', address: ''});
+    const [profileError, setProfileError] = useState({name: '', email: '', phone: ''});
     const [isValid, setValid] = useState<boolean>(false);
     const [newUserData, setNewUserData] = useState<UserData>(userData)
 
-    useEffect(() => {
-        validate();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [newUserData]);
+    // Save data to Firestore if this is the first user login
+    useEffect(() => { if (userData.isFirstLogin) dispatch(updateProfile(userData)) }, [dispatch, userData] )
+
+    // Validate changes
+    useEffect(() => validate(), [newUserData]);
 
     // Validation
     function validate() {
@@ -28,12 +32,11 @@ const Profile: FC = () => {
         const phoneValid: boolean = isPhoneNumberValid(newUserData.phoneNumber);
         const addressValid: boolean =  (!!newUserData.deliveryAddress?.street && !!newUserData.deliveryAddress?.house);
         const isFormValid = userNameValid && emailValid && phoneValid && addressValid;
-        setValid(isFormValid);
+        setValid(isFormValid && (JSON.stringify(userData) !== JSON.stringify(newUserData)) );
         setProfileError({
             name: userNameValid ? '' : 'Enter your name',
             email: emailValid ? '' : 'Incorrect email',
-            phone: phoneValid ? '' : 'Invalid phone number',
-            address: addressValid ? '' : 'Fill in the delivery address'
+            phone: phoneValid ? '' : 'Invalid phone number'
         })
     }
     
@@ -44,14 +47,14 @@ const Profile: FC = () => {
     }
 
     function addressHandler(address: DeliveryAddress) {
-        setProfileError({...profileError, address: ''})
         setNewUserData({...newUserData, deliveryAddress: address});
     }
 
-    // Save data
+    // Update user profile
     function onSubmit(event: any) {
         event.preventDefault();
-        
+        dispatch(updateProfile(newUserData)); // Save data to Firestore
+        dispatch(setUserData(newUserData)); // Update local UserData
     }
 
     return  <Fragment>
@@ -77,6 +80,7 @@ const Profile: FC = () => {
                                 type={"email"}
                                 error={!!profileError.email}
                                 required
+                                disabled
                                 margin='normal'
                                 onChange={ event => fieldHandler('email', event) }
                                 sx={fieldStyle}
