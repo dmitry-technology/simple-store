@@ -24,23 +24,15 @@ const Catalog: FC = () => {
         return await productStore.exists(id);
     }
 
-    const [product, setProduct] = useState<Product>();
-
-    useEffect(() => {
-        productStore.get('999999').then(product => setProduct(product));
-    }, []);
-
-
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
             <Box sx={{ width: '50vw' }}>
-                {product && <FormAddProduct
+                <FormAddProduct
                     categories={categories}
                     uploadProductData={uploadProductData}
                     defaultPicture={config.defaultPictureProductUrl}
                     existId={existId}
-                    product={product}
-                />}
+                />
             </Box>
         </Box>
     );
