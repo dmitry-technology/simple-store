@@ -46,7 +46,7 @@ export const systemRoutes: RouteType[] = [
 
 export const authRoutes: RouteType[] = [
     { path: PATH_LOGIN, element: <Login />, label: 'Sign in', isGuest: true },
-    { path: PATH_LOGOUT, element: <Logout />, isUser: true, isAdmin: true }
+    { path: PATH_LOGOUT, element: <Logout />, label: 'Sign out', isUser: true, isAdmin: true }
 ];
 
 export const routes: RouteType[] = [
