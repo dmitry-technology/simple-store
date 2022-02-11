@@ -25,6 +25,7 @@ import DialogConfirm from '../common/dialog';
 import { getRandomInteger } from '../../../utils/common/random';
 import ModalInfo from '../common/modal-info';
 import { ProductOptionConfigured } from '../../../models/product-options';
+import FormAddOrder from '../../UI/form-add-order';
 
 
 interface GridCellExpandProps {
@@ -49,7 +50,11 @@ const OrdersList: FC = () => {
   /* dialog modal */
   const textModal = useRef<string[]>(['']);
   const [modalVisible, setModalVisible] = useState(false);
+  
 
+  //**form edit order */
+  const [formVisible, setformVisible] = useState(false);
+  const [idUpdateOrder, setIdUpdateOrder] = useState('');
 
  
 
@@ -241,11 +246,11 @@ const OrdersList: FC = () => {
               label="Show Details"
               onClick={() => showOrder(params.id)}
             />,
-            <GridActionsCellItem
-              icon={<EditIcon />}
-              label="Edit Order"
-              onClick={() => editOrder(params.id)}
-            />,
+            // <GridActionsCellItem
+            //   icon={<EditIcon />}
+            //   label="Edit Order"
+            //   onClick={() => editOrder(params.id)}
+            // />,
             <GridActionsCellItem
               icon={<Delete />}
               label="Delete"
@@ -344,6 +349,9 @@ const OrdersList: FC = () => {
 
   //
   function editOrder(id: GridRowId) {
+    setIdUpdateOrder(id.toString());
+    setformVisible(true);
+    
     console.log("edit order " + id);
     //TODO
   }
@@ -424,6 +432,7 @@ const OrdersList: FC = () => {
       </Paper>
       <DialogConfirm visible={dialogVisible} title={confirmationData.current.title} message={confirmationData.current.message} onClose={confirmationData.current.handle} />
       <ModalInfo title={"Detailed information about the orers"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
+      {!!formVisible && <FormAddOrder id={idUpdateOrder} callBack={() => setformVisible(false)}/>}
     </Box>
 
   )
