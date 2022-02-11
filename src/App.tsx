@@ -34,7 +34,7 @@ function App() {
     if (code === ErrorType.NO_ERROR) {
       serverUnavailable && setServerUnavailable(false);
     } else if (code === ErrorType.AUTH_ERROR) {
-      if (!!userData.id) { authService.logout(); console.log('auth error') }
+      if (!!userData.id) { authService.logout() }
       serverUnavailable && setServerUnavailable(false);
     } else {
       !serverUnavailable && setServerUnavailable(true);
@@ -50,11 +50,8 @@ function App() {
   function subscribeToUserToken() {
     return authService.getUserData().subscribe({
       next(ud) {
-        console.log("next: " + ud.email + " : " + ud.isAdmin);
         if (ud.id === '') {
-          if (userData.id) {
-            dispatch(setErrorCode(ErrorType.AUTH_ERROR));
-          }
+          if (userData.id) { dispatch(setErrorCode(ErrorType.AUTH_ERROR)) }
           dispatch(setUserData(nonAuthorisedUser));
         } else {
           dispatch(setErrorCode(ErrorType.NO_ERROR));
@@ -109,8 +106,6 @@ function getRelevantRoutes(items: RouteType[], userData: UserData): RouteType[] 
   const isUser = (!!userData.id && !userData.isAdmin);
   const isAdmin = userData.isAdmin;
 
-  // console.log("isGuest:" + isGuest + " isUser:" + isUser + " isAdmin:" + isAdmin);
-
   const res = items.filter(route =>
     (route.isAdmin && route.isUser && route.isGuest) ||
     (isGuest && route.isGuest) ||
@@ -119,9 +114,6 @@ function getRelevantRoutes(items: RouteType[], userData: UserData): RouteType[] 
     (isAdmin && route.isAdmin) ||
     (isUser && route.isUser)
   )
-
-  // console.log(res);
-
 
   return res;
 }

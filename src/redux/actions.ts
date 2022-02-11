@@ -42,8 +42,6 @@ export const setClients: ActionType<UserData[]> = client => (
 export const updateProfile = function(userdata: UserData): (dispath: any) => void {
     return async dispath => {
         try {
-            console.log('Profile updated on Firestore');
-
             // Deleting fields that do not need to be saved in the database
             delete userdata.isAdmin;
             delete userdata.isFirstLogin;

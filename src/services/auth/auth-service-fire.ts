@@ -1,5 +1,5 @@
 import { from, of, Observable } from "rxjs";
-import {map, mergeMap} from 'rxjs/operators';
+import { mergeMap} from 'rxjs/operators';
 import AuthService from "./auth-service";
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, sendSignInLinkToEmail, signOut, User, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { authState } from 'rxfire/auth';
@@ -8,15 +8,16 @@ import { FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider } from "f
 import { emptyAddress, nonAuthorisedUser, UserData } from "../../models/user-data";
 import { LoginData, LoginType } from "../../models/login-data";
 import AuthErrorType, { EmailVerify } from "../../models/auth-types";
-import { collection, CollectionReference, DocumentData, getFirestore } from "firebase/firestore";
-import { collectionData } from "rxfire/firestore";
+import { collection, CollectionReference, doc, getDoc, getFirestore } from "firebase/firestore";
 
+// Available social login providers
 const providersList = new Map([
     ["Google", { service: GoogleAuthProvider }],
     ["Twitter", { service: TwitterAuthProvider }],
     ["Facebook", { service: FacebookAuthProvider }]
 ]);
 
+// Callback URL for verify email-link
 const actionCodeSettings = {
     url: 'http://localhost:3000/login/verify',
     handleCodeInApp: true,
@@ -49,20 +50,18 @@ export default class AuthServiceFire implements AuthService {
 
     getUserData(): Observable<UserData> {
         return authState(this.auth).pipe(
-            mergeMap(userFire => {
-                return collectionData(this.collectionAuth).pipe(
-                    map(usersList => (
-                        !!userFire ? this.fillUserFields(userFire, usersList) : nonAuthorisedUser
-                    ))
-                )
-            })
-        );
+            mergeMap(user => (
+                !!user
+                    ? from(this.getUser(user))
+                    : of(nonAuthorisedUser)
+            ))
+        )
     }
 
-    private fillUserFields(userFire: User, usersList: DocumentData[]): UserData {
+    private async getUser(userFire: User) {
         // Get information about the User from Firesitore
-        const clientData = usersList.find(data => data.id === userFire.uid) as UserData | undefined;
-
+        const clientData = (await getDoc(doc(this.collectionAuth, userFire?.uid ))).data() as UserData | undefined;
+        
         const baseData: UserData = {
             id: userFire.uid,
             email: userFire.email ? userFire.email : '',
@@ -71,7 +70,7 @@ export default class AuthServiceFire implements AuthService {
             photoURL: userFire.photoURL ? userFire.photoURL : '',
             deliveryAddress: emptyAddress,
             isAdmin: userFire.email === this.adminEmail,
-            isFirstLogin: userFire.metadata.creationTime === userFire.metadata.lastSignInTime
+            isFirstLogin: !clientData
         };
 
         // Create UserData with new information
