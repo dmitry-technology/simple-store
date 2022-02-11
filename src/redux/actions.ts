@@ -4,6 +4,7 @@ import ErrorType from "../models/error-types";
 import { Product } from "../models/product";
 import { Category } from "../models/category-type";
 import { Order } from "../models/order-type";
+import { clientStore } from "../config/servicesConfig";
 
 export const SET_USER_DATA = "set_user_data";
 export const SET_PRODUCTS = "set_products";
@@ -38,5 +39,20 @@ export const setClients: ActionType<UserData[]> = client => (
     { payload: client, type: SET_CLIENT_DATA }
 )
 
+export const updateProfile = function(userdata: UserData): (dispath: any) => void {
+    return async dispath => {
+        try {
+            console.log('Profile updated on Firestore');
 
+            // Deleting fields that do not need to be saved in the database
+            delete userdata.isAdmin;
+            delete userdata.isFirstLogin;
+            
+            await clientStore.update(userdata.id, userdata);
+            dispath(setErrorCode(ErrorType.NO_ERROR));
+        } catch (err: any) {
+            dispath(setErrorCode(err))
+        }
+    }
+}
 

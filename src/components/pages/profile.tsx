@@ -1,7 +1,8 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import { FC, Fragment, useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { DeliveryAddress, UserData } from '../../models/user-data';
+import { updateProfile } from '../../redux/actions';
 import { userDataSelector } from '../../redux/store';
 import { isEmailValid, isPhoneNumberValid } from '../../utils/common/validation-utils';
 import AddressForm from '../UI/common/address-form';
@@ -11,11 +12,21 @@ const fieldStyle = { width: { xs: '100%', md: '33%' }};
 
 const Profile: FC = () => {
 
+    const dispatch = useDispatch();
     const userData: UserData = useSelector(userDataSelector);
     const [profileError, setProfileError] = useState({name: '', email: '', phone: ''});
     const [isValid, setValid] = useState<boolean>(false);
     const [newUserData, setNewUserData] = useState<UserData>(userData)
 
+    // Save data to Firestore if this is the first user login
+    useEffect(() => {
+        console.log("use effect");
+        if (userData.isFirstLogin) {
+            // dispatch(updateProfile(userData));
+        }
+    }, [userData] )
+
+    // Validate changes
     useEffect(() => {
         validate();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,10 +57,10 @@ const Profile: FC = () => {
         setNewUserData({...newUserData, deliveryAddress: address});
     }
 
-    // Save data
+    // Update user profile
     function onSubmit(event: any) {
         event.preventDefault();
-        
+        dispatch(updateProfile(newUserData));
     }
 
     return  <Fragment>

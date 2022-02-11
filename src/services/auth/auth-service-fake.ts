@@ -6,7 +6,7 @@ import AuthService from "./auth-service";
 
 export default class AuthServiceFake implements AuthService {
 
-    verifyEmail(link: string): Promise<EmailVerify>  {
+    verifyEmailLoginLink(link: string): Promise<EmailVerify>  {
         return Promise.resolve(EmailVerify.SUCCESS);
     }
 

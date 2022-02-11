@@ -1,13 +1,15 @@
 import { from, of, Observable } from "rxjs";
-import { mergeMap } from 'rxjs/operators';
+import {map, mergeMap} from 'rxjs/operators';
 import AuthService from "./auth-service";
 import { getAuth, signInWithEmailAndPassword, signInWithPopup, sendSignInLinkToEmail, signOut, User, isSignInWithEmailLink, signInWithEmailLink } from "firebase/auth";
 import { authState } from 'rxfire/auth';
 import fireApp from "../../config/firebase-config";
 import { FacebookAuthProvider, GoogleAuthProvider, TwitterAuthProvider } from "firebase/auth";
-import { nonAuthorisedUser, UserData } from "../../models/user-data";
+import { emptyAddress, nonAuthorisedUser, UserData } from "../../models/user-data";
 import { LoginData, LoginType } from "../../models/login-data";
 import AuthErrorType, { EmailVerify } from "../../models/auth-types";
+import { collection, CollectionReference, DocumentData, getFirestore } from "firebase/firestore";
+import { collectionData } from "rxfire/firestore";
 
 const providersList = new Map([
     ["Google", { service: GoogleAuthProvider }],
@@ -24,10 +26,13 @@ const actionCodeSettings = {
 export default class AuthServiceFire implements AuthService {
 
     private auth = getAuth(fireApp);
+    private collectionAuth: CollectionReference;
 
-    constructor(private adminEmail: string) { }
+    constructor(private adminEmail: string, private usersCollection: string) {
+        this.collectionAuth = collection(getFirestore(fireApp), this.usersCollection);
+    }
 
-    async verifyEmail(link: string): Promise<EmailVerify> {
+    async verifyEmailLoginLink(link: string): Promise<EmailVerify> {
         if (isSignInWithEmailLink(this.auth, link)) {
             const email = window.localStorage.getItem('emailForSignIn');
             try {
@@ -44,23 +49,42 @@ export default class AuthServiceFire implements AuthService {
 
     getUserData(): Observable<UserData> {
         return authState(this.auth).pipe(
-            mergeMap(user => (
-                !!user
-                    ? from(this.getUser(user))
-                    : of(nonAuthorisedUser)
-            ))
-        )
+            mergeMap(userFire => {
+                return collectionData(this.collectionAuth).pipe(
+                    map(usersList => (
+                        !!userFire ? this.fillUserFields(userFire, usersList) : nonAuthorisedUser
+                    ))
+                )
+            })
+        );
     }
 
-    private async getUser(user: User) {
-        return {
-            id: user.uid,
-            email: user.email ? user.email : '',
-            name: user.displayName ? user.displayName : '',
-            phoneNumber: user.phoneNumber ? user.phoneNumber : '',
-            photoURL: user.photoURL ? user.photoURL : '',
-            isAdmin: user.email === this.adminEmail
+    private fillUserFields(userFire: User, usersList: DocumentData[]): UserData {
+        // Get information about the User from Firesitore
+        const clientData = usersList.find(data => data.id === userFire.uid) as UserData | undefined;
+
+        const baseData: UserData = {
+            id: userFire.uid,
+            email: userFire.email ? userFire.email : '',
+            name: userFire.displayName ? userFire.displayName : '',
+            phoneNumber: userFire.phoneNumber ? userFire.phoneNumber : '',
+            photoURL: userFire.photoURL ? userFire.photoURL : '',
+            deliveryAddress: emptyAddress,
+            isAdmin: userFire.email === this.adminEmail,
+            isFirstLogin: userFire.metadata.creationTime === userFire.metadata.lastSignInTime
         };
+
+        // Create UserData with new information
+        if (clientData) {
+            return {...baseData, 
+                        name: clientData.name ? clientData.name : baseData.name,
+                        phoneNumber: clientData.phoneNumber ? clientData.phoneNumber : baseData.phoneNumber,
+                        deliveryAddress: clientData.deliveryAddress ? clientData.deliveryAddress : baseData.deliveryAddress
+            }
+        } else {
+            // Return object just with base information from User
+            return baseData;
+        }
     }
 
     private loginWithPassword(loginData: LoginData): Promise<AuthErrorType> {

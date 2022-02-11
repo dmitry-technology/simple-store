@@ -50,6 +50,7 @@ function App() {
   function subscribeToUserToken() {
     return authService.getUserData().subscribe({
       next(ud) {
+        console.log("next: " + ud.email + " : " + ud.isAdmin);
         if (ud.id === '') {
           if (userData.id) {
             dispatch(setErrorCode(ErrorType.AUTH_ERROR));
