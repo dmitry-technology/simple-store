@@ -68,10 +68,19 @@ function App() {
     categoriesStore.fetch().then((cat) => dispatch(setCategories(cat)))
   });
 
-  // get product
+  //subscriber product
   useEffect(() => {
-    productStore.fetch().then((products) => dispatch(setProducts(products)))
-  });
+    const subscription = subscribeToProduct();
+    return () => subscription.unsubscribe();
+  }, [])
+
+  function subscribeToProduct(): Subscription {
+    return productStore.getAll().subscribe({
+      next(product: Product[]) {
+        dispatch(setProducts(product));
+      }
+    })
+  }
 
   //subscriber clients
   useEffect(() => {

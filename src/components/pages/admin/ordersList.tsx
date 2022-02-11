@@ -21,9 +21,9 @@ import { DeliveryAddress, UserData } from '../../../models/user-data';
 import storeConfig from "../../../config/store-config.json"
 import _ from 'lodash';
 import { ConfirmationData, emptyConfirmationData } from '../../../models/common/confirmation-type';
-import DialogConfirm from '../common/dialog';
+import DialogConfirm from '../../UI/common/dialog';
 import { getRandomInteger } from '../../../utils/common/random';
-import ModalInfo from '../common/modal-info';
+import ModalInfo from '../../UI/common/modal-info';
 import { ProductOptionConfigured } from '../../../models/product-options';
 import FormAddOrder from '../../UI/form-add-order';
 
@@ -83,13 +83,15 @@ const OrdersList: FC = () => {
     return 'isDesktop';
   }
 
+  //*****************castom grid cell **********************/
+
   function isOverflown(element: Element): boolean {
     return (
       element.scrollHeight > element.clientHeight ||
       element.scrollWidth > element.clientWidth
     );
   }
-
+  
   const GridCellExpand = React.memo(function GridCellExpand(
     props: GridCellExpandProps,
   ) {
@@ -263,9 +265,6 @@ const OrdersList: FC = () => {
   }
 
   //rows data gread
-  // const [rows, setRows] = useState<GridRowsProp>([]);
-
-  // useEffect(() => setRows(getRows(orders)), [orders]);
   const rows = useMemo(() => getRows(orders), [orders, dialogVisible]);
 
 
@@ -289,7 +288,7 @@ const OrdersList: FC = () => {
     });
   }
 
-  //call back actions
+  //**************************call back actions******************************//
   //remove
   function rmOrder(id: GridRowId) {
     console.log("remove order " + id);
@@ -347,7 +346,6 @@ const OrdersList: FC = () => {
     setdialogVisible(false);
   }
 
-  //
   function editOrder(id: GridRowId) {
     setIdUpdateOrder(id.toString());
     setformVisible(true);
@@ -431,7 +429,7 @@ const OrdersList: FC = () => {
         <DataGrid columns={columns} rows={rows} onCellEditCommit={onCellEdit}/>
       </Paper>
       <DialogConfirm visible={dialogVisible} title={confirmationData.current.title} message={confirmationData.current.message} onClose={confirmationData.current.handle} />
-      <ModalInfo title={"Detailed information about the orers"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
+      <ModalInfo title={"Detailed information about the order"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
       {!!formVisible && <FormAddOrder id={idUpdateOrder} callBack={() => setformVisible(false)}/>}
     </Box>
 
