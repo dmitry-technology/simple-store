@@ -7,7 +7,7 @@ import { categoriesSelector } from '../../../redux/store';
 import FormAddProduct from '../../UI/form-add-product';
 import config from "../../../config/store-config.json"
 import { productPictureStore, productStore } from '../../../config/servicesConfig';
-import { ProductOptions } from '../../../models/product-options';
+import { ProductOption } from '../../../models/product-options';
 
 const Catalog: FC = () => {
     const categories: Category[] = useSelector(categoriesSelector);

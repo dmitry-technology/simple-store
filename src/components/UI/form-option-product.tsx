@@ -1,6 +1,6 @@
 import { Box, Button, IconButton, TextField } from '@mui/material';
 import { FC, useEffect, useRef, useState } from 'react';
-import { EditOptionData, ProductOptions } from '../../models/product-options';
+import { EditOptionData, ProductOption } from '../../models/product-options';
 import { Delete } from '@mui/icons-material';
 
 type FormOptionProductProps = {
@@ -13,7 +13,7 @@ const FormOptionProduct: FC<FormOptionProductProps> = (props) => {
 
     const { addOption, onClose, optionData } = props;
 
-    const [optionEdit, setOptionEdit] = useState<ProductOptions>(optionData.option);
+    const [optionEdit, setOptionEdit] = useState<ProductOption>(optionData.option);
     const [buttonSubmitName, setButtonSubmitName] = useState<string>('Add');
 
     useEffect(() => {
@@ -61,7 +61,7 @@ const FormOptionProduct: FC<FormOptionProductProps> = (props) => {
     }
 
     function renderEditableOption() {
-        setOptionEdit({ ...optionEdit } as ProductOptions);
+        setOptionEdit({ ...optionEdit } as ProductOption);
     }
 
     function addOptionHandle() {

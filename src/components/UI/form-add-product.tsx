@@ -14,7 +14,7 @@ type FormAddProductProps = {
     uploadProductData: (product: Product, picture: File) => void;
     categories: Category[];
     defaultPicture: string;
-    existId: (id: number) => Promise<boolean>;
+    existId: (id: string) => Promise<boolean>;
     product?: Product;
 }
 
@@ -123,7 +123,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     async function onSubmit(event: any) {
         event.preventDefault();
         if (!product){
-            const idIsExist = await existId(id);
+            const idIsExist = await existId(id.toString());
             if (idIsExist){
                 setIdError('such id alredy exist');
                 return;
