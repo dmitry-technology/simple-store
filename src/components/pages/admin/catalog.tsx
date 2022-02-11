@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Category } from '../../../models/category-type';
 import { Product } from '../../../models/product';
@@ -13,12 +13,10 @@ const Catalog: FC = () => {
     const categories: Category[] = useSelector(categoriesSelector);
 
     async function uploadProductData(product: Product, picture: File) {
-        const options: ProductOptions[] = [{ optionTitle: 'size', optionData: [{ name: '30', extraPay: 0 }, { name: '40', extraPay: 10 }, { name: '50', extraPay: 15 }] }]
         if (picture) {
             const pictureUrl = await productPictureStore.uploadFile(picture);
             product.picture = pictureUrl;
         }
-        product.options = options;
         productStore.add(product);
     }
 
@@ -26,14 +24,24 @@ const Catalog: FC = () => {
         return await productStore.exists(id.toString());
     }
 
+    const [product, setProduct] = useState<Product>();
+
+    useEffect(() => {
+        productStore.get('999999').then(product => setProduct(product));
+    }, []);
+
+
     return (
         <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <FormAddProduct
-                categories={categories}
-                uploadProductData={uploadProductData}
-                defaultPicture={config.defaultPictureProductUrl}
-                existId={existId}
-            />
+            <Box sx={{ width: '50vw' }}>
+                {product && <FormAddProduct
+                    categories={categories}
+                    uploadProductData={uploadProductData}
+                    defaultPicture={config.defaultPictureProductUrl}
+                    existId={existId}
+                    product={product}
+                />}
+            </Box>
         </Box>
     );
 }
