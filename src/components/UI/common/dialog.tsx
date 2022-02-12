@@ -37,7 +37,7 @@ const DialogConfirm: FC<DialogProps> = (params) => {
         </DialogContent>
         <DialogActions>
             <Button autoFocus onClick={() => onClose(false)}>
-                Cansel
+                Cancel
             </Button>
             <Button onClick={() => onClose(true)} autoFocus>
                 Ok
