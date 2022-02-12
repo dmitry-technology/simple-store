@@ -1,9 +1,9 @@
 import { ProductOption, ProductOptionConfigured } from "./product-options";
 
 export type Product = {
-    id: number;
+    id: string;
     title: string;
-    category: number;
+    category: string;
     picture?: string;
     description?: string;
     basePrice: number;
@@ -14,4 +14,9 @@ export type Product = {
 export type ProductConfigured = {
     base: Product,
     optionsConfigured: ProductOptionConfigured[]
+}
+
+export type ProductBatch = {
+    productConfigured: ProductConfigured,
+    count: number
 }

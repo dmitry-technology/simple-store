@@ -3,6 +3,7 @@ import { Order } from "../models/order-type";
 import { Product } from "../models/product";
 import { UserData } from "../models/user-data";
 import AuthServiceFire from "../services/auth/auth-service-fire";
+import ShoppingCartService from "../services/cart/cart-service";
 import CategoriesStore from "../services/categories/categories-store";
 import ClientStore from "../services/clients/client-store";
 import DataProviderFire from "../services/common/data-provider-fire";
@@ -29,3 +30,5 @@ export const clientStore = new ClientStore(clientProvider);
 
 const productPictureProvider = new StorageProviderFire(config.productPictureFolder);
 export const productPictureStore = new StorageProcessor(productPictureProvider);
+
+export const shoppingCartService = new ShoppingCartService('my-cart');

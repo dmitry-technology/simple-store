@@ -10,16 +10,16 @@ type FormAddProductProps = {
     uploadProductData: (product: Product, picture: File) => void;
     categories: Category[];
     defaultPicture: string;
-    existId: (id: number) => Promise<boolean>;
+    existId: (id: string) => Promise<boolean>;
 }
 
 const FormAddProduct: FC<FormAddProductProps> = (props) => {
 
     const { uploadProductData, categories, defaultPicture, existId } = props;
 
-    const [id, setId] = useState<number>(0);
+    const [id, setId] = useState<string>('');
     const [title, setTitle] = useState<string>('');
-    const [category, setCategory] = useState<number>(categories[0].id);
+    const [category, setCategory] = useState<string>(categories[0].id);
     const [basePrice, setBasePrice] = useState<number>(0);
     const [active, setActive] = useState<boolean>(true);
     const [previewPath, setPreviewPath] = useState<string>(defaultPicture);
@@ -80,7 +80,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     }
 
     function onReset() {
-        setId(0);
+        setId('');
         setTitle('');
         setCategory(categories[0].id);
         setBasePrice(0);
@@ -165,7 +165,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         <Select
                             value={category}
                             label="Category"
-                            onChange={e => setCategory(+e.target.value)}
+                            onChange={e => setCategory(e.target.value)}
                             required
                         >
                             {categories.map(cat => (

@@ -206,7 +206,7 @@ const OrdersList: FC = () => {
         return res;
     }
 
-    function getProduct(id: number): Product | undefined {
+    function getProduct(id: string): Product | undefined {
         return products[products.findIndex(product => product.id === id)];
     }
 

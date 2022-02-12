@@ -1,6 +1,6 @@
 import DataProvider from "./data-provider";
-import { from, lastValueFrom, Observable } from "rxjs";
-import { collection, getDocs, doc, getDoc, setDoc, deleteDoc, getFirestore, CollectionReference, Firestore } from 'firebase/firestore';
+import { Observable } from "rxjs";
+import { collection, getDocs, doc, getDoc, setDoc, deleteDoc, getFirestore, CollectionReference } from 'firebase/firestore';
 import fireApp from "../../config/firebase-config";
 import { collectionData } from "rxfire/firestore";
 import { catchError } from 'rxjs/operators'
