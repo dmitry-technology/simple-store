@@ -4,24 +4,28 @@ export enum OrderStatus { WAITING="waiting", WORKING="working", COMPLETE="comple
 
 export type Order = {
     id?: string;
-    userId: string;
-    status?: OrderStatus;
-    products?: OrderProduct[];
-    totalPrice?: number;
-    dateCreate?: string;
+    client: string;
+    address: string;
+    phone: string;
+    products: OrderProduct[];
+    status: OrderStatus;
+    date: string;
+    price: number;
 }
 
 export type OrderProduct = {
-    productId:string, 
+    productName:string, 
     options: ProductOptionConfigured[], 
     count:number
 }
 
 
 export const orderSimple : Order = {
-    userId: "ycd8mLBJBUSTp18S15Fi2mlQT1g1",
-    status: OrderStatus.COMPLETE,
-    products: [{productId:"995511", options: [{optionData: {name: "40", extraPay: 10}, optionTitle:"Size"}], count: 5}],
-    totalPrice: 500,
-    dateCreate: new Date().toISOString()
+    client: "Jof Bezz",
+    address: "street: wolter, house: 1, flat: 1, floor: 1",
+    phone: "8-800-800-80-80",
+    products: [{productName:"Margarita", options: [{optionData: {name: "40", extraPay: 10}, optionTitle:"Size"}], count: 5}],
+    status: OrderStatus.WAITING,
+    date: new Date().toISOString(),
+    price: 500
 }

@@ -50,13 +50,13 @@ const OrdersList: FC = () => {
   /* dialog modal */
   const textModal = useRef<string[]>(['']);
   const [modalVisible, setModalVisible] = useState(false);
-  
+
 
   //**form edit order */
   const [formVisible, setformVisible] = useState(false);
   const [idUpdateOrder, setIdUpdateOrder] = useState('');
 
- 
+
 
 
   //*************************Redux***************************//
@@ -66,7 +66,7 @@ const OrdersList: FC = () => {
   const products: Product[] = useSelector(productsSelector);
 
 
-   
+
 
   //********************Mobile or desktop********************//
   const isMobile = useMediaQuery({ maxWidth: 600, orientation: 'portrait' });
@@ -91,7 +91,7 @@ const OrdersList: FC = () => {
       element.scrollWidth > element.clientWidth
     );
   }
-  
+
   const GridCellExpand = React.memo(function GridCellExpand(
     props: GridCellExpandProps,
   ) {
@@ -203,23 +203,24 @@ const OrdersList: FC = () => {
   function getColums(): any[] {
     return [
       {
-        field: "id", headerName: "Id order", flex: 30, align: 'center', headerAlign: 'center'
+        field: "id", headerName: "Id order", flex: 20, align: 'center', headerAlign: 'center'
       },
       {
-        field: "client", headerName: "Client", flex: 100, align: 'center', headerAlign: 'center'
+        field: "client", headerName: "Client", flex: 80, align: 'center', headerAlign: 'center', editable: "true"
       },
       {
         field: "address", headerName: "Address", flex: 100, align: 'center', headerAlign: 'center',
+        editable: "true", renderCell: renderCellExpand
       },
       {
-        field: "phone", headerName: "Phone", flex: 100, align: 'center', headerAlign: 'center'
+        field: "phone", headerName: "Phone", flex: 80, align: 'center', headerAlign: 'center', editable: "true"
       },
       {
-        field: "product", headerName: "Product", flex: 150, align: 'center', headerAlign: 'center',
+        field: "products", headerName: "Product", flex: 150, align: 'center', headerAlign: 'center', editable: "true",
         renderCell: renderCellExpand
       },
       {
-        field: "status", headerName: "Status", flex: 50, align: 'center', headerAlign: 'center',
+        field: "status", headerName: "Status", flex: 40, align: 'center', headerAlign: 'center',
         editable: "true", type: "singleSelect", valueOptions: storeConfig.statusOrder,
         renderCell: (params: GridRenderCellParams) => {
           return (
@@ -231,16 +232,17 @@ const OrdersList: FC = () => {
 
       },
       {
-        field: "date", headerName: "Date", flex: 50, align: 'center', headerAlign: 'center', type: 'date',
+        field: "date", headerName: "Date Time", flex: 50, align: 'center', headerAlign: 'center', type: 'date',
         valueFormatter: (params: GridValueFormatterParams) => {
-          return params.value!.toString().substring(0, 10);
+          const res = params.value!.toString().split("T");
+          return `${res[0]} ${res[1].substring(0,5)}`;
         }
       },
       {
-        field: "price", headerName: "Price", flex: 30, align: 'center', headerAlign: 'center'
+        field: "price", headerName: "Price", flex: 20, align: 'center', headerAlign: 'center', editable: "true"
       },
       {
-        field: "actions", type: 'actions', flex: 80, align: 'center', headerAlign: 'center',
+        field: "actions", type: 'actions', flex: 30, align: 'center', headerAlign: 'center',
         getActions: (params: GridRowParams) => {
           return [
             <GridActionsCellItem
@@ -270,23 +272,9 @@ const OrdersList: FC = () => {
 
   function getRows(orders: Order[]): GridRowsProp {
     return orders.map(order => {
-      if (clients.length > 0 && orders.length > 0) {
-        const client = getClient(order.userId);
-        return {
-          id: order.id,
-          client: client!.name,
-          phone: client!.phoneNumber,
-          address: getClientAddressInfo(client!.deliveryAddress as DeliveryAddress),
-          product: getInfoProduct!(order!.products as OrderProduct[]),
-          status: order.status,
-          date: order.dateCreate,
-          price: order.totalPrice
-        }
-      } else {
-        return {};
-      }
+      return { ...order, products: getInfoProduct(order.products) }
     });
-  }
+  };
 
   //**************************call back actions******************************//
   //remove
@@ -313,7 +301,7 @@ const OrdersList: FC = () => {
   }
   //show detail info
   async function showOrder(id: GridRowId) {
-    const order = orders.find(e => e.id === id); 
+    const order = orders.find(e => e.id === id);
     if (!!order) {
       textModal.current = getInfoOrder(order);
     } else {
@@ -340,7 +328,7 @@ const OrdersList: FC = () => {
       try {
         dispatch(orderStore.update(id, order));
       } catch (err) {
-        
+
       }
     }
     setdialogVisible(false);
@@ -349,12 +337,12 @@ const OrdersList: FC = () => {
   function editOrder(id: GridRowId) {
     setIdUpdateOrder(id.toString());
     setformVisible(true);
-    
+
     console.log("edit order " + id);
     //TODO
   }
 
-  
+
   //******************************************************************* */
 
 
@@ -380,10 +368,13 @@ const OrdersList: FC = () => {
   function getInfoOrder(order: Order): string[] {
     const res: string[] = [
       `Order ID  : ${order.id}`,
-      `${getInfoClient(order.userId)}`,
+      `Clietn : ${order.client}`,
+      `Address : ${order.address}`,
+      `Phone : ${order.phone}`,
       `Product: ${getInfoProduct!(order!.products as OrderProduct[])}`,
-      `Total price: ${order.totalPrice}`,
-      `Data create: ${order.dateCreate?.substring(0, 10)}`
+      `Status: ${order.status}`,
+      `Total price: ${order.price}`,
+      `Data create: ${order.date.substring(0, 10)}`
     ];
     return res;
   }
@@ -404,10 +395,9 @@ const OrdersList: FC = () => {
   function getInfoProduct(products: OrderProduct[]) {
     let res = '';
     products.forEach(productOrder => {
-      const { productId, options, count } = productOrder;
-      const product = getProduct(productId);
+      const { productName, options, count } = productOrder;
       const option = getInfoOptions(options);
-      res += `product: ${product?.title} options: ${option} count: ${count}. `
+      res += `product: ${productName} options: ${option} count: ${count}. `
     })
     return res;
 
@@ -426,11 +416,11 @@ const OrdersList: FC = () => {
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <Paper sx={{ width: { xs: '100vw', sm: '80vw' }, height: '80vh', marginTop: '2vh' }}>
-        <DataGrid columns={columns} rows={rows} onCellEditCommit={onCellEdit}/>
+        <DataGrid columns={columns} rows={rows} onCellEditCommit={onCellEdit} />
       </Paper>
       <DialogConfirm visible={dialogVisible} title={confirmationData.current.title} message={confirmationData.current.message} onClose={confirmationData.current.handle} />
       <ModalInfo title={"Detailed information about the order"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
-      {!!formVisible && <FormAddOrder id={idUpdateOrder} callBack={() => setformVisible(false)}/>}
+      {!!formVisible && <FormAddOrder id={idUpdateOrder} callBack={() => setformVisible(false)} />}
     </Box>
 
   )

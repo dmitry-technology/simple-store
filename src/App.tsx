@@ -110,6 +110,8 @@ function App() {
     })
   }
 
+  // orderStore.add(orderSimple);
+
   return (
     <BrowserRouter>
       {/* Show Alert if Connection refused*/}
