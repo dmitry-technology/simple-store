@@ -3,8 +3,9 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { FC, Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DeliveryAddress, UserData } from '../../models/user-data';
-import { setUserData, updateProfile } from '../../redux/actions';
+import { setNotificationMessage, setUserData, updateProfile } from '../../redux/actions';
 import { userDataSelector } from '../../redux/store';
+import { NotificationType } from '../../models/user-notification';
 import { isEmailValid, isPhoneNumberValid } from '../../utils/common/validation-utils';
 import AddressForm from '../UI/common/address-form';
 
@@ -55,6 +56,7 @@ const Profile: FC = () => {
         event.preventDefault();
         dispatch(updateProfile(newUserData)); // Save data to Firestore
         dispatch(setUserData(newUserData)); // Update local UserData
+        setValid(false); // Disable the Update button
     }
 
     return  <Fragment>

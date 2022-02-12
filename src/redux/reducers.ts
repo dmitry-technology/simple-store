@@ -4,7 +4,8 @@ import ErrorType from "../models/error-types";
 import { Order } from "../models/order-type";
 import { Product } from "../models/product";
 import { nonAuthorisedUser, UserData } from "../models/user-data";
-import { SET_CATEGORIES, SET_ERROR_CODE, SET_PRODUCTS, SET_USER_DATA, SET_CLIENT_DATA, SET_ORDER_DATA  } from "./actions";
+import { emptyMessage, UserNotificationMessage } from "../models/user-notification";
+import { SET_CATEGORIES, SET_ERROR_CODE, SET_PRODUCTS, SET_USER_DATA, SET_CLIENT_DATA, SET_ORDER_DATA, SET_USER_NOTIFICATION  } from "./actions";
 
 export const userDataReducer = (userData: UserData = nonAuthorisedUser, action: PayloadAction<UserData>): UserData => {
     return action.type === SET_USER_DATA ? action.payload : userData;
@@ -28,4 +29,8 @@ export const ordersReducer = (orders: Order[] = [], action: PayloadAction<Order[
 
 export const clientsReducer = (clients: UserData[] = [], action: PayloadAction<UserData[]>): UserData[] => {
     return action.type === SET_CLIENT_DATA ? action.payload : clients;
+}
+
+export const notificationReducer = (message: UserNotificationMessage = emptyMessage, action: PayloadAction<UserNotificationMessage>): UserNotificationMessage => {
+    return action.type === SET_USER_NOTIFICATION ? action.payload : message;
 }

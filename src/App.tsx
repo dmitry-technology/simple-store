@@ -11,16 +11,18 @@ import { Product } from './models/product';
 import { RouteType } from './models/route-type';
 import { nonAuthorisedUser, UserData, userDataSimple } from './models/user-data';
 import { setCategories, setErrorCode, setProducts, setUserData, setClients, setOrders } from './redux/actions';
-import { errorCodeSelector, userDataSelector } from './redux/store';
+import { errorCodeSelector, notificationSelector, userDataSelector } from './redux/store';
 import Navigator from './components/UI/common/navigator';
 import { Order, orderSimple } from './models/order-type';
+import { emptyMessage, UserNotificationMessage } from './models/user-notification';
+import MessageView from './components/UI/common/message-view';
 
 function App() {
 
   const dispatch = useDispatch();
 
   const userData: UserData = useSelector(userDataSelector);
-
+  const notificationMessage: UserNotificationMessage = useSelector(notificationSelector);
   const relevantRoutes = useMemo(() => getRelevantRoutes(routes, userData), [userData]);
   const menuItems = useMemo(() => getRelevantRoutes(menuRoutes, userData), [userData]);
   const authItems = useMemo(() => getRelevantRoutes(authRoutes, userData), [userData]);
@@ -121,6 +123,7 @@ function App() {
         </React.Fragment>
         : <React.Fragment>
           <Navigator logo={'BEST PIZZA B7'} menuItems={menuItems} authItems={authItems} />
+            { notificationMessage !== emptyMessage && <MessageView data={notificationMessage}/> }
           <Routes>
             {getRoutes(relevantRoutes)}
             <Route path={'*'} element={<Navigate to={PATH_REDIRECT} />}></Route>
