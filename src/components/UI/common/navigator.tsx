@@ -3,6 +3,9 @@ import { RouteType } from "../../../models/route-type";
 import NavigatorTabs from "./navigator-tabs";
 import { FC, Fragment, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import ProfileMenu from "./profile-menu";
+import { PATH_LOGIN } from "../../../config/routing";
+import LoginIcon from '@mui/icons-material/Login';
 
 type NavigatorProps = {
     logo: string;
@@ -39,12 +42,7 @@ const Navigator: FC<NavigatorProps> = (props) => {
                         </Typography>
                         <NavigatorTabs orientation='horizontal' items={menuItems} />
                     </Toolbar>
-                    <Button
-                        component={Link}
-                        to={authItems[0].path}
-                    >
-                        {authItems[0].label}
-                    </Button>
+                    { authItems[0].path === PATH_LOGIN ? <Button startIcon={<LoginIcon/ >} component={Link} to={authItems[0].path}>{authItems[0].label}</Button> : <ProfileMenu items={menuItems} /> }
                 </Toolbar>
             </Box>}
         </Fragment>

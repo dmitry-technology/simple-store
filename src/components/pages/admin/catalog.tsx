@@ -1,6 +1,6 @@
 import { Box } from '@mui/material';
 import { FC } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Category } from '../../../models/category-type';
 import { Product } from '../../../models/product';
 import { categoriesSelector } from '../../../redux/store';
@@ -20,17 +20,19 @@ const Catalog: FC = () => {
     }
 
     async function existId(id: string): Promise<boolean> {
-        return await productStore.exists(id.toString());
+        return await productStore.exists(id);
     }
 
     return (
-        <Box>
-            <FormAddProduct
-                categories={categories}
-                uploadProductData={uploadProductData}
-                defaultPicture={config.defaultPictureProductUrl}
-                existId={existId}
-            />
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Box sx={{ width: '50vw' }}>
+                <FormAddProduct
+                    categories={categories}
+                    uploadProductData={uploadProductData}
+                    defaultPicture={config.defaultPictureProductUrl}
+                    existId={existId}
+                />
+            </Box>
         </Box>
     );
 }

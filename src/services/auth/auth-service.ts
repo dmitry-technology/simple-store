@@ -6,6 +6,6 @@ import { UserData } from '../../models/user-data';
 export default interface AuthService {
     getUserData(): Observable<UserData>;
     login(loginData: LoginData): Promise<AuthErrorType>;
-    verifyEmail(link: string): Promise<EmailVerify> ;
+    verifyEmailLoginLink(link: string): Promise<EmailVerify> ;
     logout(): void;
 }

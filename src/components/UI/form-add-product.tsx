@@ -1,23 +1,26 @@
-import { Box, Button, FormControl, FormGroup, InputLabel, Select, TextField, SxProps, Theme, MenuItem, RadioGroup, FormControlLabel, Radio, FormLabel, Typography, TextareaAutosize } from '@mui/material';
-import { CSSProperties, FC, useEffect, useState } from 'react';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import fireApp from '../../config/firebase-config';
-import { Product } from '../../models/product';
+import { Box, Button, FormControl, FormGroup, InputLabel, Select, TextField, SxProps, Theme, MenuItem, RadioGroup, FormControlLabel, Radio, FormLabel, Typography, TextareaAutosize, IconButton, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
+import { CSSProperties, FC, Fragment, useEffect, useRef, useState } from 'react';
 import { Category } from '../../models/category-type';
-import { useDispatch } from 'react-redux';
+import { EditOptionData, ProductOption } from '../../models/product-options';
+import { Delete } from '@mui/icons-material';
+import EditIcon from '@mui/icons-material/Edit';
+import FormOptionProduct from './form-option-product';
+import { Product } from '../../models/product';
 
 type FormAddProductProps = {
     uploadProductData: (product: Product, picture: File) => void;
     categories: Category[];
     defaultPicture: string;
     existId: (id: string) => Promise<boolean>;
+    product?: Product;
 }
 
 const FormAddProduct: FC<FormAddProductProps> = (props) => {
 
-    const { uploadProductData, categories, defaultPicture, existId } = props;
+    const { uploadProductData, categories, defaultPicture, existId, product } = props;
 
     const [id, setId] = useState<string>('');
+    const [idEditable, setIdEditable] = useState<boolean>(true);
     const [title, setTitle] = useState<string>('');
     const [category, setCategory] = useState<string>(categories[0].id);
     const [basePrice, setBasePrice] = useState<number>(0);
@@ -25,15 +28,46 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     const [previewPath, setPreviewPath] = useState<string>(defaultPicture);
     const [picture, setPicture] = useState<File>();
     const [description, setDescription] = useState<string>('');
+    const [options, setOptions] = useState<ProductOption[]>([]);
+
+    const [displayOptionForm, setDisplayOptionForm] = useState<boolean>(false);
+    const optionEdit = useRef<EditOptionData>({ option: getClearOption() });
 
     const [idError, setIdError] = useState<string>('');
     const [priceError, setPriceError] = useState<string>('');
 
     const [flValid, setFlValid] = useState<boolean>(false);
 
+    const [buttonSubmitName, setButtonSubmitName] = useState<string>('Add');
+
+    useEffect(() => {
+        if (product) {
+            setButtonSubmitName('Edit');
+            const {id, title, category, basePrice, active, picture, description, options} = product;
+            setId(id);
+            setIdEditable(false);
+            setTitle(title);
+            setCategory(category);
+            setBasePrice(basePrice);
+            setActive(active);
+            picture && setPreviewPath(picture);
+            description && setDescription(description);
+            options && setOptions(options);
+        }
+    }, []);
+
     useEffect(() => {
         validateData();
-    }, [id, title, category, basePrice, picture, description]);
+    }, [id, title, category, basePrice, picture, description, displayOptionForm]);
+
+    function validateData() {
+        const isValid = id && !idError &&
+            title &&
+            category &&
+            basePrice && !priceError &&
+            !displayOptionForm;
+        setFlValid(!!isValid);
+    }
 
     function idHandle(event: any) {
         const id = event.target.value;
@@ -59,24 +93,42 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
         }
     }
 
-    function validateData() {
-        const isValid = id && !idError &&
-            title &&
-            category &&
-            basePrice && !priceError;
-        setFlValid(!!isValid);
+    function createOption() {
+        optionEdit.current = { option: getClearOption() };
+        setDisplayOptionForm(true);
+    }
+
+    function addOption(optionData: EditOptionData) {
+        if (optionData.index! >= 0) {
+            options[optionData.index!] = optionData.option;
+        } else {
+            options.push(optionData.option);
+        }
+        setOptions([...options]);
+    }
+
+    function editOption(index: number) {
+        optionEdit.current = { option: options[index], index: index };
+        setDisplayOptionForm(true);
+    }
+
+    function removeOption(index: number) {
+        options.splice(index, 1);
+        setOptions([...options]);
     }
 
     async function onSubmit(event: any) {
         event.preventDefault();
-        const idIsExist = await existId(id);
-        if (!idIsExist) {
-            const product: Product = { id, title, category, description, basePrice, active };
-            await uploadProductData(product, picture as File);
-            onReset();
-        } else {
-            setIdError('such id alredy exist');
+        if (!product){
+            const idIsExist = await existId(id.toString());
+            if (idIsExist){
+                setIdError('such id alredy exist');
+                return;
+            }
         }
+        const newProduct: Product = { id: id.toString(), title, category, description, basePrice, active, options };
+        await uploadProductData(newProduct, picture as File);
+        onReset();
     }
 
     function onReset() {
@@ -88,19 +140,20 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
         setPreviewPath(defaultPicture);
         setPicture(undefined);
         setDescription('');
+        setOptions([]);
     }
 
     // Styles of form items
-    const inputStyle: SxProps<Theme> = {
-        width: { md: '28vw' }
-    }
 
     const boxRowStyle: SxProps<Theme> = {
         display: 'flex',
         flexDirection: { xs: 'column', md: 'row' },
         alignItems: 'stretch',
-        justifyContent: 'space-between',
-        width: { xs: '95vw', md: '58vw' }
+        justifyContent: 'space-between'
+    }
+
+    const inputStyle: SxProps<Theme> = {
+        width: { md: '47%' }
     }
 
     const boxPreviewStyle: SxProps<Theme> = {
@@ -108,7 +161,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
         marginBottom: '8px',
         display: 'flex',
         justifyContent: 'center',
-        width: { md: '28vw' }
+        width: { md: '47%' }
     }
 
     const textAreaStyle: CSSProperties = {
@@ -119,13 +172,12 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     const boxButtonStyle: SxProps<Theme> = {
         display: 'flex',
         justifyContent: 'space-between',
-        width: { xs: '95vw', md: '58vw' },
         marginTop: '20px'
     }
 
     const buttonStyle: SxProps<Theme> = {
         border: '1px solid',
-        width: '45%'
+        width: '47%'
     }
 
     return (
@@ -133,6 +185,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
             component='form'
             onSubmit={onSubmit}
             onReset={onReset}
+            sx={{ width: '100%' }}
         >
             <FormGroup>
                 <Box sx={boxRowStyle as any}>
@@ -146,6 +199,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         onChange={idHandle}
                         sx={inputStyle}
                         margin='normal'
+                        disabled={!idEditable}
                         required
                     />
                     <TextField
@@ -211,6 +265,42 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         style={textAreaStyle}
                     />
                 </Box>
+                <Box>
+                    {!displayOptionForm
+                        ? <Button
+                            sx={{ width: '100%', margin: '10px 0' }}
+                            variant='contained'
+                            onClick={createOption}
+                        >
+                            Add option
+                        </Button>
+                        : <FormOptionProduct
+                            addOption={addOption}
+                            onClose={() => setDisplayOptionForm(false)}
+                            optionData={optionEdit.current}
+                        />
+                    }
+                </Box>
+                {options.length > 0 && !displayOptionForm &&
+                    <List subheader={<ListSubheader component="div" sx={{ fontSize: '1.2rem' }}>Options:</ListSubheader>}>
+                        {options.map((option, index) => (
+                            <ListItem
+                                key={index}
+                                secondaryAction={
+                                    <Fragment>
+                                        <IconButton edge="end" aria-label="edit" onClick={() => editOption(index)}>
+                                            <EditIcon />
+                                        </IconButton>
+                                        <IconButton edge="end" aria-label="delete" onClick={() => removeOption(index)}>
+                                            <Delete />
+                                        </IconButton>
+                                    </Fragment>
+                                }
+                            >
+                                <ListItemText primary={optionToString(option)} />
+                            </ListItem>
+                        ))}
+                    </List>}
                 <Box sx={boxButtonStyle}>
                     <FormControl component="fieldset" fullWidth>
                         <FormLabel component="legend">Active:</FormLabel>
@@ -227,7 +317,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                 </Box>
                 <Box sx={boxButtonStyle}>
                     <Button type='submit' variant='contained' disabled={!flValid} sx={buttonStyle}>
-                        Submit
+                        {buttonSubmitName}
                     </Button>
                     <Button type='reset' sx={buttonStyle}>
                         Reset
@@ -239,3 +329,17 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
 };
 
 export default FormAddProduct;
+
+function getClearOption(): ProductOption {
+    return {
+        optionTitle: '',
+        optionData: [{ name: '', extraPay: 0 }, { name: '', extraPay: 0 }]
+    }
+}
+
+function optionToString(option: ProductOption) {
+    return `${option.optionTitle}: ${option.optionData.reduce((r, v) => {
+        r += ` "${v.name}" = ${v.extraPay};`;
+        return r;
+    }, '')}`
+}

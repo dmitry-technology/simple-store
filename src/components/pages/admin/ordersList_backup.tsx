@@ -1,18 +1,15 @@
-import { Box, IconButton, ListItem, Paper, Typography } from '@mui/material';
+import { Box, Paper, Typography } from '@mui/material';
 import { FC, useMemo, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Order } from '../../../models/order-type';
 import { clientsSelector, ordersSelector, productsSelector } from '../../../redux/store';
 import { useMediaQuery } from "react-responsive";
-import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowHeightParams, GridRowId, GridRowParams, GridRowsProp, GridValueFormatterParams } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridColDef, GridRenderCellParams, GridRowId, GridRowParams, GridRowsProp, GridValueFormatterParams } from '@mui/x-data-grid';
 import { getOrdersListFields, OrderListFields } from '../../../config/orders-list-columns';
 import { Delete } from '@mui/icons-material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import { Product } from '../../../models/product';
-import List from '@mui/material/List';
-import ListItemText from '@mui/material/ListItemText';
-import CommentIcon from '@mui/icons-material/Comment';
 import { Subscription } from 'rxjs';
 import { clientStore, orderStore } from '../../../config/servicesConfig';
 import { setClients, setOrders } from '../../../redux/actions';
@@ -168,9 +165,9 @@ const OrdersList: FC = () => {
     function getRows(orders: Order[]): GridRowsProp {
         return orders.map(order => {
             if (clients.length > 0 && orders.length > 0) {
-                const client = getClient(order.userId);
+                const client = getClient(order.client);
                 const products = order.products.map(product => {
-                    return { product: getProduct(product.productId), count: product.count };
+                    return { product: getProduct(product.productName), count: product.count };
                 });
                 return {
                     id: order.id,
@@ -179,8 +176,8 @@ const OrdersList: FC = () => {
                     address: getClientAddressInfo(client!.deliveryAddress as DeliveryAddress),
                     product: getProductInfo(products as { product: Product, options: Object, count: number }[]),
                     status: order.status,
-                    date: order.dateCreate,
-                    price: order.totalPrice
+                    date: order.date,
+                    price: order.price
                 }
             } else {
                 return {};

@@ -25,7 +25,7 @@ export default class DataProviderFire<T> implements DataProvider<T> {
 
     async add(obj: T): Promise<T> {
         if (this.minId && this.maxId) {
-            const id = await this.getRandomId();
+            const id = (await this.getRandomId()).toString();
             obj = { ...obj, id };
         }
         await this.setObj((obj as any).id, obj);
