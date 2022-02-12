@@ -11,13 +11,10 @@ import { ProductOption } from '../../../models/product-options';
 
 const Catalog: FC = () => {
     const categories: Category[] = useSelector(categoriesSelector);
+    const dispatch = useDispatch();
 
-    async function uploadProductData(product: Product, picture: File) {
-        if (picture) {
-            const pictureUrl = await productPictureStore.uploadFile(picture);
-            product.picture = pictureUrl;
-        }
-        productStore.add(product);
+    function uploadProductData(product: Product, picture: File) {
+        dispatch(uploadProductData(product, picture));
     }
 
     async function existId(id: string): Promise<boolean> {
