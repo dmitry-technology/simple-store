@@ -9,7 +9,6 @@ import Profile from "../components/pages/profile";
 import ShoppingCart from "../components/pages/shopping-cart";
 import EmailVerification from "../components/pages/auth/verification";
 import RedirectPage from "../components/pages/auth/complete";
-import ProductsList from "../components/pages/admin/productsList";
 
 // Common routes 
 export const PATH_INDEX = "/";
@@ -26,7 +25,6 @@ export const PATH_SHOPPING_CART = "/user/cart";
 // Admin routes
 export const PATH_ADMIN_ORDERS_LIST = "/admin/orders-list";
 export const PATH_ADMIN_CATALOG = "/admin/catalog";
-export const PATH_ADMIN_PRODUCTS_LIST = "/admin/products-list"
 
 export const menuRoutes: RouteType[] = [
     { path: PATH_INDEX, element: <Index />, label: 'Pizza', isGuest: true, isUser: true, isAdmin: true },
@@ -34,7 +32,6 @@ export const menuRoutes: RouteType[] = [
     { path: PATH_ORDERS, element: <Orders />, label: 'Orders', isUser: true },
     { path: PATH_SHOPPING_CART, element: <ShoppingCart />, label: 'Cart', isGuest: true, isUser: true },
     { path: PATH_ADMIN_ORDERS_LIST, element: <OrdersList />, label: 'Orders List', isAdmin: true },
-    { path: PATH_ADMIN_PRODUCTS_LIST, element: <ProductsList />, label: 'Products List', isAdmin: true },
     { path: PATH_ADMIN_CATALOG, element: <Catalog />, label: 'Catalog', isAdmin: true }
 
 ];

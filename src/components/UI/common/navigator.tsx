@@ -3,6 +3,7 @@ import { RouteType } from "../../../models/route-type";
 import NavigatorTabs from "./navigator-tabs";
 import { FC, Fragment, useMemo } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { padding } from "@mui/system";
 
 type NavigatorProps = {
     logo: string;
@@ -22,13 +23,14 @@ const Navigator: FC<NavigatorProps> = (props) => {
         <Fragment>
             {isMenuItem && <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                 <Toolbar
+                    disableGutters
                     sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
                         width: { xs: '100vw', md: '95vw' }
                     }}
                 >
-                    <Toolbar>
+                    <Toolbar disableGutters>
                         <Typography
                             variant="h6"
                             noWrap

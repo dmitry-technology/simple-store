@@ -1,7 +1,7 @@
 import { UserData } from "../models/user-data";
 import { PayloadAction } from "@reduxjs/toolkit";
 import ErrorType from "../models/error-types";
-import { Product } from "../models/product";
+import { Product, UploadProductData } from "../models/product";
 import { Category } from "../models/category-type";
 import { Order } from "../models/order-type";
 import { clientStore, productPictureStore, productStore } from "../config/servicesConfig";
@@ -54,9 +54,10 @@ export const updateProfile = function (userdata: UserData): (dispath: any) => vo
     }
 }
 
-export const uploadProductData = function (product: Product, picture: File): (dispath: any) => void {
+export const addProductAction = function (uploadProductData: UploadProductData): (dispath: any) => void {
     return async dispath => {
         try {
+            const {product, picture} = uploadProductData;
             if (picture) {
                 const pictureUrl = await productPictureStore.uploadFile(picture);
                 product.picture = pictureUrl;
@@ -66,7 +67,33 @@ export const uploadProductData = function (product: Product, picture: File): (di
         } catch (err: any) {
             dispath(setErrorCode(err))
         }
-        return true;
+    }
+}
+
+export const removeProductAction = function (id: string): (dispath: any) => void {
+    return async dispath => {
+        try {
+            await productStore.remove(id);
+            dispath(setErrorCode(ErrorType.NO_ERROR));
+        } catch (err: any) {
+            dispath(setErrorCode(err))
+        }
+    }
+}
+
+export const updateProductAction = function (uploadProductData: UploadProductData): (dispath: any) => void {
+    return async dispath => {
+        const {product, picture} = uploadProductData;
+        try {
+            if (picture) {
+                const pictureUrl = await productPictureStore.uploadFile(picture);
+                product.picture = pictureUrl;
+            }
+            await productStore.update(product.id, product);
+            dispath(setErrorCode(ErrorType.NO_ERROR));
+        } catch (err: any) {
+            dispath(setErrorCode(err))
+        }
     }
 }
 
