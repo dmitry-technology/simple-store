@@ -202,7 +202,7 @@ const ProductsList = () => {
         return (title + category + picture + description + basePrice + options + active).split(".");
     }
 
-    function getCategory(id: number): Category | undefined {
+    function getCategory(id: string): Category | undefined {
         return categories[categories.findIndex(categories => categories.id === id)];
     }
     function getInfoOptions(options: ProductOption[]): string | undefined {

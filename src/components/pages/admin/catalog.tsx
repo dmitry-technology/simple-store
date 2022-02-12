@@ -1,13 +1,12 @@
 import { Box } from '@mui/material';
-import { FC, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { FC } from 'react';
+import { useSelector } from 'react-redux';
 import { Category } from '../../../models/category-type';
 import { Product } from '../../../models/product';
 import { categoriesSelector } from '../../../redux/store';
 import FormAddProduct from '../../UI/form-add-product';
 import config from "../../../config/store-config.json"
 import { productPictureStore, productStore } from '../../../config/servicesConfig';
-import { ProductOption } from '../../../models/product-options';
 
 const Catalog: FC = () => {
     const categories: Category[] = useSelector(categoriesSelector);

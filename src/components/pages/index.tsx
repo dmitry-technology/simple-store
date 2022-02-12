@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { FC } from 'react';
 import ProductCard from '../UI/product-card';
 import { useSelector } from 'react-redux';
@@ -13,14 +13,22 @@ const Index: FC = () => {
     const categories: Category[] = useSelector(categoriesSelector);
     const categoriesSorted = _.sortBy(categories, ['sortOrder']);
 
+    function getActiveProductsByCategory(categoryId: string): Product[] {
+        return products.filter(prod => prod.active && prod.category === categoryId);
+    }
+
     return <Box>
-        {categoriesSorted.map(cat => <Box key={cat.name} component="div">
-            <Typography sx={{ m: 1, fontFamily: 'Cooper' }} variant='h3'>
-                {cat.name}
-            </Typography>
-            {products.filter(prod => prod.active && prod.category === cat.id)
-                .map((prod, index) => <ProductCard key={index + prod.title} {...prod} />)}
-        </Box>)}
+        {categoriesSorted.map(cat =>
+            getActiveProductsByCategory(cat.id).length > 0 &&
+            <Box key={cat.name} component="div" sx={{m: 1}}>
+                <Typography id={cat.id} sx={{ fontFamily: 'Cooper' }} variant='h3'>
+                    {cat.name}
+                </Typography>
+                <Grid container alignItems="stretch" >
+                    {getActiveProductsByCategory(cat.id).map((prod, index) =>
+                        <ProductCard key={index + prod.title} {...prod} />)}
+                </Grid>
+            </Box>)}
     </Box>;
 }
 

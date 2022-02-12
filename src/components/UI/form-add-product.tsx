@@ -1,14 +1,11 @@
 import { Box, Button, FormControl, FormGroup, InputLabel, Select, TextField, SxProps, Theme, MenuItem, RadioGroup, FormControlLabel, Radio, FormLabel, Typography, TextareaAutosize, IconButton, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
 import { CSSProperties, FC, Fragment, useEffect, useRef, useState } from 'react';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
-import fireApp from '../../config/firebase-config';
-import { Product } from '../../models/product';
 import { Category } from '../../models/category-type';
-import { useDispatch } from 'react-redux';
 import { EditOptionData, ProductOption } from '../../models/product-options';
 import { Delete } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import FormOptionProduct from './form-option-product';
+import { Product } from '../../models/product';
 
 type FormAddProductProps = {
     uploadProductData: (product: Product, picture: File) => void;
@@ -22,10 +19,10 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
 
     const { uploadProductData, categories, defaultPicture, existId, product } = props;
 
-    const [id, setId] = useState<number>(0);
+    const [id, setId] = useState<string>('');
     const [idEditable, setIdEditable] = useState<boolean>(true);
     const [title, setTitle] = useState<string>('');
-    const [category, setCategory] = useState<number>(categories[0].id);
+    const [category, setCategory] = useState<string>(categories[0].id);
     const [basePrice, setBasePrice] = useState<number>(0);
     const [active, setActive] = useState<boolean>(true);
     const [previewPath, setPreviewPath] = useState<string>(defaultPicture);
@@ -47,7 +44,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
         if (product) {
             setButtonSubmitName('Edit');
             const {id, title, category, basePrice, active, picture, description, options} = product;
-            setId(+id);
+            setId(id);
             setIdEditable(false);
             setTitle(title);
             setCategory(category);
@@ -135,7 +132,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     }
 
     function onReset() {
-        setId(0);
+        setId('');
         setTitle('');
         setCategory(categories[0].id);
         setBasePrice(0);
@@ -222,7 +219,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         <Select
                             value={category}
                             label="Category"
-                            onChange={e => setCategory(+e.target.value)}
+                            onChange={e => setCategory(e.target.value)}
                             required
                         >
                             {categories.map(cat => (
