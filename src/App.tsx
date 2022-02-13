@@ -113,8 +113,16 @@ function App() {
         </React.Fragment>
         : <React.Fragment>
           <Navigator menuItems={menuItems} authItems={authItems} />
-            { notificationMessage !== emptyMessage && <MessageView data={notificationMessage}/> }
-          <Box sx={{alignSelf: 'bottom', width: '100vw', overflow: 'auto'}}>
+          {notificationMessage !== emptyMessage && <MessageView data={notificationMessage} />}
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              width: '100%',
+              overflow: 'auto',
+              flex: '1 0 auto',
+            }}
+          >
             <Routes>
               {getRoutes(relevantRoutes)}
               <Route path={'*'} element={<Navigate to={PATH_REDIRECT} />}></Route>
