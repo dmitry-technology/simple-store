@@ -5,4 +5,13 @@ export default class ShoppingCartService extends LocalStorageProvider<ProductBat
     constructor(storageName: string) {
         super(storageName);
     }
+
+    getItemsCount(): number {
+        let res = 0;
+        const batches = this.getAll();
+        for (let batch of batches) {
+            res += batch.count;
+        }
+        return res;
+    }
 }
