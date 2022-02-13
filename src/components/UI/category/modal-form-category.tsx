@@ -38,7 +38,10 @@ const ModalFormCategory: FC<ModalFormCategoryProps> = (props) => {
                         <CloseIcon sx={{ fontSize: '1.9rem' }} />
                     </IconButton>
                 </Box>
-                <FormAddCategory />
+                <FormAddCategory 
+                    uploadCategoryFn={uploadCategoryFn}
+                    category={category}
+                />
             </Paper>
         </Modal >
     );

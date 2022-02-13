@@ -50,7 +50,7 @@ export const setCartItemsCount: ActionType<number> = count => (
     { payload: count, type: SET_CART_ITEMS_COUNT }
 )
 
-export const updateProfile = function(userdata: UserData): (dispatch: any) => void {
+export const updateProfile = function (userdata: UserData): (dispatch: any) => void {
     return async dispatch => {
         try {
             // Deleting fields that do not need to be saved in the database
@@ -59,10 +59,10 @@ export const updateProfile = function(userdata: UserData): (dispatch: any) => vo
 
             await clientStore.update(userdata.id, userdata);
             dispatch(setErrorCode(ErrorType.NO_ERROR));
-            dispatch(setNotificationMessage({message: 'Profile has been updated', type: NotificationType.SUCCESS}));
+            dispatch(setNotificationMessage({ message: 'Profile has been updated', type: NotificationType.SUCCESS }));
         } catch (err: any) {
             dispatch(setErrorCode(err))
-            dispatch(setNotificationMessage({message: 'Error: Can`t update profile.', type: NotificationType.ERROR}));
+            dispatch(setNotificationMessage({ message: 'Error: Can`t update profile.', type: NotificationType.ERROR }));
         }
     }
 }
@@ -70,17 +70,17 @@ export const updateProfile = function(userdata: UserData): (dispatch: any) => vo
 export const addProductAction = function (uploadProductData: UploadProductData): (dispath: any) => void {
     return async dispatch => {
         try {
-            const {product, picture} = uploadProductData;
+            const { product, picture } = uploadProductData;
             if (picture) {
                 const pictureUrl = await productPictureStore.uploadFile(picture);
                 product.picture = pictureUrl;
             }
             await productStore.add(product);
             dispatch(setErrorCode(ErrorType.NO_ERROR));
-            dispatch(setNotificationMessage({message: 'Product has been added', type: NotificationType.SUCCESS}));
+            dispatch(setNotificationMessage({ message: 'Product has been added', type: NotificationType.SUCCESS }));
         } catch (err: any) {
             dispatch(setErrorCode(err))
-            dispatch(setNotificationMessage({message: 'Error: Can`t add product.', type: NotificationType.ERROR}));
+            dispatch(setNotificationMessage({ message: 'Error: Can`t add product.', type: NotificationType.ERROR }));
         }
     }
 }
@@ -90,17 +90,17 @@ export const removeProductAction = function (id: string): (dispath: any) => void
         try {
             await productStore.remove(id);
             dispatch(setErrorCode(ErrorType.NO_ERROR));
-            dispatch(setNotificationMessage({message: 'Product has been removed', type: NotificationType.SUCCESS}));
+            dispatch(setNotificationMessage({ message: 'Product has been removed', type: NotificationType.SUCCESS }));
         } catch (err: any) {
             dispatch(setErrorCode(err));
-            dispatch(setNotificationMessage({message: 'Error: Can`t removed product.', type: NotificationType.ERROR}));
+            dispatch(setNotificationMessage({ message: 'Error: Can`t remove product.', type: NotificationType.ERROR }));
         }
     }
 }
 
 export const updateProductAction = function (uploadProductData: UploadProductData): (dispath: any) => void {
     return async dispatch => {
-        const {product, picture} = uploadProductData;
+        const { product, picture } = uploadProductData;
         try {
             if (picture) {
                 const pictureUrl = await productPictureStore.uploadFile(picture);
@@ -108,23 +108,54 @@ export const updateProductAction = function (uploadProductData: UploadProductDat
             }
             await productStore.update(product.id, product);
             dispatch(setErrorCode(ErrorType.NO_ERROR));
-            dispatch(setNotificationMessage({message: 'Product has been updated', type: NotificationType.SUCCESS}));
+            dispatch(setNotificationMessage({ message: 'Product has been updated', type: NotificationType.SUCCESS }));
         } catch (err: any) {
             dispatch(setErrorCode(err))
-            dispatch(setNotificationMessage({message: 'Error: Can`t updated product.', type: NotificationType.ERROR}));
+            dispatch(setNotificationMessage({ message: 'Error: Can`t update product.', type: NotificationType.ERROR }));
         }
     }
 }
 
-export const removeCategoryAction = function (id: string): (dispath: any) => void {
+export const addCategoryAction = function (category: Category): (dispath: any) => void {
     return async dispatch => {
         try {
-            await categoriesStore.remove(id);
+            await categoriesStore.add(category);
             dispatch(setErrorCode(ErrorType.NO_ERROR));
-            dispatch(setNotificationMessage({message: 'Category has been removed', type: NotificationType.SUCCESS}));
+            dispatch(setNotificationMessage({ message: 'Category has been added', type: NotificationType.SUCCESS }));
         } catch (err: any) {
             dispatch(setErrorCode(err))
-            dispatch(setNotificationMessage({message: 'Error: Can`t removed category.', type: NotificationType.ERROR}));
+            dispatch(setNotificationMessage({ message: 'Error: Can`t add category.', type: NotificationType.ERROR }));
+        }
+    }
+}
+
+export const updateCategoryAction = function (category: Category): (dispath: any) => void {
+    return async dispatch => {
+        try {
+            await categoriesStore.update(category.id, category);
+            dispatch(setErrorCode(ErrorType.NO_ERROR));
+            dispatch(setNotificationMessage({ message: 'Category has been updated', type: NotificationType.SUCCESS }));
+        } catch (err: any) {
+            dispatch(setErrorCode(err))
+            dispatch(setNotificationMessage({ message: 'Error: Can`t update category.', type: NotificationType.ERROR }));
+        }
+    }
+}
+
+export const removeCategoryAction = function (id: string, products?: Product[]): (dispath: any) => void {
+    return async dispatch => {
+        try {
+            if (products) {
+                for (let i = 0; i < products.length; i++) {
+                    await productStore.remove(products[i].id);
+                }
+            }
+            await categoriesStore.remove(id);
+            dispatch(setErrorCode(ErrorType.NO_ERROR));
+            dispatch(setNotificationMessage({ message: 'Category has been removed', type: NotificationType.SUCCESS }));
+        } catch (err: any) {
+            dispatch(setErrorCode(err))
+            dispatch(setNotificationMessage({ message: 'Error: Can`t remove category.', type: NotificationType.ERROR }));
         }
     }
 }
@@ -139,15 +170,15 @@ export const addOrderAction = function (orderData: Order): (dispath: any) => voi
         }
     }
 }
-export const updateOrder = function(id:string, order: Order): (dispatch: any) => void {
+export const updateOrder = function (id: string, order: Order): (dispatch: any) => void {
     return async dispatch => {
         try {
             await orderStore.update(id, order);
             dispatch(setErrorCode(ErrorType.NO_ERROR));
-            dispatch(setNotificationMessage({message: 'Order has been updated', type: NotificationType.SUCCESS}));
+            dispatch(setNotificationMessage({ message: 'Order has been updated', type: NotificationType.SUCCESS }));
         } catch (err: any) {
             dispatch(setErrorCode(err))
-            dispatch(setNotificationMessage({message: 'Error: Can`t update order.', type: NotificationType.ERROR}));
+            dispatch(setNotificationMessage({ message: 'Error: Can`t update order.', type: NotificationType.ERROR }));
         }
     }
 }

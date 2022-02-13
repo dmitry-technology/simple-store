@@ -20,7 +20,7 @@ export const localPhoneValidationRegex = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]
 const productService = new DataProviderFire<Product>(config.productsCollection);
 export const productStore = new ProductStore(productService);
 //const categories service
-const categoriesService = new DataProviderFire<Category>(config.categoriesCollection);
+const categoriesService = new DataProviderFire<Category>(config.categoriesCollection, config.minId, config.maxId);
 export const categoriesStore = new CategoriesStore(categoriesService);
 //const order service
 const orderProvider = new DataProviderFire<Order>(config.ordersCollection, config.minId, config.maxId);
