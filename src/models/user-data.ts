@@ -22,7 +22,8 @@ export const userDataSimple: UserData = {
     email: "google@mail.com",
     name: "Jeff Bezos",
     phoneNumber: "88001009090",
-    deliveryAddress: {street: 'Yitzhack I. Rager Blvd', house: '55', flat: '100', floor: '1', comment: ''}
+    deliveryAddress: {street: 'Yitzhack I. Rager Blvd', house: '55', flat: '100', floor: '1', comment: ''},
+    isAdmin: true
 }
 
 export const nonAuthorisedUser: UserData = {id: ''};
