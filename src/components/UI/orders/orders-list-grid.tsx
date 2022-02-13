@@ -16,7 +16,7 @@ import ListItemText from '@mui/material/ListItemText';
 import CommentIcon from '@mui/icons-material/Comment';
 import { Subscription } from 'rxjs';
 import { clientStore, orderStore } from '../../../config/servicesConfig';
-import { setClients, setOrders } from '../../../redux/actions';
+import { setClients, setOrders, updateOrder } from '../../../redux/actions';
 import { DeliveryAddress, UserData } from '../../../models/user-data';
 import storeConfig from "../../../config/store-config.json"
 import _ from 'lodash';
@@ -52,7 +52,7 @@ const OrdersListGrid: FC = () => {
 
     //**form edit order */
     const [formVisible, setformVisible] = useState(false);
-    const [idUpdateOrder, setIdUpdateOrder] = useState('');
+    const [orderUpdate, setOrderUpdate] = useState(orderSimple);
 
     //*************************Redux***************************//
     const dispatch = useDispatch();
@@ -189,7 +189,7 @@ const OrdersListGrid: FC = () => {
 
     useEffect(() => {
         setColumns(getFilteredColumns(getOrdersListFields().get(mode) as OrderListFields[]));
-    }, [mode]);
+    }, [mode, orders]);
 
     function getFilteredColumns(fields: OrderListFields[]): any[] {
         return getColums().filter(column => fields.includes(column.field as any));
@@ -237,25 +237,28 @@ const OrdersListGrid: FC = () => {
                 field: "price", headerName: "Price", flex: 20, align: 'center', headerAlign: 'center', editable: "true"
             },
             {
-                field: "actions", type: 'actions', flex: 30, align: 'center', headerAlign: 'center',
+                field: "actions", type: 'actions', flex: 40, align: 'center', headerAlign: 'center',
                 getActions: (params: GridRowParams) => {
-                    return [
+                    const adminAction = [
+                        <GridActionsCellItem
+                            icon={<EditIcon />}
+                            label="Edit Order"
+                            onClick={() => editOrder(params.id)}
+                        />
+                    ];
+                    const userAction = [
                         <GridActionsCellItem
                             icon={<VisibilityIcon />}
                             label="Show Details"
                             onClick={() => showOrder(params.id)}
                         />,
-                        // <GridActionsCellItem
-                        //   icon={<EditIcon />}
-                        //   label="Edit Order"
-                        //   onClick={() => editOrder(params.id)}
-                        // />,
                         <GridActionsCellItem
                             icon={<Delete />}
                             label="Delete"
                             onClick={() => rmOrder(params.id)}
                         />
-                    ]
+                    ];
+                    return userData.isAdmin ? userAction.concat(adminAction) : userAction;
                 }
             }
         ];
@@ -267,7 +270,7 @@ const OrdersListGrid: FC = () => {
 
     function getRows(orders: Order[]): GridRowsProp {
 
-        return orders.filter(order => order.client.isAdmin == userData.isAdmin || order.client.id == userData.id)
+        return orders.filter(order => userData.isAdmin || order.client.id == userData.id)
             .map(order => {
                 return {
                     ...order,
@@ -276,7 +279,7 @@ const OrdersListGrid: FC = () => {
                     address: !!order.client.deliveryAddress ? getClientAddressInfo(order.client.deliveryAddress) : '',
                     products: getInfoProduct(order.products),
                     price: getOrderPrice(order.products)
-                    
+
                 }
             });
     };
@@ -330,21 +333,20 @@ const OrdersListGrid: FC = () => {
 
     function handleUpdate(order: Order, id: string, status: boolean): void {
         if (status) {
-            try {
-                dispatch(orderStore.update(id, order));
-            } catch (err) {
-
-            }
+            dispatch(updateOrder(id, order));
         }
         setdialogVisible(false);
     }
 
     function editOrder(id: GridRowId) {
-        setIdUpdateOrder(id.toString());
+        const order = getOrder(id.toString());
         setformVisible(true);
-
-        console.log("edit order " + id);
-        //TODO
+        if(!!order) {
+            setOrderUpdate(order);
+            setformVisible(true);
+        } else {
+            console.log("not found " + id)
+        }
     }
 
 
@@ -354,22 +356,22 @@ const OrdersListGrid: FC = () => {
     //*****************************Utils **********************************/
 
     function getClientAddressInfo(deliveryAddress: DeliveryAddress): string {
-        let res = `st. ${deliveryAddress.street}
-        ${deliveryAddress.house ? ` ${deliveryAddress.house}` : ``}  
-        ${deliveryAddress.flat? ` flat ${deliveryAddress.floor}` : ``}
-        ${deliveryAddress.floor? ` floor ${deliveryAddress.floor}` : ``}`;
+        let res = `st ${deliveryAddress.street}
+        ${deliveryAddress.house ? ` ${deliveryAddress.house}.` : ``}  
+        ${deliveryAddress.flat ? ` flat ${deliveryAddress.floor}.` : ``}
+        ${deliveryAddress.floor ? ` floor ${deliveryAddress.floor}.` : ``}`;
         return res;
     }
 
-    function getOrderPrice(products: ProductBatch[]){
+    function getOrderPrice(products: ProductBatch[]) {
         return products.map(productBatch => {
             let priceOption = 0;
             productBatch.productConfigured.optionsConfigured.forEach(option => {
                 priceOption += option.optionData.extraPay;
             })
-            return (productBatch.productConfigured.base.basePrice + priceOption)*productBatch.count;
+            return (productBatch.productConfigured.base.basePrice + priceOption) * productBatch.count;
         })
-        .reduce((prev, current) => prev + current);
+            .reduce((prev, current) => prev + current);
     }
 
     function getProduct(id: string): Product | undefined {
@@ -389,8 +391,8 @@ const OrdersListGrid: FC = () => {
             `Order ID  : ${order.id}`,
             `Clietn : ${order.client.name}`,
             `Phone : ${order.client.phoneNumber}`,
-            `Address : ${!!order.client.deliveryAddress ? getClientAddressInfo(order.client.deliveryAddress) : ''}`,
-            `Product: ${getInfoProduct(order.products)}`,
+            `${!!order.client.deliveryAddress ? `Address : ${getClientAddressInfo(order.client.deliveryAddress)}` : ''}`,
+            `${getInfoProduct(order.products)}`,
             `Status: ${order.status}`,
             `Total price: ${getOrderPrice(order.products)}`,
             `Data create: ${order.date.substring(0, 10)}`
@@ -398,25 +400,12 @@ const OrdersListGrid: FC = () => {
         return res;
     }
 
-    function getInfoClient(id: string) {
-        const client = getClient(id);
-        const name = !!client?.name ? `client: ${client?.name}. ` : ``;
-        const phone = !!client?.phoneNumber ? `phone: ${client?.phoneNumber}. ` : ``;
-        const street = !!client?.deliveryAddress?.street ? `street: ${client?.deliveryAddress?.street}. ` : ``;
-        const house = !!client?.deliveryAddress?.house ? `house: ${client?.deliveryAddress?.house}. ` : ``;
-        const flat = !!client?.deliveryAddress?.flat ? `flat: ${client?.deliveryAddress?.flat}. ` : ``;
-        const floor = !!client?.deliveryAddress?.floor ? `floor: ${client?.deliveryAddress?.floor}. ` : ``;
-        const comment = !!client?.deliveryAddress?.comment ? `comment: ${client?.deliveryAddress?.comment}. ` : ``;
-
-        return (name + phone + street + house + flat + floor + comment);
-    }
-
     function getInfoProduct(products: ProductBatch[]) {
         let res = '';
         products.forEach(productOrder => {
             const { productConfigured, count } = productOrder;
             const option = getInfoOptions(productConfigured.optionsConfigured);
-            res += `product: ${productConfigured.base.title} options: ${option} count: ${count}. `
+            res += `product: ${productConfigured.base.title} ${!!option ? `options: ${option} ` : ``}count: ${count}. `
         })
         return res;
 
@@ -439,7 +428,7 @@ const OrdersListGrid: FC = () => {
             </Paper>
             <DialogConfirm visible={dialogVisible} title={confirmationData.current.title} message={confirmationData.current.message} onClose={confirmationData.current.handle} />
             <ModalInfo title={"Detailed information about the order"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
-            {!!formVisible && <FormAddOrder id={idUpdateOrder} callBack={() => setformVisible(false)} />}
+            <FormAddOrder callBack={() => setformVisible(false)} visible={formVisible} orders={orderUpdate} />
         </Box>
 
     )

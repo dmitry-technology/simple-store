@@ -120,3 +120,16 @@ export const addOrderAction = function (orderData: Order): (dispath: any) => voi
         }
     }
 }
+export const updateOrder = function(id:string, order: Order): (dispatch: any) => void {
+    return async dispatch => {
+        try {
+            await orderStore.update(id, order);
+            dispatch(setErrorCode(ErrorType.NO_ERROR));
+            dispatch(setNotificationMessage({message: 'Order has been updated', type: NotificationType.SUCCESS}));
+        } catch (err: any) {
+            dispatch(setErrorCode(err))
+            dispatch(setNotificationMessage({message: 'Error: Can`t update order.', type: NotificationType.ERROR}));
+        }
+    }
+}
+
