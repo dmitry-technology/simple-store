@@ -20,3 +20,16 @@ export type ProductBatch = {
     productConfigured: ProductConfigured,
     count: number
 }
+
+export type UploadProductData = {
+    product: Product,
+    picture?: File
+}
+
+export const emptyProduct: Product ={
+    id: 'empty',
+    title: 'empty title',
+    category: '',
+    basePrice: 0,
+    active: false    
+}

@@ -1,14 +1,14 @@
 import { Box, Button, FormControl, FormGroup, InputLabel, Select, TextField, SxProps, Theme, MenuItem, RadioGroup, FormControlLabel, Radio, FormLabel, Typography, TextareaAutosize, IconButton, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
 import { CSSProperties, FC, Fragment, useEffect, useRef, useState } from 'react';
+import { Product, UploadProductData } from '../../models/product';
 import { Category } from '../../models/category-type';
 import { EditOptionData, ProductOption } from '../../models/product-options';
 import { Delete } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import FormOptionProduct from './form-option-product';
-import { Product } from '../../models/product';
 
 type FormAddProductProps = {
-    uploadProductData: (product: Product, picture: File) => void;
+    uploadProduct: (uploadProductData: UploadProductData) => void;
     categories: Category[];
     defaultPicture: string;
     existId: (id: string) => Promise<boolean>;
@@ -17,7 +17,7 @@ type FormAddProductProps = {
 
 const FormAddProduct: FC<FormAddProductProps> = (props) => {
 
-    const { uploadProductData, categories, defaultPicture, existId, product } = props;
+    const { uploadProduct, categories, defaultPicture, existId, product } = props;
 
     const [id, setId] = useState<string>('');
     const [idEditable, setIdEditable] = useState<boolean>(true);
@@ -42,8 +42,9 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
 
     useEffect(() => {
         if (product) {
+            const newProduct = JSON.parse(JSON.stringify(product));
             setButtonSubmitName('Edit');
-            const {id, title, category, basePrice, active, picture, description, options} = product;
+            const {id, title, category, basePrice, active, picture, description, options} = newProduct;
             setId(id);
             setIdEditable(false);
             setTitle(title);
@@ -127,8 +128,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
             }
         }
         const newProduct: Product = { id: id.toString(), title, category, description, basePrice, active, options };
-        await uploadProductData(newProduct, picture as File);
-        onReset();
+        await uploadProduct({product: newProduct, picture: picture as File});
     }
 
     function onReset() {
@@ -172,7 +172,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     const boxButtonStyle: SxProps<Theme> = {
         display: 'flex',
         justifyContent: 'space-between',
-        marginTop: '20px'
+        margin: '20px 0'
     }
 
     const buttonStyle: SxProps<Theme> = {

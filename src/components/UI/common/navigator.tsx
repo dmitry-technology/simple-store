@@ -25,13 +25,14 @@ const Navigator: FC<NavigatorProps> = (props) => {
         <Fragment>
             {isMenuItem && <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
                 <Toolbar
+                    disableGutters
                     sx={{
                         display: 'flex',
                         justifyContent: 'space-between',
                         width: { xs: '100vw', md: '95vw' }
                     }}
                 >
-                    <Toolbar>
+                    <Toolbar disableGutters>
                         <Typography
                             variant="h6"
                             noWrap
