@@ -1,31 +1,31 @@
+import { emptyProduct, ProductBatch } from "./product";
 import { ProductOptionConfigured } from "./product-options";
+import { UserData, userDataSimple } from "./user-data";
 
-export enum OrderStatus { WAITING="waiting", WORKING="working", COMPLETE="complete" };
+export enum OrderStatus { WAITING = "waiting", WORKING = "working", COMPLETE = "complete" };
 
 export type Order = {
     id?: string;
-    client: string;
-    address: string;
-    phone: string;
-    products: OrderProduct[];
+    client: UserData;
+    products: ProductBatch[];
     status: OrderStatus;
     date: string;
-    price: number;
-}
-
-export type OrderProduct = {
-    productName: string, 
-    options: ProductOptionConfigured[], 
-    count:number
 }
 
 
-export const orderSimple : Order = {
-    client: "Jof Bezz",
-    address: "street: wolter, house: 1, flat: 1, floor: 1",
-    phone: "8-800-800-80-80",
-    products: [{productName:"Margarita", options: [{optionData: {name: "40", extraPay: 10}, optionTitle:"Size"}], count: 5}],
+
+export const orderSimple: Order = {
+    client: userDataSimple,
+    products: [
+        {
+            productConfigured: {
+                base: emptyProduct,
+                optionsConfigured: [{ optionData: { name: "40", extraPay: 10 }, optionTitle: "Size" }]
+            },
+            count: 5
+
+        }
+    ],
     status: OrderStatus.WAITING,
-    date: new Date().toISOString(),
-    price: 500
+    date: new Date().toISOString()
 }

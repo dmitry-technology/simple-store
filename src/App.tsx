@@ -96,19 +96,7 @@ function App() {
     })
   }
 
-  //subscriber orders
-  useEffect(() => {
-    const subscription = subscribeToOrders();
-    return () => subscription.unsubscribe();
-  }, [])
 
-  function subscribeToOrders(): Subscription {
-    return orderStore.getAll().subscribe({
-      next(orders: Order[]) {
-        dispatch(setOrders(orders));
-      }
-    })
-  }
 
   // orderStore.add(orderSimple);
 
