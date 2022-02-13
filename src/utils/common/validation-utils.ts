@@ -14,5 +14,5 @@ export function isPhoneNumberValid(tel: string | undefined): boolean {
 }
 
 export function isCustomerCanOrder(client: UserData): boolean {
-    return (!client.name && !client.email && !client.phoneNumber && !client.deliveryAddress?.street && !client.deliveryAddress?.house);
+    return (!!client.name && !!client.email && !!client.phoneNumber && !!client.deliveryAddress?.street && !!client.deliveryAddress?.house);
 }

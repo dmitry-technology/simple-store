@@ -4,7 +4,7 @@ import ErrorType from "../models/error-types";
 import { Product, UploadProductData } from "../models/product";
 import { Category } from "../models/category-type";
 import { Order } from "../models/order-type";
-import { clientStore, productPictureStore, productStore } from "../config/servicesConfig";
+import { clientStore, orderStore, productPictureStore, productStore } from "../config/servicesConfig";
 import { NotificationType, UserNotificationMessage } from "../models/user-notification";
 
 export const SET_USER_DATA = "set_user_data";
@@ -105,3 +105,13 @@ export const updateProductAction = function (uploadProductData: UploadProductDat
     }
 }
 
+export const addOrderAction = function (orderData: Order): (dispath: any) => void {
+    return async dispath => {
+        try {
+            await orderStore.add(orderData);
+            dispath(setErrorCode(ErrorType.NO_ERROR));
+        } catch (err: any) {
+            dispath(setErrorCode(err))
+        }
+    }
+}
