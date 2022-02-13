@@ -269,7 +269,15 @@ const OrdersListGrid: FC = () => {
 
         return orders.filter(order => order.client.isAdmin == userData.isAdmin || order.client.id == userData.id)
             .map(order => {
-                return { ...order, products: getInfoProduct(order.products) }
+                return {
+                    ...order,
+                    client: order.client.name,
+                    phone: order.client.phoneNumber,
+                    address: !!order.client.deliveryAddress ? getClientAddressInfo(order.client.deliveryAddress) : '',
+                    products: getInfoProduct(order.products),
+                    price: getOrderPrice(order.products)
+                    
+                }
             });
     };
 
@@ -346,8 +354,22 @@ const OrdersListGrid: FC = () => {
     //*****************************Utils **********************************/
 
     function getClientAddressInfo(deliveryAddress: DeliveryAddress): string {
-        let res = `${deliveryAddress.street} ${deliveryAddress.house}`;
+        let res = `st. ${deliveryAddress.street}
+        ${deliveryAddress.house ? ` ${deliveryAddress.house}` : ``}  
+        ${deliveryAddress.flat? ` flat ${deliveryAddress.floor}` : ``}
+        ${deliveryAddress.floor? ` floor ${deliveryAddress.floor}` : ``}`;
         return res;
+    }
+
+    function getOrderPrice(products: ProductBatch[]){
+        return products.map(productBatch => {
+            let priceOption = 0;
+            productBatch.productConfigured.optionsConfigured.forEach(option => {
+                priceOption += option.optionData.extraPay;
+            })
+            return (productBatch.productConfigured.base.basePrice + priceOption)*productBatch.count;
+        })
+        .reduce((prev, current) => prev + current);
     }
 
     function getProduct(id: string): Product | undefined {
@@ -365,12 +387,12 @@ const OrdersListGrid: FC = () => {
     function getInfoOrder(order: Order): string[] {
         const res: string[] = [
             `Order ID  : ${order.id}`,
-            `Clietn : ${order.client}`,
-            `Address : ${order.client.deliveryAddress?.street}`,
+            `Clietn : ${order.client.name}`,
             `Phone : ${order.client.phoneNumber}`,
-            `Product: ${getInfoProduct!(order!.products as ProductBatch[])}`,   //TODO
+            `Address : ${!!order.client.deliveryAddress ? getClientAddressInfo(order.client.deliveryAddress) : ''}`,
+            `Product: ${getInfoProduct(order.products)}`,
             `Status: ${order.status}`,
-            `Total price: ${`ds`}`, //TODO
+            `Total price: ${getOrderPrice(order.products)}`,
             `Data create: ${order.date.substring(0, 10)}`
         ];
         return res;
