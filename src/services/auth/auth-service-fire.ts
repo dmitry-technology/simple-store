@@ -28,9 +28,12 @@ export default class AuthServiceFire implements AuthService {
 
     private auth = getAuth(fireApp);
     private collectionAuth: CollectionReference;
+    private collectionAdmins: CollectionReference;
 
-    constructor(private adminEmail: string, private usersCollection: string) {
-        this.collectionAuth = collection(getFirestore(fireApp), this.usersCollection);
+    constructor(private usersCollection: string, private adminsCollection: string) {
+        const firestore = getFirestore(fireApp);
+        this.collectionAuth = collection(firestore, this.usersCollection);
+        this.collectionAdmins = collection(firestore, this.adminsCollection);
     }
 
     async verifyEmailLoginLink(link: string): Promise<EmailVerify> {
@@ -61,6 +64,7 @@ export default class AuthServiceFire implements AuthService {
     private async getUser(userFire: User) {
         // Get information about the User from Firesitore
         const clientData = (await getDoc(doc(this.collectionAuth, userFire?.uid ))).data() as UserData | undefined;
+        const isAdmin = (await getDoc(doc(this.collectionAdmins, userFire?.uid ))).data();
         
         const baseData: UserData = {
             id: userFire.uid,
@@ -69,8 +73,8 @@ export default class AuthServiceFire implements AuthService {
             phoneNumber: userFire.phoneNumber ? userFire.phoneNumber : '',
             photoURL: userFire.photoURL ? userFire.photoURL : '',
             deliveryAddress: emptyAddress,
-            isAdmin: userFire.email === this.adminEmail,
-            isFirstLogin: !clientData
+            isAdmin: !!isAdmin,
+            isFirstLogin: !!!clientData
         };
 
         // Create UserData with new information
