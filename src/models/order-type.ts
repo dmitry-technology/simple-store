@@ -14,7 +14,7 @@ export type Order = {
 }
 
 export type OrderProduct = {
-    productName:string, 
+    productName: string, 
     options: ProductOptionConfigured[], 
     count:number
 }

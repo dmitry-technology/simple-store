@@ -3,6 +3,7 @@ import { Order } from "../models/order-type";
 import { Product } from "../models/product";
 import { UserData } from "../models/user-data";
 import AuthServiceFire from "../services/auth/auth-service-fire";
+import ShoppingCartService from "../services/cart/cart-service";
 import CategoriesStore from "../services/categories/categories-store";
 import ClientStore from "../services/clients/client-store";
 import DataProviderFire from "../services/common/data-provider-fire";
@@ -10,7 +11,7 @@ import StorageProcessor from "../services/common/storage-processor";
 import StorageProviderFire from "../services/common/storage-provider-fire";
 import OrderStore from "../services/order/order-store";
 import ProductStore from "../services/products/product-store";
-import config from "./store-config.json"
+import config from "./store-config.json";
 
 export const authService = new AuthServiceFire(config.adminEmail, config.clientsCollection);
 export const localPhoneValidationRegex = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;
@@ -30,3 +31,5 @@ export const clientStore = new ClientStore(clientProvider);
 
 const productPictureProvider = new StorageProviderFire(config.productPictureFolder);
 export const productPictureStore = new StorageProcessor(productPictureProvider);
+
+export const shoppingCartService = new ShoppingCartService('my-cart');
