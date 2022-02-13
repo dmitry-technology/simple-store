@@ -17,7 +17,13 @@ import { ProductOption } from '../../models/product-options';
 import ModalInfoProduct from './modal-info-product';
 import ModalFormProduct from './modal-form-product';
 
-const ProductListGrid: FC = () => {
+type ProductListGridProps = {
+    products: Product[];
+}
+
+const ProductListGrid: FC<ProductListGridProps> = (props) => {
+
+    const {products} = props;
 
     //**************** dialog confirmation ********************//
     const confirmationData = useRef<ConfirmationData>(emptyConfirmationData);
@@ -29,12 +35,6 @@ const ProductListGrid: FC = () => {
 
     //************************* redux *************************//
     const dispatch = useDispatch();
-    const products: Product[] = useSelector(productsSelector);
-    const categories: Category[] = useSelector(categoriesSelector);
-
-    //****************** selector categories ******************//
-    const [curCategory, setCurCategory] = useState<string>(categories[0].id.toString());
-
 
     //****************** dialog form update product ******************//
     const [modalFormVisible, setModaFormlVisible] = useState(false);
@@ -149,10 +149,10 @@ const ProductListGrid: FC = () => {
     }
 
     //rows data gread
-    const rows = useMemo(() => getRows(products), [products, curCategory, dialogVisible]);
+    const rows = useMemo(() => getRows(products), [products, dialogVisible]);
+
     function getRows(products: Product[]): GridRowsProp {
-        const filteredProducts = products.filter(p => p.category === curCategory);
-        return filteredProducts.map(product => {
+        return products.map(product => {
             return {
                 ...product,
                 options: getInfoOptions(product!.options as ProductOption[])
@@ -245,19 +245,6 @@ const ProductListGrid: FC = () => {
 
     return (
         <Fragment>
-            <FormControl margin='dense' sx={{ width: { xs: '100vw', sm: '95vw' } }}>
-                <InputLabel>Category</InputLabel>
-                <Select
-                    value={curCategory}
-                    label="Category"
-                    onChange={e => setCurCategory(e.target.value)}
-                    required
-                >
-                    {categories.map(cat => (
-                        <MenuItem value={cat.id} key={cat.id}>{cat.name}</MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
             <Paper
                 sx={{
                     width: { xs: '100vw', sm: '95vw' },
