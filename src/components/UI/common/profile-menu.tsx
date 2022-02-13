@@ -29,8 +29,8 @@ const ProfileMenu: FC<{items: RouteType[], userData: UserData}> = (props) => {
                         aria-controls={open ? 'account-menu' : undefined}
                         aria-haspopup="true"
                         aria-expanded={open ? 'true' : undefined} >
-                        <Avatar sx={{ width: 48, height: 48 }}>
-                            { props.userData.photoURL !== '' ? <img src={props.userData.photoURL} alt={firstLettter} width='48' height='48' /> : firstLettter }
+                        <Avatar sx={{ width: 36, height: 36, border: '2px solid white', }}>
+                            { props.userData.photoURL !== '' ? <img src={props.userData.photoURL} alt={firstLettter} width='36' height='36' /> : firstLettter }
                         </Avatar>
                     </IconButton>
                 </Tooltip>

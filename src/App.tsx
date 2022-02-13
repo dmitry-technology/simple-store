@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, LinearProgress } from '@mui/material';
+import { Alert, AlertTitle, Box, LinearProgress } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
@@ -126,10 +126,12 @@ function App() {
         : <React.Fragment>
           <Navigator logo={'BEST PIZZA B7'} menuItems={menuItems} authItems={authItems} />
             { notificationMessage !== emptyMessage && <MessageView data={notificationMessage}/> }
-          <Routes>
-            {getRoutes(relevantRoutes)}
-            <Route path={'*'} element={<Navigate to={PATH_REDIRECT} />}></Route>
-          </Routes>
+          <Box sx={{alignSelf: 'bottom', width: '100vw', overflow: 'auto'}}>
+            <Routes>
+              {getRoutes(relevantRoutes)}
+              <Route path={'*'} element={<Navigate to={PATH_REDIRECT} />}></Route>
+            </Routes>
+          </Box>
         </React.Fragment>
       }
     </BrowserRouter>

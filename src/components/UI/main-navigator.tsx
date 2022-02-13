@@ -1,13 +1,12 @@
-import { AppBar, Avatar, Box, Container, IconButton, Menu, MenuItem, Toolbar, Tooltip, Typography } from "@mui/material";
+import { AppBar, Box, Container, IconButton, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
 import Button from '@mui/material/Button';
 import { RouteType } from "../../models/route-type";
-import NavigatorTabs from "./common/navigator-tabs";
-import { FC, Fragment, useEffect, useMemo, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { FC, Fragment, useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
+import { HashLink as Link } from 'react-router-hash-link';
 import ProfileMenu from "./common/profile-menu";
 import { PATH_LOGIN } from "../../config/routing";
 import LoginIcon from '@mui/icons-material/Login';
-import pages from "../pages";
 import MenuIcon from '@mui/icons-material/Menu';
 import React from "react";
 import { useSelector } from "react-redux";
@@ -21,11 +20,11 @@ type NavigatorProps = {
     authItems: RouteType[];
 }
 
-const MainNavigator: FC<NavigatorProps> = (props) => {
+function generateMenu(categories: Category[]): RouteType[] {
+    return categories.map(item => ({path: `/#cat_${item.id}`, label: item.name}));
+}
 
-    function generateMenu(categories: Category[]): RouteType[] {
-        return categories.map(item => ({path: `#cat_${item.id}`, label: item.name}));
-    }
+const MainNavigator: FC<NavigatorProps> = (props) => {
 
     const { logo, menuItems, authItems } = props;
     const userData: UserData = useSelector(userDataSelector);
@@ -33,7 +32,7 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
     const items = userData.isAdmin ? menuItems : generateMenu(categories);
 
     const path = useLocation().pathname;
-    const isMenuItem = useMemo(() => menuItems.find(item => item.path === path), [path]);
+    const isMenuItem = useMemo(() => menuItems.find(item => item.path === path), [menuItems, path]);
 
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
@@ -45,16 +44,18 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
 
     return (
         <Fragment>
-            { isMenuItem && <Fragment><AppBar style={{ background: '#ff6f04' }}>
+            { isMenuItem && <Fragment>
+                <AppBar style={{ background: '#ff6f04' }}>
                     <Container maxWidth="xl" >
                         <Toolbar disableGutters>
                             <Typography
                                 variant="h6"
                                 noWrap
-                                component="div"
+                                component="a"
+                                href="/"
                                 sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
                             >
-                                {logo}
+                                <img src="logo_main.png" height="40px" alt="Logo"></img>
                             </Typography>
 
                             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -87,7 +88,7 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
                                     }}
                                 >
                                     {items.map((page) => (
-                                        <MenuItem key={page.path} onClick={handleCloseNavMenu} component={Link} to={page.path} >
+                                        <MenuItem key={page.path} onClick={handleCloseNavMenu} component={Link} to={page.path}>
                                             <Typography textAlign="center">{page.label}</Typography>
                                         </MenuItem>
                                     ))}
@@ -99,7 +100,7 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
                                 component="div"
                                 sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
                             >
-                                {logo}
+                                <img src="logo_main.png" height="35px" alt="Logo"></img>
                             </Typography>
                             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                                 {items.map((page) => (
@@ -115,7 +116,9 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
                             </Box>
 
                             <Box sx={{ flexGrow: 0 }}>
-                            { authItems[0].path === PATH_LOGIN ? <Button variant='contained' startIcon={<LoginIcon/ >} component={Link} to={authItems[0].path}>{authItems[0].label}</Button> : <ProfileMenu items={menuItems} userData={userData} /> }
+                            { authItems[0].path === PATH_LOGIN 
+                                ? <Button style={{ background: '#fff', color: '#ff6f04' }} variant='contained' startIcon={<LoginIcon/ >} component={Link} to={authItems[0].path}>{authItems[0].label}</Button> 
+                                : <ProfileMenu items={menuItems} userData={userData} /> }
                             </Box>
                         </Toolbar>
                     </Container>

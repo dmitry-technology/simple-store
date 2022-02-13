@@ -37,7 +37,6 @@ export const menuRoutes: RouteType[] = [
     { path: PATH_SHOPPING_CART, element: <ShoppingCart />, icon: <ShoppingCartIcon />, label: 'Cart', isGuest: true, isUser: true },
     { path: PATH_ADMIN_ORDERS_LIST, element: <OrdersList />, label: 'Orders List', isAdmin: true },
     { path: PATH_ADMIN_CATALOG, element: <Catalog />, label: 'Catalog', isAdmin: true }
-
 ];
 
 export const systemRoutes: RouteType[] = [
