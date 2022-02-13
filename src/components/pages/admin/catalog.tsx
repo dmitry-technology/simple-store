@@ -1,40 +1,36 @@
-import { Box } from '@mui/material';
-import { FC } from 'react';
-import { useSelector } from 'react-redux';
-import { Category } from '../../../models/category-type';
-import { Product } from '../../../models/product';
-import { categoriesSelector } from '../../../redux/store';
-import FormAddProduct from '../../UI/form-add-product';
-import config from "../../../config/store-config.json"
-import { productPictureStore, productStore } from '../../../config/servicesConfig';
+import { Box, Button, Paper } from "@mui/material";
+import { FC, useState } from "react";
+import { useDispatch } from 'react-redux';
+import { UploadProductData } from '../../../models/product';
+import { addProductAction } from "../../../redux/actions";
+import ModalFormProduct from "../../UI/modal-form-product";
+import ProductListGrid from "../../UI/product-list-grid";
 
 const Catalog: FC = () => {
-    const categories: Category[] = useSelector(categoriesSelector);
 
-    async function uploadProductData(product: Product, picture: File) {
-        if (picture) {
-            const pictureUrl = await productPictureStore.uploadFile(picture);
-            product.picture = pictureUrl;
-        }
-        productStore.add(product);
-    }
+    const [modalFormVisible, setModaFormlVisible] = useState(false);
 
-    async function existId(id: string): Promise<boolean> {
-        return await productStore.exists(id);
+    const dispatch = useDispatch();
+
+    async function addProductFn(uploadProductData: UploadProductData) {
+        await dispatch(addProductAction(uploadProductData));
     }
 
     return (
-        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Box sx={{ width: '50vw' }}>
-                <FormAddProduct
-                    categories={categories}
-                    uploadProductData={uploadProductData}
-                    defaultPicture={config.defaultPictureProductUrl}
-                    existId={existId}
-                />
-            </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '1 0 auto' }}>
+            <Paper sx={{ margin: '10px 0' }}>
+                <Button variant="outlined" onClick={() => setModaFormlVisible(true)}>
+                    Create new product
+                </Button>
+            </Paper>
+            <ProductListGrid />
+            <ModalFormProduct
+                visible={modalFormVisible}
+                uploadProductFn={addProductFn}
+                onClose={() => setModaFormlVisible(false)}
+            />
         </Box>
-    );
+    )
 }
 
 export default Catalog;

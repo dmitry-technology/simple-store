@@ -1,10 +1,10 @@
 import { UserData } from "../models/user-data";
 import { PayloadAction } from "@reduxjs/toolkit";
 import ErrorType from "../models/error-types";
-import { Product } from "../models/product";
+import { Product, UploadProductData } from "../models/product";
 import { Category } from "../models/category-type";
 import { Order } from "../models/order-type";
-import { clientStore } from "../config/servicesConfig";
+import { clientStore, productPictureStore, productStore } from "../config/servicesConfig";
 import { NotificationType, UserNotificationMessage } from "../models/user-notification";
 
 export const SET_USER_DATA = "set_user_data";
@@ -51,13 +51,56 @@ export const updateProfile = function(userdata: UserData): (dispatch: any) => vo
             // Deleting fields that do not need to be saved in the database
             delete userdata.isAdmin;
             delete userdata.isFirstLogin;
-            
+
             await clientStore.update(userdata.id, userdata);
             dispatch(setErrorCode(ErrorType.NO_ERROR));
             dispatch(setNotificationMessage({message: 'Profile has been updated', type: NotificationType.SUCCESS}));
         } catch (err: any) {
             dispatch(setErrorCode(err))
             dispatch(setNotificationMessage({message: 'Error: Can`t update profile.', type: NotificationType.ERROR}));
+        }
+    }
+}
+
+export const addProductAction = function (uploadProductData: UploadProductData): (dispath: any) => void {
+    return async dispath => {
+        try {
+            const {product, picture} = uploadProductData;
+            if (picture) {
+                const pictureUrl = await productPictureStore.uploadFile(picture);
+                product.picture = pictureUrl;
+            }
+            await productStore.add(product);
+            dispath(setErrorCode(ErrorType.NO_ERROR));
+        } catch (err: any) {
+            dispath(setErrorCode(err))
+        }
+    }
+}
+
+export const removeProductAction = function (id: string): (dispath: any) => void {
+    return async dispath => {
+        try {
+            await productStore.remove(id);
+            dispath(setErrorCode(ErrorType.NO_ERROR));
+        } catch (err: any) {
+            dispath(setErrorCode(err))
+        }
+    }
+}
+
+export const updateProductAction = function (uploadProductData: UploadProductData): (dispath: any) => void {
+    return async dispath => {
+        const {product, picture} = uploadProductData;
+        try {
+            if (picture) {
+                const pictureUrl = await productPictureStore.uploadFile(picture);
+                product.picture = pictureUrl;
+            }
+            await productStore.update(product.id, product);
+            dispath(setErrorCode(ErrorType.NO_ERROR));
+        } catch (err: any) {
+            dispath(setErrorCode(err))
         }
     }
 }

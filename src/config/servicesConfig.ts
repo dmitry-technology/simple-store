@@ -11,7 +11,7 @@ import StorageProcessor from "../services/common/storage-processor";
 import StorageProviderFire from "../services/common/storage-provider-fire";
 import OrderStore from "../services/order/order-store";
 import ProductStore from "../services/products/product-store";
-import config from "./store-config.json"
+import config from "./store-config.json";
 
 export const authService = new AuthServiceFire(config.adminEmail, config.clientsCollection);
 export const localPhoneValidationRegex = /^\+?([0-9]{2})\)?[-. ]?([0-9]{4})[-. ]?([0-9]{4})$/;

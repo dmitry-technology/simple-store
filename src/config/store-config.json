@@ -9,6 +9,6 @@
     "currencySign": "₪",
     "productsCollection": "products",
     "categoriesCollection": "categories",
-    "ordersCollection": "orders",
+    "ordersCollection": "orders", 
     "clientsCollection": "clients"
 }
