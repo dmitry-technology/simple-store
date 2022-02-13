@@ -121,8 +121,7 @@ const ProductListGrid: FC = () => {
                 align: 'center',
                 headerAlign: 'center',
                 editable: true,
-                type: 'singleSelect',
-                valueOptions: [true, false]
+                type: 'boolean'
             },
             {
                 field: "actions", type: 'actions', flex: 80, align: 'center', headerAlign: 'center',
@@ -190,15 +189,15 @@ const ProductListGrid: FC = () => {
 
     //update
     function onCellEdit(params: GridCellEditCommitParams) {
-        const id: string = params.id.toString();
-        const oldProduct = getProduct(id);
-        const oldValue = (oldProduct as any)[params.field];
-        if (oldValue !== params.value) {
-            const newProduct = { ...oldProduct, [params.field]: params.value };
+        let { field, value, id } = params;
+        const oldProduct = getProduct(id.toString());
+        const oldValue = (oldProduct as any)[field];
+        if (oldValue !== value) {
+            const newProduct = { ...oldProduct, [field]: value };
             const uploadProductData: UploadProductData = { product: newProduct as Product };
             confirmationData.current.title = `Update product`;
             confirmationData.current.message = `Do you want update product with ID 
-            ${oldProduct?.id}: old value ${oldValue} new value ${params.value}`;
+            ${oldProduct?.id}: old value ${oldValue} new value ${value}`;
             confirmationData.current.handle = handleUpdate.bind(undefined, uploadProductData);
             setDialogVisible(true);
         }
