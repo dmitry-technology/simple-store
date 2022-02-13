@@ -6,6 +6,9 @@ import storeConfig from '../../config/store-config.json';
 import OptionButtons from './option-buttons';
 import { shoppingCartService } from '../../config/servicesConfig';
 import { ProductBatch } from '../../models/product';
+import { UserData } from '../../models/user-data';
+import { useSelector } from 'react-redux';
+import { userDataSelector } from '../../redux/store';
 
 type ProductCardProps = {
     id: string;
@@ -24,6 +27,7 @@ const ProductCard: FC<ProductCardProps> = props => {
     const [optionsConfigured, setOptionsConfigured] = useState<ProductOptionConfigured[]>([]);
     const [resultPrice, setResultPrice] = useState<number>(basePrice);
     const [count, setCount] = useState<number>(1);
+    const userData: UserData = useSelector(userDataSelector);
 
     useEffect(() => {
        !!options && options.forEach(option => 
@@ -102,8 +106,9 @@ const ProductCard: FC<ProductCardProps> = props => {
                         required
                         sx={{ width: '40%', ml: 2 }}
                         onChange={changeCountHandler}
+                        disabled={userData.isAdmin}
                     />
-                    <IconButton onClick={addToCartHandler}>
+                    <IconButton onClick={addToCartHandler} disabled={userData.isAdmin}>
                         <AddShoppingCartIcon />
                     </IconButton>
                 </Box>
