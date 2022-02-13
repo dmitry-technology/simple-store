@@ -12,7 +12,7 @@ import { RouteType } from './models/route-type';
 import { nonAuthorisedUser, UserData, userDataSimple } from './models/user-data';
 import { setCategories, setErrorCode, setProducts, setUserData, setClients, setOrders } from './redux/actions';
 import { errorCodeSelector, notificationSelector, userDataSelector } from './redux/store';
-import Navigator from './components/UI/common/navigator';
+import Navigator from './components/UI/main-navigator';
 import { Order, orderSimple } from './models/order-type';
 import { emptyMessage, UserNotificationMessage } from './models/user-notification';
 import MessageView from './components/UI/common/message-view';
