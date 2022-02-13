@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, LinearProgress } from '@mui/material';
+import { Alert, AlertTitle, Box, LinearProgress } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
@@ -12,7 +12,7 @@ import { RouteType } from './models/route-type';
 import { nonAuthorisedUser, UserData, userDataSimple } from './models/user-data';
 import { setCategories, setErrorCode, setProducts, setUserData, setClients, setOrders } from './redux/actions';
 import { errorCodeSelector, notificationSelector, userDataSelector } from './redux/store';
-import Navigator from './components/UI/common/navigator';
+import Navigator from './components/UI/main-navigator';
 import { Order, orderSimple } from './models/order-type';
 import { emptyMessage, UserNotificationMessage } from './models/user-notification';
 import MessageView from './components/UI/common/message-view';
@@ -114,10 +114,12 @@ function App() {
         : <React.Fragment>
           <Navigator logo={'BEST PIZZA B7'} menuItems={menuItems} authItems={authItems} />
             { notificationMessage !== emptyMessage && <MessageView data={notificationMessage}/> }
-          <Routes>
-            {getRoutes(relevantRoutes)}
-            <Route path={'*'} element={<Navigate to={PATH_REDIRECT} />}></Route>
-          </Routes>
+          <Box sx={{alignSelf: 'bottom', width: '100vw', overflow: 'auto'}}>
+            <Routes>
+              {getRoutes(relevantRoutes)}
+              <Route path={'*'} element={<Navigate to={PATH_REDIRECT} />}></Route>
+            </Routes>
+          </Box>
         </React.Fragment>
       }
     </BrowserRouter>
