@@ -17,26 +17,14 @@ const style = {
     boxShadow: 24,
     p: 4,
 };
-const formStyle = { m: 2, minWidth: 300 };
+const formStyle = { m: 2, minWidth: '80vh' };
 
-const FormAddOrder: FC<{id: string, callBack: () => void }> = (props) => {
+const FormAddOrder: FC<{ orders: Order, visible: boolean, callBack: () => void }> = (props) => {
 
     //init store
     const dispatch = useDispatch();
-    const orders: Order[] = useSelector(ordersSelector);
-    const clients: UserData[] = useSelector(clientsSelector);
-    const products: Product[] = useSelector(productsSelector);
-
-    //initial order by id
-    const [order, setOrder] = useState(getOrder(props.id));
-
-    //validation form
     const [isValid, setIsValid] = useState("false");
 
-    //find order by id
-    function getOrder(id: string): Order | undefined {
-        return orders[orders.findIndex(order => order.id === id)];
-    }
 
     //handler form
     function onSumbitForm(event: any) {
@@ -52,21 +40,29 @@ const FormAddOrder: FC<{id: string, callBack: () => void }> = (props) => {
     }
 
     return (
-        <Paper>
-            <Box component='form' onSubmit={onSumbitForm}>
+        <Modal
+            open={props.visible}
+            onClose={props.callBack}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+            sx={{ display: 'flex', justifyContent: 'center' }}
+        >
+            <Paper>
+                <Box component='form' onSubmit={onSumbitForm}>
 
-                <Typography id="modal-modal-title" variant="h6" component="h2">
-                    {props.id}
-                </Typography>
+                    <Typography id="modal-modal-title" variant="h6" component="h2">
+                        TODO
+                    </Typography>
 
-                {/* Control buttons */}
-                <FormControl sx={formStyle}>
-                    <Button type="submit" disabled={!isValid}>Submit</Button>
-                    <Button type="reset" onClick={() => resetForm()}>Reset</Button>
-                </FormControl>
-            </Box>
-            <Button onClick={props.callBack}>close</Button>
-        </Paper>
+                    {/* Control buttons */}
+                    <FormControl sx={formStyle}>
+                        <Button type="submit" disabled={!isValid}>Submit</Button>
+                        <Button type="reset" onClick={() => resetForm()}>Reset</Button>
+                    </FormControl>
+                </Box>
+                <Button onClick={props.callBack}>close</Button>
+            </Paper>
+        </Modal>
     )
 };
 

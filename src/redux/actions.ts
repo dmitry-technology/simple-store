@@ -4,7 +4,7 @@ import ErrorType from "../models/error-types";
 import { Product, UploadProductData } from "../models/product";
 import { Category } from "../models/category-type";
 import { Order } from "../models/order-type";
-import { clientStore, productPictureStore, productStore } from "../config/servicesConfig";
+import { clientStore, orderStore, productPictureStore, productStore } from "../config/servicesConfig";
 import { NotificationType, UserNotificationMessage } from "../models/user-notification";
 
 export const SET_USER_DATA = "set_user_data";
@@ -101,6 +101,19 @@ export const updateProductAction = function (uploadProductData: UploadProductDat
             dispath(setErrorCode(ErrorType.NO_ERROR));
         } catch (err: any) {
             dispath(setErrorCode(err))
+        }
+    }
+}
+
+export const updateOrder = function(id:string, order: Order): (dispatch: any) => void {
+    return async dispatch => {
+        try {
+            await orderStore.update(id, order);
+            dispatch(setErrorCode(ErrorType.NO_ERROR));
+            dispatch(setNotificationMessage({message: 'Order has been updated', type: NotificationType.SUCCESS}));
+        } catch (err: any) {
+            dispatch(setErrorCode(err))
+            dispatch(setNotificationMessage({message: 'Error: Can`t update order.', type: NotificationType.ERROR}));
         }
     }
 }
