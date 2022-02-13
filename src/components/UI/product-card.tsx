@@ -1,39 +1,32 @@
 import { Box, Card, CardActions, CardContent, CardMedia, IconButton, TextField, Typography } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
-import { ProductOption, ProductOptionConfigured } from '../../models/product-options';
+import { ProductOptionConfigured } from '../../models/product-options';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import storeConfig from '../../config/store-config.json';
 import OptionButtons from './option-buttons';
 import { shoppingCartService } from '../../config/servicesConfig';
-import { ProductBatch } from '../../models/product';
+import { Product, ProductBatch } from '../../models/product';
 import { UserData } from '../../models/user-data';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { userDataSelector } from '../../redux/store';
+import { setNotificationMessage } from '../../redux/actions';
+import { NotificationType } from '../../models/user-notification';
 
-type ProductCardProps = {
-    id: string;
-    title: string;
-    category: string;
-    picture?: string;
-    description?: string;
-    basePrice: number;
-    options?: ProductOption[];
-    active: boolean;
-}
-
-const ProductCard: FC<ProductCardProps> = props => {
+const ProductCard: FC<Product> = props => {
 
     const { title, basePrice, description, picture, options } = props;
     const [optionsConfigured, setOptionsConfigured] = useState<ProductOptionConfigured[]>([]);
     const [resultPrice, setResultPrice] = useState<number>(basePrice);
     const [count, setCount] = useState<number>(1);
     const userData: UserData = useSelector(userDataSelector);
+    const dispatch = useDispatch();
 
     useEffect(() => {
-       !!options && options.forEach(option => 
+        !!options && options.forEach(option =>
             optionsConfigured.push({
-                optionTitle: option.optionTitle, 
-                optionData: option.optionData[0]}))
+                optionTitle: option.optionTitle,
+                optionData: option.optionData[0]
+            }))
     }, [])
 
     function changeOptionHandler(optionTitle: string, optionValue: string) {
@@ -45,7 +38,7 @@ const ProductCard: FC<ProductCardProps> = props => {
                 extraPay: optionToChange?.optionData
                     .find(od => od.name === optionValue)?.extraPay as number
             }
-        }        
+        }
         const index = optionsConfigured.findIndex(option => option.optionTitle === optionTitle);
         optionsConfigured.splice(index, 1, optionConfigured);
         setOptionsConfigured(optionsConfigured);
@@ -63,12 +56,16 @@ const ProductCard: FC<ProductCardProps> = props => {
     function addToCartHandler() {
         const batch: ProductBatch = {
             productConfigured: {
-                base: {...props},
+                base: { ...props },
                 optionsConfigured: optionsConfigured
             },
             count: count
         }
-        shoppingCartService.add(batch);
+        shoppingCartService.add(batch);        
+        dispatch(setNotificationMessage({
+            message: "Added to shopping cart",
+            type: NotificationType.SUCCESS
+        }));
     }
 
     function changeCountHandler(event: any) {
