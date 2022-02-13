@@ -1,6 +1,6 @@
 import { Box, List, ListItem, Modal, Paper, Typography } from '@mui/material';
 import { FC } from 'react';
-import { Product } from '../../models/product';
+import { Product } from '../../../models/product';
 import ProductCard from './product-card';
 
 const style = {

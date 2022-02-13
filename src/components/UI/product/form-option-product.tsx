@@ -1,6 +1,6 @@
 import { Box, Button, IconButton, TextField } from '@mui/material';
 import { FC, useEffect, useRef, useState } from 'react';
-import { EditOptionData, ProductOption } from '../../models/product-options';
+import { EditOptionData, ProductOption } from '../../../models/product-options';
 import { Delete } from '@mui/icons-material';
 
 type FormOptionProductProps = {

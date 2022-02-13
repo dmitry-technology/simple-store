@@ -3,8 +3,8 @@ import { FC, useState } from "react";
 import { useDispatch } from 'react-redux';
 import { UploadProductData } from '../../../models/product';
 import { addProductAction } from "../../../redux/actions";
-import ModalFormProduct from "../../UI/modal-form-product";
-import ProductListGrid from "../../UI/product-list-grid";
+import ModalFormProduct from "../../UI/product/modal-form-product";
+import ProductListGrid from "../../UI/product/product-list-grid";
 
 const Catalog: FC = () => {
 

@@ -5,7 +5,8 @@ import { Order } from "../models/order-type";
 import { Product } from "../models/product";
 import { nonAuthorisedUser, UserData } from "../models/user-data";
 import { emptyMessage, UserNotificationMessage } from "../models/user-notification";
-import { SET_CATEGORIES, SET_ERROR_CODE, SET_PRODUCTS, SET_USER_DATA, SET_CLIENT_DATA, SET_ORDER_DATA, SET_USER_NOTIFICATION  } from "./actions";
+import { shoppingCartService } from "../config/servicesConfig";
+import { SET_CATEGORIES, SET_ERROR_CODE, SET_PRODUCTS, SET_USER_DATA, SET_CLIENT_DATA, SET_ORDER_DATA, SET_USER_NOTIFICATION, SET_CART_ITEMS_COUNT  } from "./actions";
 
 export const userDataReducer = (userData: UserData = nonAuthorisedUser, action: PayloadAction<UserData>): UserData => {
     return action.type === SET_USER_DATA ? action.payload : userData;
@@ -33,4 +34,8 @@ export const clientsReducer = (clients: UserData[] = [], action: PayloadAction<U
 
 export const notificationReducer = (message: UserNotificationMessage = emptyMessage, action: PayloadAction<UserNotificationMessage>): UserNotificationMessage => {
     return action.type === SET_USER_NOTIFICATION ? action.payload : message;
+}
+
+export const cartItemCountReducer = (count: number = shoppingCartService.getItemsCount(), action: PayloadAction<number>): number => {
+    return action.type === SET_CART_ITEMS_COUNT ? action.payload : count;
 }

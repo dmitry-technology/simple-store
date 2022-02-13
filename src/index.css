@@ -1,3 +1,18 @@
+@font-face {
+  font-family: 'Cooper Std Black';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Cooper Std Black'), url('fonts/CooperBlack-Std.woff') format('woff');
+  }
+  
+
+  @font-face {
+  font-family: 'Cooper Std Black Italic';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Cooper Std Black Italic'), url('fonts/CooperBlack-StdItal.woff') format('woff');
+  }
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

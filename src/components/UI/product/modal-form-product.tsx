@@ -1,14 +1,14 @@
 import { Box, IconButton, Modal, Paper } from '@mui/material';
 import { FC } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Category } from '../../models/category-type';
-import { categoriesSelector } from '../../redux/store';
+import { Category } from '../../../models/category-type';
+import { categoriesSelector } from '../../../redux/store';
 import FormAddProduct from './form-add-product';
-import config from "../../config/store-config.json"
-import { Product, UploadProductData } from '../../models/product';
-import { productStore } from '../../config/servicesConfig';
+import config from "../../../config/store-config.json"
+import { Product, UploadProductData } from '../../../models/product';
+import { productStore } from '../../../config/servicesConfig';
 import CloseIcon from '@mui/icons-material/Close';
-import { addProductAction } from '../../redux/actions';
+import { addProductAction } from '../../../redux/actions';
 
 type ModalFormProductProps = {
     visible: boolean;

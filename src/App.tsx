@@ -112,7 +112,7 @@ function App() {
           <LinearProgress sx={{ width: '100%' }} />
         </React.Fragment>
         : <React.Fragment>
-          <Navigator logo={'BEST PIZZA B7'} menuItems={menuItems} authItems={authItems} />
+          <Navigator menuItems={menuItems} authItems={authItems} />
             { notificationMessage !== emptyMessage && <MessageView data={notificationMessage}/> }
           <Box sx={{alignSelf: 'bottom', width: '100vw', overflow: 'auto'}}>
             <Routes>

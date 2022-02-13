@@ -1,9 +1,9 @@
 import { FC, useState } from 'react';
 import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
-import { ProductOption } from '../../models/product-options';
-import { UserData } from '../../models/user-data';
+import { ProductOption } from '../../../models/product-options';
+import { UserData } from '../../../models/user-data';
 import { useSelector } from 'react-redux';
-import { userDataSelector } from '../../redux/store';
+import { userDataSelector } from '../../../redux/store';
 
 type OptionButtonsProps = {
     productOption: ProductOption,

@@ -1,16 +1,16 @@
 import { Box, Card, CardActions, CardContent, CardMedia, IconButton, TextField, Typography } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
-import { ProductOptionConfigured } from '../../models/product-options';
+import { ProductOption, ProductOptionConfigured } from '../../../models/product-options';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import storeConfig from '../../config/store-config.json';
+import storeConfig from '../../../config/store-config.json';
 import OptionButtons from './option-buttons';
-import { shoppingCartService } from '../../config/servicesConfig';
-import { Product, ProductBatch } from '../../models/product';
-import { UserData } from '../../models/user-data';
+import { shoppingCartService } from '../../../config/servicesConfig';
+import { Product, ProductBatch } from '../../../models/product';
+import { UserData } from '../../../models/user-data';
 import { useDispatch, useSelector } from 'react-redux';
-import { userDataSelector } from '../../redux/store';
-import { setNotificationMessage } from '../../redux/actions';
-import { NotificationType } from '../../models/user-notification';
+import { userDataSelector } from '../../../redux/store';
+import { NotificationType } from '../../../models/user-notification';
+import { setNotificationMessage } from '../../../redux/actions';
 
 const ProductCard: FC<Product> = props => {
 

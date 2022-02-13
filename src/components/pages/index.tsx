@@ -1,6 +1,6 @@
 import { Box, Grid, Typography } from '@mui/material';
 import { FC } from 'react';
-import ProductCard from '../UI/product-card';
+import ProductCard from '../UI/product/product-card';
 import { useSelector } from 'react-redux';
 import { categoriesSelector, productsSelector } from '../../redux/store';
 import { Product } from '../../models/product';
@@ -21,7 +21,7 @@ const Index: FC = () => {
         {categoriesSorted.map(cat =>
             getActiveProductsByCategory(cat.id).length > 0 &&
             <Box key={cat.name} component="div" sx={{m: 1}}>
-                <Typography id={`cat_${cat.id}`} sx={{ fontFamily: 'Cooper' }} variant='h3'>
+                <Typography id={`cat_${cat.id}`} sx={{ fontFamily: 'Cooper Std Black' }} variant='h3'>
                     {cat.name}
                 </Typography>
                 <Grid container alignItems="stretch" >
