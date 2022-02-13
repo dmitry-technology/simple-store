@@ -247,8 +247,7 @@ const ProductListGrid: FC<ProductListGridProps> = (props) => {
         <Fragment>
             <Paper
                 sx={{
-                    width: { xs: '100vw', sm: '95vw' },
-                    border: '1px solid',
+                    width: '100%',
                     flex: '1 0 auto',
                     '& .Mui-error': {
                         bgcolor: '#ff6262d4',

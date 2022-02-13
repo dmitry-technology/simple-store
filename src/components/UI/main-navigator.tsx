@@ -22,7 +22,7 @@ type NavigatorProps = {
 }
 
 function generateMenu(categories: Category[]): RouteType[] {
-    return categories.map(item => ({path: `/#cat_${item.id}`, label: item.name}));
+    return categories.map(item => ({ path: `/#cat_${item.id}`, label: item.name }));
 }
 
 const MainNavigator: FC<NavigatorProps> = (props) => {
@@ -45,9 +45,9 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
 
     return (
         <Fragment>
-            { isMenuItem && <Fragment>
+            {isMenuItem && <Fragment>
                 <AppBar style={{ background: '#ff6f04' }}>
-                    <Container maxWidth="xl" >
+                    <Box sx={{ width: { xs: '100%', sm: '90%' }, alignSelf: 'center' }}>
                         <Toolbar disableGutters>
                             <Typography variant="h6" noWrap component="a" href="/" sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}>
                                 <img src={`${window.location.origin}/logo_main.png`} height="40px" alt="Logo"></img>
@@ -57,8 +57,8 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
                                 <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
                                     <MenuIcon />
                                 </IconButton>
-                                <Menu id="menu-appbar" anchorEl={anchorElNav} 
-                                anchorOrigin={{
+                                <Menu id="menu-appbar" anchorEl={anchorElNav}
+                                    anchorOrigin={{
                                         vertical: 'bottom',
                                         horizontal: 'left',
                                     }}
@@ -98,19 +98,19 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
 
 
                             {/* Show Shopping Cart Button */}
-                            { !userData.isAdmin && <Box sx={{ flexGrow: 0, marginRight: '15px'  }}><ShoppingCartButton /></Box> }
+                            {!userData.isAdmin && <Box sx={{ flexGrow: 0, marginRight: '15px' }}><ShoppingCartButton /></Box>}
 
                             {/* Show Login button or User menu */}
-                            <Box sx={{ flexGrow: 0}}>
-                            { authItems[0].path === PATH_LOGIN 
-                                ? <Link to={authItems[0].path}><IconButton sx={{":hover": {bgcolor: '#a23b0e'}, backgroundColor: '#ff6f04', color: '#fff', border: '2px solid white', width: 40, height: 40 }}><PersonIcon /></IconButton></Link>
-                                : <ProfileMenu items={menuItems} userData={userData} /> }
+                            <Box sx={{ flexGrow: 0 }}>
+                                {authItems[0].path === PATH_LOGIN
+                                    ? <Link to={authItems[0].path}><IconButton sx={{ ":hover": { bgcolor: '#a23b0e' }, backgroundColor: '#ff6f04', color: '#fff', border: '2px solid white', width: 40, height: 40 }}><PersonIcon /></IconButton></Link>
+                                    : <ProfileMenu items={menuItems} userData={userData} />}
                             </Box>
 
                         </Toolbar>
-                    </Container>
+                    </Box>
                 </AppBar>
-                <Box sx={{marginBottom: '70px'}}></Box>
+                <Box sx={{ marginBottom: '70px' }}></Box>
             </Fragment>}
         </Fragment>
     )

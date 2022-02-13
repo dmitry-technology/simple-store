@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, LinearProgress } from '@mui/material';
+import { Alert, AlertTitle, Box, LinearProgress, Paper } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
@@ -118,15 +118,26 @@ function App() {
             sx={{
               display: 'flex',
               justifyContent: 'center',
-              width: '100%',
-              overflow: 'auto',
-              flex: '1 0 auto',
+              overflowY: 'auto',
+              flexGrow: 3,
+              '::-webkit-scrollbar': {
+                width: 0
+              }
             }}
           >
-            <Routes>
-              {getRoutes(relevantRoutes)}
-              <Route path={'*'} element={<Navigate to={PATH_REDIRECT} />}></Route>
-            </Routes>
+            <Paper
+              sx={{
+                display: 'flex',
+                width: { xs: '100%', sm: '90%' },
+                minHeight: '100%',
+                height: 'fit-content'
+              }}
+            >
+              <Routes>
+                {getRoutes(relevantRoutes)}
+                <Route path={'*'} element={<Navigate to={PATH_REDIRECT} />}></Route>
+              </Routes>
+            </Paper>
           </Box>
         </React.Fragment>
       }
