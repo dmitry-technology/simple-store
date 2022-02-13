@@ -14,6 +14,7 @@ export const SET_CATEGORIES = "set_categories";
 export const SET_ORDER_DATA = "set_order_data";
 export const SET_CLIENT_DATA = "set_client_data";
 export const SET_USER_NOTIFICATION = "set_user_notification";
+export const SET_CART_ITEMS_COUNT = "set_cart_items_count";
 
 type ActionType<T> = (data: T) => PayloadAction<T>;
 
@@ -43,6 +44,10 @@ export const setClients: ActionType<UserData[]> = client => (
 
 export const setNotificationMessage: ActionType<UserNotificationMessage> = message => (
     { payload: message, type: SET_USER_NOTIFICATION }
+)
+
+export const setCartItemsCount: ActionType<number> = count => (
+    { payload: count, type: SET_CART_ITEMS_COUNT }
 )
 
 export const updateProfile = function(userdata: UserData): (dispatch: any) => void {

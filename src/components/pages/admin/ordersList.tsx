@@ -25,8 +25,8 @@ import DialogConfirm from '../../UI/common/dialog';
 import { getRandomInteger } from '../../../utils/common/random';
 import ModalInfo from '../../UI/common/modal-info';
 import { ProductOptionConfigured } from '../../../models/product-options';
-import FormAddOrder from '../../UI/form-add-order';
-import OrdersListGrid from '../../UI/orders-list-grid';
+import FormAddOrder from '../../UI/orders/form-add-order';
+import OrdersListGrid from '../../UI/orders/orders-list-grid';
 
 const OrdersList: FC = () => {
 

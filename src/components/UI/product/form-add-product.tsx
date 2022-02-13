@@ -1,8 +1,8 @@
 import { Box, Button, FormControl, FormGroup, InputLabel, Select, TextField, SxProps, Theme, MenuItem, RadioGroup, FormControlLabel, Radio, FormLabel, Typography, TextareaAutosize, IconButton, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
 import { CSSProperties, FC, Fragment, useEffect, useRef, useState } from 'react';
-import { Product, UploadProductData } from '../../models/product';
-import { Category } from '../../models/category-type';
-import { EditOptionData, ProductOption } from '../../models/product-options';
+import { Product, UploadProductData } from '../../../models/product';
+import { Category } from '../../../models/category-type';
+import { EditOptionData, ProductOption } from '../../../models/product-options';
 import { Delete } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import FormOptionProduct from './form-option-product';

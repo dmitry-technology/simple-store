@@ -1,10 +1,10 @@
 import { Box, Button, FormControl, List, ListItem, Modal, Paper, Typography } from '@mui/material';
 import React, { FC, Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Order } from '../../models/order-type';
-import { Product } from '../../models/product';
-import { UserData } from '../../models/user-data';
-import { ordersSelector, clientsSelector, productsSelector } from '../../redux/store';
+import { Order } from '../../../models/order-type';
+import { Product } from '../../../models/product';
+import { UserData } from '../../../models/user-data';
+import { ordersSelector, clientsSelector, productsSelector } from '../../../redux/store';
 
 const style = {
     position: 'absolute' as 'absolute',

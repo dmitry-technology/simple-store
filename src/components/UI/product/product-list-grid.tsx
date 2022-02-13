@@ -1,19 +1,19 @@
 import { FormControl, InputLabel, MenuItem, Paper, Select } from '@mui/material';
 import { DataGrid, GridActionsCellItem, GridCellEditCommitParams, GridColDef, GridRowId, GridRowParams, GridRowsProp } from '@mui/x-data-grid';
 import { FC, Fragment, useEffect, useMemo, useRef, useState } from 'react';
-import { getProductsListFields, ProductListFields } from '../../config/products-list-columns';
+import { getProductsListFields, ProductListFields } from '../../../config/products-list-columns';
 import { useMediaQuery } from "react-responsive";
 import { Delete } from "@mui/icons-material"
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { emptyProduct, Product, UploadProductData } from '../../models/product';
+import { emptyProduct, Product, UploadProductData } from '../../../models/product';
 import { useDispatch, useSelector } from 'react-redux';
-import { Category } from '../../models/category-type';
-import { categoriesSelector, productsSelector } from '../../redux/store';
-import DialogConfirm from './common/dialog';
-import { ConfirmationData, emptyConfirmationData } from '../../models/common/confirmation-type';
-import { removeProductAction, updateProductAction } from '../../redux/actions';
-import { ProductOption } from '../../models/product-options';
+import { Category } from '../../../models/category-type';
+import { categoriesSelector, productsSelector } from '../../../redux/store';
+import DialogConfirm from '../common/dialog';
+import { ConfirmationData, emptyConfirmationData } from '../../../models/common/confirmation-type';
+import { removeProductAction, updateProductAction } from '../../../redux/actions';
+import { ProductOption } from '../../../models/product-options';
 import ModalInfoProduct from './modal-info-product';
 import ModalFormProduct from './modal-form-product';
 

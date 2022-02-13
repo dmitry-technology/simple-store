@@ -13,9 +13,10 @@ import { useSelector } from "react-redux";
 import { UserData } from "../../models/user-data";
 import { categoriesSelector, userDataSelector } from "../../redux/store";
 import { Category } from "../../models/category-type";
+import ShoppingCartButton from "./cart-button-view";
+import PersonIcon from '@mui/icons-material/Person';
 
 type NavigatorProps = {
-    logo: string;
     menuItems: RouteType[];
     authItems: RouteType[];
 }
@@ -26,7 +27,7 @@ function generateMenu(categories: Category[]): RouteType[] {
 
 const MainNavigator: FC<NavigatorProps> = (props) => {
 
-    const { logo, menuItems, authItems } = props;
+    const { menuItems, authItems } = props;
     const userData: UserData = useSelector(userDataSelector);
     const categories: Category[] = useSelector(categoriesSelector);
     const items = userData.isAdmin ? menuItems : generateMenu(categories);
@@ -48,31 +49,16 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
                 <AppBar style={{ background: '#ff6f04' }}>
                     <Container maxWidth="xl" >
                         <Toolbar disableGutters>
-                            <Typography
-                                variant="h6"
-                                noWrap
-                                component="a"
-                                href="/"
-                                sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
-                            >
-                                <img src="logo_main.png" height="40px" alt="Logo"></img>
+                            <Typography variant="h6" noWrap component="a" href="/" sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}>
+                                <img src={`${window.location.origin}/logo_main.png`} height="40px" alt="Logo"></img>
                             </Typography>
 
                             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                                <IconButton
-                                    size="large"
-                                    aria-label="account of current user"
-                                    aria-controls="menu-appbar"
-                                    aria-haspopup="true"
-                                    onClick={handleOpenNavMenu}
-                                    color="inherit"
-                                >
+                                <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
                                     <MenuIcon />
                                 </IconButton>
-                                <Menu
-                                    id="menu-appbar"
-                                    anchorEl={anchorElNav}
-                                    anchorOrigin={{
+                                <Menu id="menu-appbar" anchorEl={anchorElNav} 
+                                anchorOrigin={{
                                         vertical: 'bottom',
                                         horizontal: 'left',
                                     }}
@@ -94,12 +80,7 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
                                     ))}
                                 </Menu>
                             </Box>
-                            <Typography
-                                variant="h6"
-                                noWrap
-                                component="div"
-                                sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}
-                            >
+                            <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                                 <img src="logo_main.png" height="35px" alt="Logo"></img>
                             </Typography>
                             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
@@ -115,11 +96,17 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
                                 ))}
                             </Box>
 
-                            <Box sx={{ flexGrow: 0 }}>
+
+                            {/* Show Shopping Cart Button */}
+                            { !userData.isAdmin && <Box sx={{ flexGrow: 0, marginRight: '15px'  }}><ShoppingCartButton /></Box> }
+
+                            {/* Show Login button or User menu */}
+                            <Box sx={{ flexGrow: 0}}>
                             { authItems[0].path === PATH_LOGIN 
-                                ? <Button style={{ background: '#fff', color: '#ff6f04' }} variant='contained' startIcon={<LoginIcon/ >} component={Link} to={authItems[0].path}>{authItems[0].label}</Button> 
+                                ? <Link to={authItems[0].path}><IconButton sx={{":hover": {bgcolor: '#a23b0e'}, backgroundColor: '#ff6f04', color: '#fff', border: '2px solid white', width: 40, height: 40 }}><PersonIcon /></IconButton></Link>
                                 : <ProfileMenu items={menuItems} userData={userData} /> }
                             </Box>
+
                         </Toolbar>
                     </Container>
                 </AppBar>

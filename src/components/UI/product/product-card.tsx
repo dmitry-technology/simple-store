@@ -1,14 +1,14 @@
 import { Box, Card, CardActions, CardContent, CardMedia, IconButton, TextField, Typography } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
-import { ProductOption, ProductOptionConfigured } from '../../models/product-options';
+import { ProductOption, ProductOptionConfigured } from '../../../models/product-options';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
-import storeConfig from '../../config/store-config.json';
+import storeConfig from '../../../config/store-config.json';
 import OptionButtons from './option-buttons';
-import { shoppingCartService } from '../../config/servicesConfig';
-import { ProductBatch } from '../../models/product';
-import { UserData } from '../../models/user-data';
+import { shoppingCartService } from '../../../config/servicesConfig';
+import { ProductBatch } from '../../../models/product';
+import { UserData } from '../../../models/user-data';
 import { useSelector } from 'react-redux';
-import { userDataSelector } from '../../redux/store';
+import { userDataSelector } from '../../../redux/store';
 
 type ProductCardProps = {
     id: string;

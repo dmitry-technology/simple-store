@@ -6,7 +6,7 @@ import { Order } from "../models/order-type";
 import { Product } from "../models/product";
 import { UserData } from "../models/user-data";
 import { UserNotificationMessage } from "../models/user-notification";
-import { categoriesReducer, errorCodeReducer, productsReducer, userDataReducer, ordersReducer, clientsReducer, notificationReducer } from "./reducers";
+import { categoriesReducer, errorCodeReducer, productsReducer, userDataReducer, ordersReducer, clientsReducer, notificationReducer, cartItemCountReducer } from "./reducers";
 
 type StoreType = {
     userData: UserData,
@@ -15,7 +15,8 @@ type StoreType = {
     categories: Category[],
     orders: Order[],
     clients: UserData[],
-    notification: UserNotificationMessage
+    notification: UserNotificationMessage,
+    cartCount: number
 };
 
 const reducers = combineReducers<StoreType>({
@@ -25,7 +26,8 @@ const reducers = combineReducers<StoreType>({
     categories: categoriesReducer,
     orders: ordersReducer,
     clients: clientsReducer,
-    notification: notificationReducer
+    notification: notificationReducer,
+    cartCount: cartItemCountReducer
 });
 
 // Create store
@@ -39,3 +41,4 @@ export const categoriesSelector = (state: StoreType): Category[] => state.catego
 export const ordersSelector = (state: StoreType): Order[] => state.orders;
 export const clientsSelector = (state: StoreType): UserData[] => state.clients;
 export const notificationSelector = (state: StoreType): UserNotificationMessage => state.notification;
+export const cartCountItemsSelector = (state: StoreType): number => state.cartCount;
