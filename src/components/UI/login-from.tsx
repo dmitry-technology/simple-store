@@ -54,7 +54,7 @@ const LoginForm: FC<LoginFormProps> = (props) => {
   ]);
 
   function isAdmin(email: string) {
-    return email === storeConfig.adminEmail;
+    return storeConfig.adminsEmailList.includes(email);
   }
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

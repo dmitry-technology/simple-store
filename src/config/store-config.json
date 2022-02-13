@@ -1,7 +1,6 @@
 {
     "minId": 100000,
     "maxId": 999999,
-    "adminEmail": "admin@tel-ran.co.il",
     "socialLoginProviders": ["Google", "Facebook", "Twitter"],
     "statusOrder": ["waiting", "working", "complete"],
     "defaultPictureProductUrl": "logo512.png",
@@ -10,5 +9,7 @@
     "productsCollection": "products",
     "categoriesCollection": "categories",
     "ordersCollection": "orders", 
-    "clientsCollection": "clients"
+    "clientsCollection": "clients",
+    "adminsEmailList": ["admin@tel-ran.co.il"],
+    "adminsCollection": "admins"
 }
