@@ -30,6 +30,6 @@ export const emptyProduct: Product ={
     id: 'empty',
     title: 'empty title',
     category: '',
-    basePrice: 0,
+    basePrice: 50,
     active: false    
 }
