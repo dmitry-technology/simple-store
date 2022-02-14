@@ -120,10 +120,7 @@ function App() {
               display: 'flex',
               justifyContent: 'center',
               overflowY: 'auto',
-              flexGrow: 3,
-              '::-webkit-scrollbar': {
-                width: 0
-              }
+              flexGrow: 3
             }}
           >
             <Box
