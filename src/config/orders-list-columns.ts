@@ -21,7 +21,6 @@ export function getOrdersListFields(): Map<string, OrderListFields[]> {
         ["isLaptop", [
             OrderListFields.id,
             OrderListFields.client,
-            OrderListFields.products,
             OrderListFields.status,
             OrderListFields.price,
             OrderListFields.actions]],

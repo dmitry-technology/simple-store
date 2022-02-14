@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Popper, Box, IconButton, ListItem, Paper, Typography, Button } from '@mui/material';
 import { FC, useMemo, useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Order, orderSimple } from '../../../models/order-type';
+import { Order, orderSimple, OrderStatus } from '../../../models/order-type';
 import { clientsSelector, ordersSelector, productsSelector, userDataSelector } from '../../../redux/store';
 import { useMediaQuery } from "react-responsive";
 import { DataGrid, GridActionsCellItem, GridCellEditCommitParams, GridColDef, GridRenderCellParams, GridRowHeightParams, GridRowId, GridRowParams, GridRowsProp, GridValueFormatterParams } from '@mui/x-data-grid';
@@ -11,11 +11,7 @@ import { Delete } from '@mui/icons-material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import { Product, ProductBatch } from '../../../models/product';
-import List from '@mui/material/List';
-import ListItemText from '@mui/material/ListItemText';
-import CommentIcon from '@mui/icons-material/Comment';
-import { Subscription } from 'rxjs';
-import { clientStore, orderStore } from '../../../config/servicesConfig';
+import { orderStore } from '../../../config/servicesConfig';
 import { setClients, setOrders, updateOrder } from '../../../redux/actions';
 import { DeliveryAddress, UserData } from '../../../models/user-data';
 import storeConfig from "../../../config/store-config.json"
@@ -25,7 +21,7 @@ import DialogConfirm from '../common/dialog';
 import { getRandomInteger } from '../../../utils/common/random';
 import ModalInfo from '../common/modal-info';
 import { ProductOptionConfigured } from '../../../models/product-options';
-import FormAddOrder from './form-add-order';
+import FormUpdateOrder from './order-update';
 
 
 interface GridCellExpandProps {
@@ -189,7 +185,7 @@ const OrdersListGrid: FC = () => {
 
     useEffect(() => {
         setColumns(getFilteredColumns(getOrdersListFields().get(mode) as OrderListFields[]));
-    }, [mode, orders]);
+    }, [mode, orders, userData]);
 
     function getFilteredColumns(fields: OrderListFields[]): any[] {
         return getColums().filter(column => fields.includes(column.field as any));
@@ -201,22 +197,22 @@ const OrdersListGrid: FC = () => {
                 field: "id", headerName: "Id order", flex: 20, align: 'center', headerAlign: 'center'
             },
             {
-                field: "client", headerName: "Client", flex: 80, align: 'center', headerAlign: 'center', editable: "true"
+                field: "client", headerName: "Client", flex: 80, align: 'center', headerAlign: 'center'
             },
             {
                 field: "address", headerName: "Address", flex: 100, align: 'center', headerAlign: 'center',
-                editable: "true", renderCell: renderCellExpand
+                renderCell: renderCellExpand
             },
             {
-                field: "phone", headerName: "Phone", flex: 80, align: 'center', headerAlign: 'center', editable: "true"
+                field: "phone", headerName: "Phone", flex: 80, align: 'center', headerAlign: 'center'
             },
             {
-                field: "products", headerName: "Product", flex: 150, align: 'center', headerAlign: 'center', editable: "true",
+                field: "products", headerName: "Product", flex: 150, align: 'center', headerAlign: 'center',
                 renderCell: renderCellExpand
             },
             {
                 field: "status", headerName: "Status", flex: 40, align: 'center', headerAlign: 'center',
-                editable: "true", type: "singleSelect", valueOptions: storeConfig.statusOrder,
+                editable: userData.isAdmin, type: "singleSelect", valueOptions: storeConfig.statusOrder,
                 renderCell: (params: GridRenderCellParams) => {
                     return (
                         <Box sx={{ backgroundColor: colotState.get(params.value), color: 'white', width: '80%', textAlign: 'center' }}>
@@ -238,32 +234,30 @@ const OrdersListGrid: FC = () => {
             {
                 field: "actions", type: 'actions', flex: 40, align: 'center', headerAlign: 'center',
                 getActions: (params: GridRowParams) => {
-                    const adminAction = [
-                        <GridActionsCellItem
-                            icon={<EditIcon />}
-                            label="Edit Order"
-                            onClick={() => editOrder(params.id)}
-                        />
-                    ];
-                    const userAction = [
+                    return [
                         <GridActionsCellItem
                             icon={<VisibilityIcon />}
                             label="Show Details"
                             onClick={() => showOrder(params.id)}
                         />,
                         <GridActionsCellItem
+                            icon={<EditIcon />}
+                            label="Edit Order"
+                            disabled={isActiveOrder(params.id)}
+                            onClick={() => editOrder(params.id)}
+                        />,
+                        <GridActionsCellItem
                             icon={<Delete />}
                             label="Delete"
+                            disabled={isActiveOrder(params.id)}
                             onClick={() => rmOrder(params.id)}
                         />
-                    ];
-                    return userData.isAdmin ? userAction.concat(adminAction) : userAction;
+                    ]
                 }
             }
         ];
     }
 
-    //rows data gread
     const rows = useMemo(() => getRows(orders), [orders, dialogVisible]);
 
 
@@ -273,12 +267,11 @@ const OrdersListGrid: FC = () => {
             .map(order => {
                 return {
                     ...order,
-                    client: order.client.name,
-                    phone: order.client.phoneNumber,
-                    address: !!order.client.deliveryAddress ? getClientAddressInfo(order.client.deliveryAddress) : '',
-                    products: getInfoProduct(order.products),
-                    price: getOrderPrice(order.products)
-
+                    client: (!!order.client && !!order.client.name) ? order.client.name : 'not found',
+                    phone: (!!order.client && !!order.client.phoneNumber) ? order.client.phoneNumber : 'not found',
+                    address: (!!order.client && !!order.client.deliveryAddress) ? getClientAddressInfo(order.client.deliveryAddress) : 'not found',
+                    products: (!!order.products && !!order.products.length) ? getInfoProduct(order.products) : 'not found',
+                    price: (!!order.products) ? getOrderPrice(order.products) : 'not found'
                 }
             });
     };
@@ -286,9 +279,7 @@ const OrdersListGrid: FC = () => {
     //**************************call back actions******************************//
     //remove
     function rmOrder(id: GridRowId) {
-        console.log("remove order " + id);
         const order = getOrder(id.toString());
-        console.log(order);
         if (!!order) {
             confirmationData.current.title = `remove order`;
             confirmationData.current.message = `Do you want remove order ID ${order?.id}`;
@@ -322,9 +313,9 @@ const OrdersListGrid: FC = () => {
         const id: string = params.id.toString();
         const oldOrder = getOrder(id);
         const newOrder = { ...oldOrder, [params.field]: params.value };
-        if (oldOrder !== newOrder) {
+        if (oldOrder != newOrder) {
             confirmationData.current.title = `update order`;
-            confirmationData.current.message = `Do you want update order ID ${oldOrder?.id} old value ${(oldOrder as any)[params.field]} new value ${params.value}`;
+            confirmationData.current.message = `Do you want update ${params.field} order ID ${oldOrder?.id} from ${(oldOrder as any)[params.field]} at ${params.value}`;
             confirmationData.current.handle = handleUpdate.bind(undefined, newOrder as Order, id);
             setdialogVisible(true);
         }
@@ -340,15 +331,13 @@ const OrdersListGrid: FC = () => {
     function editOrder(id: GridRowId) {
         const order = getOrder(id.toString());
         setformVisible(true);
-        if(!!order) {
+        if (!!order) {
             setOrderUpdate(order);
             setformVisible(true);
         } else {
             console.log("not found " + id)
         }
     }
-
-
     //******************************************************************* */
 
 
@@ -370,19 +359,15 @@ const OrdersListGrid: FC = () => {
             })
             return (productBatch.productConfigured.base.basePrice + priceOption) * productBatch.count;
         })
-            .reduce((prev, current) => prev + current);
-    }
-
-    function getProduct(id: string): Product | undefined {
-        return products[products.findIndex(product => product.id === id)];
+            .reduce((prev, current) => prev + current, 0);
     }
 
     function getOrder(id: string): Order | undefined {
         return orders[orders.findIndex(order => order.id === id)];
     }
-
-    function getClient(id: string): UserData | undefined {
-        return clients[clients.findIndex(client => client.id == id)];
+    //disable btn in table
+    function isActiveOrder(id: GridRowId) {
+        return userData.isAdmin ? false : getOrder(id.toString())?.status !== OrderStatus.WAITING;
     }
 
     function getInfoOrder(order: Order): string[] {
@@ -399,7 +384,7 @@ const OrdersListGrid: FC = () => {
         return res;
     }
 
-    function formatDate(date : string){
+    function formatDate(date: string) {
         const res = date.split("T");
         return `${res[0]} ${res[1].substring(0, 5)}`;
     }
@@ -422,17 +407,16 @@ const OrdersListGrid: FC = () => {
         });
         return res;
     }
-
-    // /********************************************************************** */
+    ///********************************************************************** */
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <Paper sx={{ width: { xs: '100vw', sm: '80vw' }, height: '80vh', marginTop: '2vh' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
+            <Paper sx={{ width: '90vw', height: '80vh', marginTop: '2vh' }}>
                 <DataGrid columns={columns} rows={rows} onCellEditCommit={onCellEdit} />
             </Paper>
             <DialogConfirm visible={dialogVisible} title={confirmationData.current.title} message={confirmationData.current.message} onClose={confirmationData.current.handle} />
             <ModalInfo title={"Detailed information about the order"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
-            {!!formVisible && <FormAddOrder callBack={() => setformVisible(false)} visible={formVisible} order={orderUpdate} />}
+            {!!formVisible && <FormUpdateOrder callBack={() => setformVisible(false)} visible={formVisible} order={orderUpdate} />}
         </Box>
 
     )

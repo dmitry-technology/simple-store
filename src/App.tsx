@@ -96,11 +96,6 @@ function App() {
     })
   }
 
-
-
-  // orderStore.add(orderSimple);
-  // productStore.add(emptyProduct);
-
   return (
     <BrowserRouter>
       {/* Show Alert if Connection refused*/}
