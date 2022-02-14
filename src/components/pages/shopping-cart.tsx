@@ -13,6 +13,7 @@ import { addOrderAction, setNotificationMessage } from '../../redux/actions';
 import { NotificationType } from '../../models/user-notification';
 import { isCustomerCanOrder } from '../../utils/common/validation-utils';
 import { OrderStatus } from '../../models/order-type';
+import CollapsibleTable from '../UI/common/collapsible-table';
 
 const ShoppingCart: FC = () => {
 
@@ -56,13 +57,18 @@ const ShoppingCart: FC = () => {
         }
     }
 
-    return <Box>
-        {`You have ${shoppingCart.length} products in cart`}
+    return <Box sx={{ mt: 1 }}>
+        {shoppingCart.length === 0 && `You have 0 products in cart`}
+        {CollapsibleTable(shoppingCart)}
         <Box>
-            <Button variant='contained' onClick={checkoutHandler}>
+            <Button
+                variant='contained'
+                onClick={checkoutHandler}>
                 Checkout <DeliveryDiningIcon />
             </Button>
-            <Button variant='outlined' onClick={deleteCartHandler}>
+            <Button
+                variant='outlined'
+                onClick={deleteCartHandler}>
                 Delete Cart <DeleteForeverIcon />
             </Button>
         </Box>
