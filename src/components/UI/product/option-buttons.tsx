@@ -1,10 +1,8 @@
 import { FC, useEffect, useState } from 'react';
-import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material';
+import { Box, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { ProductOption } from '../../../models/product-options';
-import { UserData } from '../../../models/user-data';
-import { useSelector } from 'react-redux';
-import { userDataSelector } from '../../../redux/store';
 import { ProductBatch } from '../../../models/product';
+import storeConfig from "../../../config/store-config.json"
 
 type OptionButtonsProps = {
     productOption: ProductOption,
@@ -16,7 +14,6 @@ const OptionButtons: FC<OptionButtonsProps> = props => {
 
     const { productOption, optionChangeFn, productBatch } = props;
     const [value, setValue] = useState<string>(productOption.optionData[0].name);
-    const userData: UserData = useSelector(userDataSelector);
 
     useEffect(() => {
         if (!!productBatch) {
@@ -27,18 +24,22 @@ const OptionButtons: FC<OptionButtonsProps> = props => {
         }
     }, [])
 
-    function handleChange(event: any, newValue: string) {
-        optionChangeFn(productOption.optionTitle, newValue);
-        setValue(newValue);
+    function handleChange(_: any, newValue: string) {
+        if (newValue !== null) {
+            optionChangeFn(productOption.optionTitle, newValue);
+            setValue(newValue);
+        } 
     }
 
-    return <Box sx={{ display: 'block', mb: 0.5 }}>
+    return <Box sx={{ display: 'block', width: '100%', paddingBottom: 1}}>
+        <Typography variant="inherit" sx={{mb: 0.5}} >{productOption.optionTitle}:</Typography>
         <ToggleButtonGroup
+            color='warning'
             value={value}
             exclusive
             onChange={handleChange}
             size={'small'}
-            sx={{ width: 255 }}
+            sx={{ width: '100%', height: '30px', border: `0.5px solid ${storeConfig.primaryColor}`}}
             title={productOption.optionTitle}
         >
             {productOption.optionData.map(option => <ToggleButton key={option.name} value={option.name}
