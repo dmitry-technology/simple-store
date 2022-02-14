@@ -168,7 +168,7 @@ const OrdersListGrid: FC = () => {
                             elevation={1}
                             style={{ minHeight: wrapper.current!.offsetHeight - 3 }}
                         >
-                            {value.split('.').map(e => <Typography variant="body2" style={{ padding: 8 }}> {e} </Typography>)}
+                            {value.split('.').map((e, index) => <Typography key={index} variant="body2" style={{ padding: 8 }}> {e} </Typography>)}
                         </Paper>
                     </Popper>
                 )}
@@ -428,7 +428,7 @@ const OrdersListGrid: FC = () => {
             </Paper>
             <DialogConfirm visible={dialogVisible} title={confirmationData.current.title} message={confirmationData.current.message} onClose={confirmationData.current.handle} />
             <ModalInfo title={"Detailed information about the order"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
-            <FormAddOrder callBack={() => setformVisible(false)} visible={formVisible} orders={orderUpdate} />
+            <FormAddOrder callBack={() => setformVisible(false)} visible={formVisible} order={orderUpdate} />
         </Box>
 
     )
