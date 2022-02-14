@@ -7,7 +7,7 @@ import { authRoutes, menuRoutes, PATH_REDIRECT, routes } from './config/routing'
 import { authService, categoriesStore, clientStore, productStore, orderStore } from './config/servicesConfig';
 import { Category } from './models/category-type';
 import ErrorType from './models/error-types';
-import { Product } from './models/product';
+import { emptyProduct, Product } from './models/product';
 import { RouteType } from './models/route-type';
 import { nonAuthorisedUser, UserData, userDataSimple } from './models/user-data';
 import { setCategories, setErrorCode, setProducts, setUserData, setClients, setOrders } from './redux/actions';
@@ -99,6 +99,7 @@ function App() {
 
 
   // orderStore.add(orderSimple);
+  // productStore.add(emptyProduct);
 
   return (
     <BrowserRouter>

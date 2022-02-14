@@ -229,8 +229,7 @@ const OrdersListGrid: FC = () => {
             {
                 field: "date", headerName: "Date Time", flex: 50, align: 'center', headerAlign: 'center', type: 'date',
                 valueFormatter: (params: GridValueFormatterParams) => {
-                    const res = params.value!.toString().split("T");
-                    return `${res[0]} ${res[1].substring(0, 5)}`;
+                    return formatDate(params.value!.toString());
                 }
             },
             {
@@ -395,9 +394,14 @@ const OrdersListGrid: FC = () => {
             `${getInfoProduct(order.products)}`,
             `Status: ${order.status}`,
             `Total price: ${getOrderPrice(order.products)}`,
-            `Data create: ${order.date.substring(0, 10)}`
+            `Data create: ${formatDate(order.date)}`
         ];
         return res;
+    }
+
+    function formatDate(date : string){
+        const res = date.split("T");
+        return `${res[0]} ${res[1].substring(0, 5)}`;
     }
 
     function getInfoProduct(products: ProductBatch[]) {
@@ -414,7 +418,7 @@ const OrdersListGrid: FC = () => {
     function getInfoOptions(options: ProductOptionConfigured[]) {
         let res = '';
         options.forEach(element => {
-            res += `${element.optionTitle} = ${element.optionData.name}`
+            res += `${element.optionTitle} = ${element.optionData.name} `
         });
         return res;
     }
@@ -428,7 +432,7 @@ const OrdersListGrid: FC = () => {
             </Paper>
             <DialogConfirm visible={dialogVisible} title={confirmationData.current.title} message={confirmationData.current.message} onClose={confirmationData.current.handle} />
             <ModalInfo title={"Detailed information about the order"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
-            <FormAddOrder callBack={() => setformVisible(false)} visible={formVisible} order={orderUpdate} />
+            {!!formVisible && <FormAddOrder callBack={() => setformVisible(false)} visible={formVisible} order={orderUpdate} />}
         </Box>
 
     )
