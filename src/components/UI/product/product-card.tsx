@@ -28,7 +28,7 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
         if (!!props.productBatch) {
             setCount(props.productBatch.count);
         }
-    }, [])
+    },[])
 
     useEffect(() => {
         !!options && options.forEach(option =>
@@ -93,7 +93,6 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
     }
 
     function changeCountHandler(count: number) {
-        // const count = event.target.value as number;
         setCount(count);
         !!props.updateOrderFn && !!props.productBatch && props!.updateOrderFn({ ...props.productBatch, count: count });
     }
@@ -124,7 +123,7 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
                                 {resultPrice}{storeConfig.currencySign}
                             </Typography>
                             <Box sx={{ display: 'inline-flex', justifyContent: 'right', m: 0, width: '100%' }}>
-                                <CountSelector handlerFunc={changeCountHandler} />
+                                <CountSelector handlerFunc={changeCountHandler} value={count} />
                             </Box>
                         </Box>
                         <Box sx={{mt: 1}}>
@@ -134,7 +133,7 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
                                     startIcon={<AddShoppingCartIcon />} 
                                     fullWidth
                                     onClick={addToCartHandler}
-                                    disabled={userData.isAdmin}
+                                    disabled={userData.isAdmin || !!props.productBatch }
                                     >
                                 Add to cart
                                 </Button>

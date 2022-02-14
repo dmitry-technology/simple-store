@@ -23,7 +23,7 @@ export const PATH_REDIRECT = "/redirect";
 
 // User routes
 export const PATH_PROFILE = "/user/profile";
-export const PATH_ORDERS = "/user/orders";
+export const PATH_ORDERS = "/orders-list";
 export const PATH_SHOPPING_CART = "/user/cart";
 
 // Admin routes
@@ -33,10 +33,10 @@ export const PATH_ADMIN_CATALOG = "/admin/catalog";
 export const menuRoutes: RouteType[] = [
     { path: PATH_INDEX, element: <Index />, label: 'Pizza', isGuest: true, isUser: true, isAdmin: true },
     { path: PATH_PROFILE, element: <Profile />, icon: <AccountCircleIcon />, label: 'Profile', isUser: true },
-    { path: PATH_ORDERS, element: <Orders />, icon: <LocalPizzaIcon />, label: 'Orders', isUser: true },
+    { path: PATH_ORDERS, element: <OrdersList />, icon: <LocalPizzaIcon />, label: 'Orders', isUser: true },
     { path: PATH_SHOPPING_CART, element: <ShoppingCart />, icon: <ShoppingCartIcon />, label: 'Cart', isGuest: true, isUser: true },
     { path: PATH_ADMIN_ORDERS_LIST, element: <OrdersList />, label: 'Orders List', isAdmin: true },
-    { path: PATH_ADMIN_CATALOG, element: <Catalog />, label: 'Catalog', isAdmin: true }
+    // { path: PATH_ADMIN_CATALOG, element: <Catalog />, label: 'Catalog', isAdmin: true }
 ];
 
 export const systemRoutes: RouteType[] = [
