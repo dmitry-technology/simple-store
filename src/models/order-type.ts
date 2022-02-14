@@ -18,6 +18,7 @@ export const orderSimple: Order = {
     client: userDataSimple,
     products: [
         {
+            id: 'test',
             productConfigured: {
                 base: emptyProduct,
                 optionsConfigured: [{ optionData: { name: "40", extraPay: 10 }, optionTitle: "Size" }]

@@ -55,6 +55,7 @@ export default class LocalStorageProvider<T> implements LocalProvider<T> {
         if (index >= 0) {
             const oldItem = this.get(id);
             storage.splice(index, 1);
+            localStorage.setItem(this.localStorageName, JSON.stringify(storage));
             return oldItem;
         } else {
             return null;
