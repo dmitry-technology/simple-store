@@ -17,10 +17,10 @@ const Index: FC = () => {
         return products.filter(prod => prod.active && prod.category === categoryId);
     }
 
-    return <Box>
+    return <Box sx={{ width: '100%' }}>
         {categoriesSorted.map(cat =>
             getActiveProductsByCategory(cat.id).length > 0 &&
-            <Box key={cat.name} component="div" sx={{m: 1}}>
+            <Box key={cat.name} component="div" sx={{ m: 1 }}>
                 <Typography id={`cat_${cat.id}`} sx={{ fontFamily: 'Cooper Std Black' }} variant='h3'>
                     {cat.name}
                 </Typography>

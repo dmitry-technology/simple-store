@@ -49,7 +49,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
             setIdEditable(false);
             setTitle(title);
             setCategory(category);
-            setBasePrice(basePrice);
+            setBasePrice(+basePrice);
             setActive(active);
             picture && setPreviewPath(picture);
             description && setDescription(description);
@@ -77,7 +77,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     }
 
     function priceHandle(event: any) {
-        const price = event.target.value;
+        const price = +event.target.value;
         setBasePrice(price);
         setPriceError(price < 1 ? 'price must be greater than 0' : '');
     }
@@ -128,6 +128,9 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
             }
         }
         const newProduct: Product = { id: id.toString(), title, category, description, basePrice, active, options };
+        if (product && product.picture) {
+            newProduct.picture = product.picture;
+        }
         await uploadProduct({product: newProduct, picture: picture as File});
     }
 
