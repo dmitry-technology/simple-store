@@ -142,12 +142,13 @@ export const updateCategoryAction = function (category: Category): (dispath: any
     }
 }
 
-export const removeCategoryAction = function (id: string, products?: Product[]): (dispath: any) => void {
+export const removeCategoryAction = function (id: string): (dispath: any) => void {
     return async dispatch => {
         try {
-            if (products) {
-                for (let i = 0; i < products.length; i++) {
-                    await productStore.remove(products[i].id);
+            const productsByCat = (await productStore.fetch()).filter(p => p.category === id);
+            if (productsByCat.length > 0) {
+                for (let i = 0; i < productsByCat.length; i++) {
+                    await productStore.remove(productsByCat[i].id);
                 }
             }
             await categoriesStore.remove(id);

@@ -4,7 +4,7 @@
     "primaryColor": "#ff6f04",
     "socialLoginProviders": ["Google", "Facebook", "Twitter"],
     "statusOrder": ["waiting", "working", "complete"],
-    "defaultPictureProductUrl": "logo512.png",
+    "defaultPictureProductUrl": "https://firebasestorage.googleapis.com/v0/b/simple-store-fbe1f.appspot.com/o/logo512.png?alt=media&token=1612b11a-beaf-4d9f-843b-a756b566a515",
     "productPictureFolder": "images",
     "currencySign": "₪",
     "productsCollection": "products",

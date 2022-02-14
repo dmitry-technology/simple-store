@@ -34,7 +34,7 @@ const ModalInfoProduct: FC<ModalInfoProductProps> = (props) => {
         aria-describedby="modal-modal-description"
         sx={{ display: 'flex', justifyContent: 'center' }}
     >
-        <Paper sx={{ padding: '20px', width: 'fit-content', height: 'fit-content', alignSelf: 'center' }}>
+        <Paper sx={{ padding: '20px', width: {xs: '80%', sm: '50%', md: '30%', lg: '20%'}, height: 'fit-content', alignSelf: 'center' }}>
             <ProductCard
                 product={product}
             />
