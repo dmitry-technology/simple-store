@@ -1,8 +1,7 @@
-import { Box, IconButton, Modal, Paper } from '@mui/material';
+import { Modal, Paper } from '@mui/material';
 import { FC } from 'react';
 import { Category } from '../../../models/category-type';
 import FormAddCategory from './form-add-category';
-import CloseIcon from '@mui/icons-material/Close';
 
 type ModalFormCategoryProps = {
     visible: boolean;
@@ -33,14 +32,10 @@ const ModalFormCategory: FC<ModalFormCategoryProps> = (props) => {
                     overflow: 'auto'
                 }}
             >
-                <Box sx={{ display: 'flex', justifyContent: 'end', marginTop: '5px' }}>
-                    <IconButton onClick={onClose}>
-                        <CloseIcon sx={{ fontSize: '1.9rem' }} />
-                    </IconButton>
-                </Box>
                 <FormAddCategory 
                     uploadCategoryFn={uploadCategoryFn}
                     category={category}
+                    onClose={onClose}
                 />
             </Paper>
         </Modal >

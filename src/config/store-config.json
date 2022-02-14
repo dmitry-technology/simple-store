@@ -1,6 +1,7 @@
 {
     "minId": 100000,
     "maxId": 999999,
+    "primaryColor": "#ff6f04",
     "socialLoginProviders": ["Google", "Facebook", "Twitter"],
     "statusOrder": ["waiting", "working", "complete"],
     "defaultPictureProductUrl": "logo512.png",

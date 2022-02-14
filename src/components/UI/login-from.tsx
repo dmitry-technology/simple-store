@@ -81,7 +81,7 @@ const LoginForm: FC<LoginFormProps> = (props) => {
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid container component="main" sx={{ height: '100vh' }}>
+      <Grid container component="main" sx={{ position: 'fixed', left: 0, top: 0, height: '100%' }}>
         <CssBaseline />
         <Grid item xs={false} sm={4} md={7} sx={{
           backgroundImage: 'url(https://firebasestorage.googleapis.com/v0/b/simple-store-fbe1f.appspot.com/o/login_pic.jpg?alt=media&token=92b8331c-73d1-485e-96cb-3760c0743ec1)',

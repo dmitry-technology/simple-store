@@ -7,7 +7,7 @@ import { authRoutes, menuRoutes, PATH_REDIRECT, routes } from './config/routing'
 import { authService, categoriesStore, clientStore, productStore, orderStore } from './config/servicesConfig';
 import { Category } from './models/category-type';
 import ErrorType from './models/error-types';
-import { Product } from './models/product';
+import { emptyProduct, Product } from './models/product';
 import { RouteType } from './models/route-type';
 import { nonAuthorisedUser, UserData, userDataSimple } from './models/user-data';
 import { setCategories, setErrorCode, setProducts, setUserData, setClients, setOrders } from './redux/actions';
@@ -99,6 +99,7 @@ function App() {
 
 
   // orderStore.add(orderSimple);
+  // productStore.add(emptyProduct);
 
   return (
     <BrowserRouter>
@@ -119,13 +120,10 @@ function App() {
               display: 'flex',
               justifyContent: 'center',
               overflowY: 'auto',
-              flexGrow: 3,
-              '::-webkit-scrollbar': {
-                width: 0
-              }
+              flexGrow: 3
             }}
           >
-            <Paper
+            <Box
               sx={{
                 display: 'flex',
                 width: { xs: '100%', sm: '90%' },
@@ -137,7 +135,7 @@ function App() {
                 {getRoutes(relevantRoutes)}
                 <Route path={'*'} element={<Navigate to={PATH_REDIRECT} />}></Route>
               </Routes>
-            </Paper>
+            </Box>
           </Box>
         </React.Fragment>
       }

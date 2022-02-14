@@ -5,12 +5,13 @@ import { Category } from '../../../models/category-type';
 type FormAddCategoryProps = {
     uploadCategoryFn: (category: Category) => void;
     category?: Category;
+    onClose?: () => void;
 }
 
 
 const FormAddCategory: FC<FormAddCategoryProps> = (props) => {
 
-    const { uploadCategoryFn, category } = props;
+    const { uploadCategoryFn, category, onClose } = props;
 
     const [name, setName] = useState<string>('');
     const [sortOrder, setSortOrder] = useState<number>(10);
@@ -52,12 +53,6 @@ const FormAddCategory: FC<FormAddCategoryProps> = (props) => {
         }
     }
 
-    function onReset() {
-        setName('');
-        setSortOrder(10);
-        setActive(false);
-    }
-
     const boxButtonStyle: SxProps<Theme> = {
         width: '100%',
         display: 'flex',
@@ -74,7 +69,6 @@ const FormAddCategory: FC<FormAddCategoryProps> = (props) => {
         <Box
             component={'form'}
             onSubmit={onSubmit}
-            onReset={onReset}
         >
             <FormGroup>
                 <TextField
@@ -111,8 +105,8 @@ const FormAddCategory: FC<FormAddCategoryProps> = (props) => {
                     <Button type='submit' variant='contained' disabled={!flValid} sx={buttonStyle}>
                         {buttonSubmitName}
                     </Button>
-                    <Button type='reset' sx={buttonStyle}>
-                        Reset
+                    <Button onClick={onClose} sx={buttonStyle}>
+                        Cancel
                     </Button>
                 </Box>
             </FormGroup>
