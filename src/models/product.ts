@@ -17,6 +17,7 @@ export type ProductConfigured = {
 }
 
 export type ProductBatch = {
+    id: string;
     productConfigured: ProductConfigured,
     count: number
 }

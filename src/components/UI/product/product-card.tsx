@@ -1,6 +1,6 @@
 import { Box, Card, CardActions, CardContent, CardMedia, IconButton, TextField, Typography } from '@mui/material';
-import { FC, useEffect, useState } from 'react';
-import { ProductOption, ProductOptionConfigured } from '../../../models/product-options';
+import { FC, useEffect, useRef, useState } from 'react';
+import { ProductOptionConfigured } from '../../../models/product-options';
 import AddShoppingCartIcon from '@mui/icons-material/AddShoppingCart';
 import storeConfig from '../../../config/store-config.json';
 import OptionButtons from './option-buttons';
@@ -10,7 +10,8 @@ import { UserData } from '../../../models/user-data';
 import { useDispatch, useSelector } from 'react-redux';
 import { userDataSelector } from '../../../redux/store';
 import { NotificationType } from '../../../models/user-notification';
-import { setNotificationMessage } from '../../../redux/actions';
+import { setCartItemsCount, setNotificationMessage } from '../../../redux/actions';
+import { getRandomInteger } from '../../../utils/common/random';
 
 const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrderFn?: (productBatch: ProductBatch) => void }> = props => {
 
@@ -20,6 +21,7 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
     const [count, setCount] = useState<number>(1);
     const userData: UserData = useSelector(userDataSelector);
     const dispatch = useDispatch();
+    const batchId = useRef<string>(getRandomInteger(storeConfig.minId, storeConfig.maxId).toString());
 
     useEffect(() => {
         if (!!props.productBatch) {
@@ -54,6 +56,7 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
 
     function updateOrder(optionsConfigured: ProductOptionConfigured[]) {
         const batch: ProductBatch = {
+            id: batchId.current,
             productConfigured: {
                 base: { ...props.product },
                 optionsConfigured: optionsConfigured
@@ -61,7 +64,6 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
             count: count
         }
         props.updateOrderFn!(batch);
-
     }
 
     function changeResultPrice() {
@@ -74,6 +76,7 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
 
     function addToCartHandler() {
         const batch: ProductBatch = {
+            id: batchId.current,
             productConfigured: {
                 base: { ...props.product },
                 optionsConfigured: optionsConfigured
@@ -81,6 +84,7 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
             count: count
         }
         shoppingCartService.add(batch);
+        dispatch(setCartItemsCount(shoppingCartService.getItemsCount()));
         dispatch(setNotificationMessage({
             message: "Added to shopping cart",
             type: NotificationType.SUCCESS

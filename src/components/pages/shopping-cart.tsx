@@ -9,11 +9,11 @@ import { PATH_LOGIN, PATH_PROFILE } from '../../config/routing';
 import { UserData } from '../../models/user-data';
 import { useDispatch, useSelector } from 'react-redux';
 import { userDataSelector } from '../../redux/store';
-import { addOrderAction, setNotificationMessage } from '../../redux/actions';
+import { addOrderAction, setCartItemsCount, setNotificationMessage } from '../../redux/actions';
 import { NotificationType } from '../../models/user-notification';
 import { isCustomerCanOrder } from '../../utils/common/validation-utils';
 import { OrderStatus } from '../../models/order-type';
-import CollapsibleTable from '../UI/common/collapsible-table';
+import CartTable from '../UI/orders/cart-table';
 
 const ShoppingCart: FC = () => {
 
@@ -27,12 +27,17 @@ const ShoppingCart: FC = () => {
         setShoppingCart(shoppingCartService.getAll());
     }, [])
 
-    function deleteCartHandler() {
+    function deleteCartHandler(): void {
         shoppingCartService.removeAll();
+        updateCartFn();
+    }
+
+    function updateCartFn(): void {
+        dispatch(setCartItemsCount(shoppingCartService.getItemsCount()));
         setShoppingCart(shoppingCartService.getAll());
     }
 
-    function checkoutHandler() {
+    function checkoutHandler(): void {
         if (!userData.id) {
             setNeedAuthFl(true);
             dispatch(setNotificationMessage({
@@ -53,27 +58,40 @@ const ShoppingCart: FC = () => {
                 date: new Date().toISOString(),
                 status: OrderStatus.WAITING
             }))
+            dispatch(setNotificationMessage({
+                message: "Thank you for your order!",
+                type: NotificationType.SUCCESS
+            }));
             deleteCartHandler();
         }
     }
 
-    return <Box sx={{ mt: 1 }}>
+    return <Box sx={{ mt: 1, width: '100%' }}>
         {shoppingCart.length === 0 && `You have 0 products in cart`}
-        {CollapsibleTable(shoppingCart)}
-        <Box>
-            <Button
-                variant='contained'
-                onClick={checkoutHandler}>
-                Checkout <DeliveryDiningIcon />
-            </Button>
-            <Button
-                variant='outlined'
-                onClick={deleteCartHandler}>
-                Delete Cart <DeleteForeverIcon />
-            </Button>
-        </Box>
-        {needAuthFl && <Navigate to={PATH_LOGIN} />}
-        {needFillProfileFl && <Navigate to={PATH_PROFILE} />}
+        {shoppingCart.length > 0 && <Box>
+            <CartTable batches={shoppingCart} updateCartFn={updateCartFn} />
+            <Box sx={{mt: 1, display: 'flex', width: '100%', justifyContent: 'end'}}>                
+                <Button
+                    variant='outlined'
+                    onClick={deleteCartHandler} 
+                    color='warning'
+                    sx={{mr: 2}}>
+                    Delete Cart <DeleteForeverIcon />
+                </Button>
+                <Button
+                    variant='outlined'
+                    onClick={checkoutHandler}
+                    sx={{color: '#ff6f04', borderColor: '#ff6f04', ':hover': {
+                        borderColor: '#ff6f04',
+                        backgroundColor: '#ff6f04',
+                        color: '#FFFFFF'
+                    }}}>                    
+                    Send Order &nbsp;<DeliveryDiningIcon />
+                </Button>
+            </Box>
+            {needAuthFl && <Navigate to={PATH_LOGIN} />}
+            {needFillProfileFl && <Navigate to={PATH_PROFILE} />}
+        </Box>}
     </Box>;
 }
 
