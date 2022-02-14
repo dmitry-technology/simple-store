@@ -94,7 +94,7 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
     }
 
     return <Card sx={{ width: 270, minHeight: 350, display: 'inline-block', m: 1 }}>
-        <CardMedia component="img" height="240" alt={title}
+        <CardMedia component="img" sx={{width: '260px', height: '260px', padding: '5px' }} alt={title}
             image={!!picture ? picture : `${window.location.origin}/${storeConfig.defaultPictureProductUrl}`}
         />
         <CardContent sx={{ paddingBottom: 0 }}>

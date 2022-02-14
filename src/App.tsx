@@ -125,7 +125,7 @@ function App() {
               }
             }}
           >
-            <Paper
+            <Box
               sx={{
                 display: 'flex',
                 width: { xs: '100%', sm: '90%' },
@@ -137,7 +137,7 @@ function App() {
                 {getRoutes(relevantRoutes)}
                 <Route path={'*'} element={<Navigate to={PATH_REDIRECT} />}></Route>
               </Routes>
-            </Paper>
+            </Box>
           </Box>
         </React.Fragment>
       }
