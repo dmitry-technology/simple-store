@@ -36,14 +36,7 @@ const ModalInfoProduct: FC<ModalInfoProductProps> = (props) => {
     >
         <Paper sx={{ padding: '20px', width: 'fit-content', height: 'fit-content', alignSelf: 'center' }}>
             <ProductCard
-                id={id}
-                title={title}
-                category={category}
-                basePrice={basePrice}
-                description={description}
-                picture={picture}
-                options={options}
-                active={active}
+                product={product}
             />
         </Paper>
     </Modal>

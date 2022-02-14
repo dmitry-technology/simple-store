@@ -26,7 +26,7 @@ const Index: FC = () => {
                 </Typography>
                 <Grid container alignItems="stretch" >
                     {getActiveProductsByCategory(cat.id).map((prod, index) =>
-                        <ProductCard key={index + prod.title} {...prod} />)}
+                        <ProductCard key={index + prod.title} product={prod} />)}
                 </Grid>
             </Box>)}
     </Box>;

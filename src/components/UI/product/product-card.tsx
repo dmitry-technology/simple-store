@@ -12,14 +12,20 @@ import { userDataSelector } from '../../../redux/store';
 import { NotificationType } from '../../../models/user-notification';
 import { setNotificationMessage } from '../../../redux/actions';
 
-const ProductCard: FC<Product> = props => {
+const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrderFn?: (productBatch: ProductBatch) => void }> = props => {
 
-    const { title, basePrice, description, picture, options } = props;
+    const { title, basePrice, description, picture, options } = { ...props.product };
     const [optionsConfigured, setOptionsConfigured] = useState<ProductOptionConfigured[]>([]);
     const [resultPrice, setResultPrice] = useState<number>(basePrice);
     const [count, setCount] = useState<number>(1);
     const userData: UserData = useSelector(userDataSelector);
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        if (!!props.productBatch) {
+            setCount(props.productBatch.count);
+        }
+    }, [])
 
     useEffect(() => {
         !!options && options.forEach(option =>
@@ -42,7 +48,20 @@ const ProductCard: FC<Product> = props => {
         const index = optionsConfigured.findIndex(option => option.optionTitle === optionTitle);
         optionsConfigured.splice(index, 1, optionConfigured);
         setOptionsConfigured(optionsConfigured);
+        !!props.updateOrderFn && updateOrder(optionsConfigured);
         changeResultPrice();
+    }
+
+    function updateOrder(optionsConfigured: ProductOptionConfigured[]) {
+        const batch: ProductBatch = {
+            productConfigured: {
+                base: { ...props.product },
+                optionsConfigured: optionsConfigured
+            },
+            count: count
+        }
+        props.updateOrderFn!(batch);
+
     }
 
     function changeResultPrice() {
@@ -56,12 +75,12 @@ const ProductCard: FC<Product> = props => {
     function addToCartHandler() {
         const batch: ProductBatch = {
             productConfigured: {
-                base: { ...props },
+                base: { ...props.product },
                 optionsConfigured: optionsConfigured
             },
             count: count
         }
-        shoppingCartService.add(batch);        
+        shoppingCartService.add(batch);
         dispatch(setNotificationMessage({
             message: "Added to shopping cart",
             type: NotificationType.SUCCESS
@@ -69,12 +88,14 @@ const ProductCard: FC<Product> = props => {
     }
 
     function changeCountHandler(event: any) {
-        setCount(event.target.value as number);
+        const count = event.target.value as number;
+        setCount(count);
+        !!props.updateOrderFn && !!props.productBatch && props!.updateOrderFn({ ...props.productBatch, count: count });
     }
 
     return <Card sx={{ width: 270, minHeight: 350, display: 'inline-block', m: 1 }}>
         <CardMedia component="img" height="240" alt={title}
-            image={!!picture ? picture : storeConfig.defaultPictureProductUrl}
+            image={!!picture ? picture : `${window.location.origin}/${storeConfig.defaultPictureProductUrl}`}
         />
         <CardContent sx={{ paddingBottom: 0 }}>
             <Typography gutterBottom variant="h5">
@@ -88,7 +109,7 @@ const ProductCard: FC<Product> = props => {
             <Box>
                 {!!options && options.map(option =>
                     <OptionButtons key={option.optionTitle} productOption={option}
-                        optionChangeFn={changeOptionHandler} />)}
+                        optionChangeFn={changeOptionHandler} productBatch={props.productBatch} />)}
             </Box>
             <Box sx={{ display: 'inline-flex' }}>
                 <Typography variant="h5" >
@@ -99,11 +120,11 @@ const ProductCard: FC<Product> = props => {
                         id="outlined-number"
                         type="number"
                         size='small'
-                        defaultValue='1'
+                        value={count}
                         required
                         sx={{ width: '40%', ml: 2 }}
                         onChange={changeCountHandler}
-                        disabled={userData.isAdmin}
+                    // disabled={userData.isAdmin}
                     />
                     <IconButton onClick={addToCartHandler} disabled={userData.isAdmin}>
                         <AddShoppingCartIcon />
