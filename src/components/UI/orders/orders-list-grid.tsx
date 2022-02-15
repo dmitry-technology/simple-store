@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Popper, Box, Paper, Typography } from '@mui/material';
+import { Popper, Box, Paper, Typography, ListItem, List, ListItemText } from '@mui/material';
 import { FC, useMemo, useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Order, orderSimple } from '../../../models/order-type';
@@ -19,6 +19,7 @@ import DialogConfirm from '../common/dialog';
 import ModalInfo from '../common/modal-info';
 import { ProductOptionConfigured } from '../../../models/product-options';
 import FormUpdateOrder from './order-update';
+import _ from 'lodash';
 
 //status order from service config
 const arrStatus = Array.from(orderState.keys());
@@ -144,13 +145,19 @@ const OrdersListGrid: FC = () => {
                     <Popper
                         open={showFullCell && anchorEl !== null}
                         anchorEl={anchorEl}
-                        style={{ width, marginLeft: -17 }}
+                        style={{ width: '50vw'}}
                     >
                         <Paper
                             elevation={1}
                             style={{ minHeight: wrapper.current!.offsetHeight - 3 }}
                         >
-                            {value.split('.').map((e, index) => <Typography key={index} variant="body2" style={{ padding: 8 }}> {e} </Typography>)}
+                            {value.split('Product name:').map((e, index) => {
+                               return <List>
+                                    <ListItem>
+                                    <Typography key={index} variant="body2"> {e} </Typography>
+                                    </ListItem>
+                                </List>
+                            })}
                         </Paper>
                     </Popper>
                 )}
@@ -182,14 +189,14 @@ const OrdersListGrid: FC = () => {
             {
                 field: "id", headerName: "Id order", flex: 20, align: 'center', headerAlign: 'center'
             },
-            {
+            userData.isAdmin && {
                 field: "client", headerName: "Client", flex: 80, align: 'center', headerAlign: 'center'
             },
-            {
+            userData.isAdmin && {
                 field: "address", headerName: "Address", flex: 100, align: 'center', headerAlign: 'center',
                 renderCell: renderCellExpand
             },
-            {
+            userData.isAdmin && {
                 field: "phone", headerName: "Phone", flex: 40, align: 'center', headerAlign: 'center'
             },
             {
@@ -325,11 +332,11 @@ const OrdersListGrid: FC = () => {
     //*****************************Utils **********************************/
     //* get information address about client */
     function getClientAddressInfo(deliveryAddress: DeliveryAddress): string {
-        let res = `st ${deliveryAddress.street}
-        ${deliveryAddress.house ? ` ${deliveryAddress.house}.` : ``}  
-        ${deliveryAddress.flat ? ` flat ${deliveryAddress.floor}.` : ``}
-        ${deliveryAddress.floor ? ` floor ${deliveryAddress.floor}.` : ``}
-        ${deliveryAddress.comment ? ` comment ${deliveryAddress.comment}.` : ``}`;
+        let res = `St "${deliveryAddress.street}
+        ${deliveryAddress.house ? ` № ${deliveryAddress.house}"` : ``}  
+        ${deliveryAddress.flat ? ` apt "${deliveryAddress.floor}"` : ``}
+        ${deliveryAddress.floor ? ` floor "${deliveryAddress.floor}"` : ``}
+        ${deliveryAddress.comment ? ` comment "${deliveryAddress.comment}"` : ``}`;
         return res;
     }
     //* get order price */
@@ -376,16 +383,16 @@ const OrdersListGrid: FC = () => {
         products.forEach(productOrder => {
             const { productConfigured, count } = productOrder;
             const option = getInfoOptions(productConfigured.optionsConfigured);
-            res += `Product name: "${productConfigured.base.title}" ${!!option ? `options: "${option}" ` : ``}count: ${count}.   `
+            res += `Product name: "${productConfigured.base.title}" ${!!option ? `${option} ` : ``}count: ${count}.   `
         })
         return res;
 
     }
-    //* get information about oprtion product */
+    //* get information about option product */
     function getInfoOptions(options: ProductOptionConfigured[]) {
-        let res = '';
+        let res = ' ';
         options.forEach(element => {
-            res += ` ${element.optionTitle} = ${element.optionData.name}`
+            res += `${element.optionTitle}=${element.optionData.name} `
         });
         return res;
     }
