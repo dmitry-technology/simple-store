@@ -52,6 +52,10 @@ function App() {
   function subscribeToUserToken() {
     return authService.getUserData().subscribe({
       next(ud) {
+
+        console.log("next");
+        console.log(ud);
+        
         if (ud.id === '') {
           if (userData.id) { dispatch(setErrorCode(ErrorType.AUTH_ERROR)) }
           dispatch(setUserData(nonAuthorisedUser));
@@ -82,19 +86,20 @@ function App() {
     })
   }
 
+  // FIXME WTF?
   //subscriber clients
-  useEffect(() => {
-    const subscription = subscribeToClients();
-    return () => subscription.unsubscribe();
-  }, [])
+  // useEffect(() => {
+  //   const subscription = subscribeToClients();
+  //   return () => subscription.unsubscribe();
+  // }, [])
 
-  function subscribeToClients(): Subscription {
-    return clientStore.getAll().subscribe({
-      next(clients: UserData[]) {
-        dispatch(setClients(clients));
-      }
-    })
-  }
+  // function subscribeToClients(): Subscription {
+  //   return clientStore.getAll().subscribe({
+  //     next(clients: UserData[]) {
+  //       dispatch(setClients(clients));
+  //     }
+  //   })
+  // }
 
   return (
     <BrowserRouter>

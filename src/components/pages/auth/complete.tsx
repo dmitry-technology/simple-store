@@ -10,6 +10,10 @@ const RedirectPage: FC = () => {
     const userData: UserData = useSelector(userDataSelector);
     const [redirectPath, setRedirectPath] = useState<string>();
 
+    console.log("redirect page");
+    console.log(userData);
+    
+
     useEffect( () => {
         getNavigatePath().then(path => setRedirectPath(path))
     }, [] )
