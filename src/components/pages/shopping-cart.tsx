@@ -65,7 +65,8 @@ const ShoppingCart: FC = () => {
                 message: "Please, fill neccessary info to continue",
                 type: NotificationType.INFO
             }));
-        } else {
+        }
+        if (isCustomerCanOrder(userData)) {
             dispatch(addOrderAction({
                 client: userData,
                 products: shoppingCart,
@@ -76,7 +77,7 @@ const ShoppingCart: FC = () => {
                 message: "Thank you for your order!",
                 type: NotificationType.SUCCESS
             }));
-            deleteCartHandler();
+            deleteCartFn(true);
         }
     }
 
