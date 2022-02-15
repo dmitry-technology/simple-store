@@ -86,21 +86,6 @@ function App() {
     })
   }
 
-  // FIXME WTF?
-  //subscriber clients
-  // useEffect(() => {
-  //   const subscription = subscribeToClients();
-  //   return () => subscription.unsubscribe();
-  // }, [])
-
-  // function subscribeToClients(): Subscription {
-  //   return clientStore.getAll().subscribe({
-  //     next(clients: UserData[]) {
-  //       dispatch(setClients(clients));
-  //     }
-  //   })
-  // }
-
   return (
     <BrowserRouter>
       {/* Show Alert if Connection refused*/}

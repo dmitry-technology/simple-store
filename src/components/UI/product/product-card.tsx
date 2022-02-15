@@ -97,14 +97,14 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
         !!props.updateOrderFn && !!props.productBatch && props!.updateOrderFn({ ...props.productBatch, count: count });
     }
 
-    return <Card sx={{ width: "90%", minHeight: "350px", display: 'inline-flex', flexDirection: 'column', m: 1 }}>
+    return <Card sx={{ width: "90%", minHeight: "350px", display: 'inline-flex', flexDirection: 'column', m: 1, alignItems: 'center' }}>
                 <CardMedia  component="img"  
                             alt={title}
-                            sx={{width: '100%', padding: '5px' }}
+                            sx={{width: '80%', padding: '5px' }}
                             image={!!picture ? picture : `${window.location.origin}/${storeConfig.defaultPictureProductUrl}`}
                 />
                 <CardContent sx={{ flexGrow: 1, paddingBottom: 0 }}>
-                    <Typography gutterBottom variant="h5" sx={{ fontFamily: 'Cooper Std Black' }}>
+                    <Typography gutterBottom variant="h5" sx={{ fontFamily: 'noto sans display condensed bold italic' }}>
                         {title}
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -112,7 +112,7 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
                     </Typography>
                 </CardContent>
                 <CardActions sx={{ display: 'flex', flexDirection: 'column', width: '100%', p: 0, m: 0 }}>
-                    <Box sx={{p: 2, width: '90%'}}>
+                    <Box sx={{p: 1, width: '90%'}}>
                         <Box sx={{paddingBottom: 1}}>
                             {!!options && options.map(option =>
                                 <OptionButtons key={option.optionTitle} productOption={option}
