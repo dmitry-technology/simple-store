@@ -16,7 +16,7 @@ const Catalog: FC = () => {
     const categories: Category[] = useSelector(categoriesSelector);
 
     //**************** search by products *********************//
-    const [serachLine, setSerachLine] = useState<string>('');
+    const [searchLine, setSearchLine] = useState<string>('');
 
     //******************** form product ***********************//
     const [modalProductFormVisible, setModalProductFormVisible] = useState(false);
@@ -29,11 +29,11 @@ const Catalog: FC = () => {
 
     const productsByCat = useMemo(() => {
         let productsByCat = getProductsByCat(curCatId);
-        if (serachLine) {
-            productsByCat = productsByCat.filter(p => p.id.includes(serachLine) || p.title.includes(serachLine));
+        if (searchLine) {
+            productsByCat = productsByCat.filter(p => p.id.includes(searchLine) || p.title.includes(searchLine));
         }
         return productsByCat;
-    }, [curCatId, products, serachLine]);
+    }, [curCatId, products, searchLine]);
 
     const dispatch = useDispatch();
 
@@ -72,11 +72,11 @@ const Catalog: FC = () => {
                     </Button>
                 </Box>
                 <TextField
-                    value={serachLine}
-                    label="Serach"
+                    value={searchLine}
+                    label="Search"
                     variant="outlined"
                     type="text"
-                    onChange={e => setSerachLine(e.target.value)}
+                    onChange={e => setSearchLine(e.target.value)}
                 // sx={{ height: '30px' }}
                 // margin='normal'
                 />

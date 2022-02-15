@@ -122,7 +122,13 @@ export const uploadProductsCsvAction = function (file: File, catId: string): (di
         try {
             const products = await getProductsFromCSV(file);
             for (let i = 0; i < products.length; i++) {
-                await productStore.add({ ...products[i], category: catId });
+                const prodWithCat = { ...products[i], category: catId };
+                const suchProductIsExist = await productStore.exists(products[i].id);
+                if (suchProductIsExist) {
+                    await productStore.update(products[i].id, prodWithCat);
+                } else {
+                    await productStore.add(prodWithCat);
+                }
             }
             dispatch(setErrorCode(ErrorType.NO_ERROR));
             dispatch(setNotificationMessage({ message: 'Products successful uploaded from CSV file', type: NotificationType.SUCCESS }));
