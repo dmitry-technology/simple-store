@@ -4,7 +4,6 @@ import { Order } from '../../../models/order-type';
 import { Subscription } from 'rxjs';
 import { orderStore } from '../../../config/servicesConfig';
 import { setOrders } from '../../../redux/actions';
-import _ from 'lodash';
 
 import OrdersListGrid from '../../UI/orders/orders-list-grid';
 

@@ -4,7 +4,6 @@ import Catalog from "../components/pages/admin/catalog";
 import OrdersList from "../components/pages/admin/ordersList";
 import Login from "../components/pages/auth/login";
 import Logout from "../components/pages/auth/logout";
-import Orders from "../components/pages/orders";
 import Profile from "../components/pages/profile";
 import ShoppingCart from "../components/pages/shopping-cart";
 import EmailVerification from "../components/pages/auth/verification";

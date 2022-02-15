@@ -1,9 +1,6 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, SxProps, TextField, Theme } from '@mui/material';
 import { FC, useEffect, useState } from 'react';
-import { productStore } from '../../../config/servicesConfig';
 import { Category } from '../../../models/category-type';
-import { Product } from '../../../models/product';
-import { OptionData, ProductOption } from '../../../models/product-options';
 
 type Props = {
     categories: Category[];
@@ -26,7 +23,7 @@ const FormUploadFileProducts: FC<Props> = (props) => {
 
     function validate(): boolean {
         const isValid: boolean = (file &&
-            file.type === 'application/vnd.ms-excel' &&
+            file.name.split('.')[1] === 'csv' &&
             categories.findIndex(c => c.id === curCatId) > -1) as boolean;
         setFlValid(isValid);
         return isValid;
@@ -96,48 +93,3 @@ const FormUploadFileProducts: FC<Props> = (props) => {
 };
 
 export default FormUploadFileProducts;
-
-const labelsInclude = true;
-const withQuote = true;
-
-function JSON2CSV(objArray: any) {
-    let array = typeof objArray != 'object' ? JSON.parse(objArray) : objArray;
-    // console.log(array);
-
-    let str = '';
-    let line = '';
-
-    // if (labelsInclude) {        
-    //     if (withQuote) {
-    //         for (let index in array[0]) {
-    //             let value = index + "";
-    //             line += '"' + value.replace(/"/g, '""') + '",';
-    //         }
-    //     } else {
-    //         for (let index in array[0]) {
-    //             line += index + ',';
-    //         }
-    //     }
-
-    //     line = line.slice(0, -1);
-    //     str += line + '\r\n';
-    // }
-
-    for (let i = 0; i < array.length; i++) {
-        line = '';
-        if (withQuote) {
-            for (let index in array[i]) {
-                let value = array[i][index] + "";
-                line += '"' + value.replace(/"/g, '""') + '",';
-            }
-        } else {
-            for (let index in array[i]) {
-                line += array[i][index] + ',';
-            }
-        }
-
-        line = line.slice(0, -1);
-        str += line + '\r\n';
-    }
-    return str;
-}

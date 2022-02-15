@@ -30,7 +30,6 @@ const Index: FC = () => {
                             xs={12} 
                             sm={4} 
                             md={3}
-                            lg={2} 
                             key={index + prod.title}
                             sx={{display: 'flex', justifyContent: 'center'}}
                             >
