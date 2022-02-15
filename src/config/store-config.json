@@ -1,6 +1,8 @@
 {
     "minId": 100000,
     "maxId": 999999,
+    "maxItemsForOrder": 10,
+    "deliveryCost": 20,
     "primaryColor": "#ff6f04",
     "socialLoginProviders": ["Google", "Facebook", "Twitter"],
     "statusOrder": ["waiting", "working", "complete"],
