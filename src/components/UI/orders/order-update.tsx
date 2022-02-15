@@ -64,6 +64,7 @@ const FormUpdateOrder: FC<{ order: Order, visible: boolean, callBack: () => void
             dispatch(updateOrderAction(index, orderEditable));
             props.callBack();
         }
+        setdialogVisible(false);
     }
     //handle update options
     function handlerUpdateOptions(productBatch: ProductBatch) {

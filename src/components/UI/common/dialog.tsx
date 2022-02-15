@@ -22,7 +22,6 @@ const DialogConfirm: FC<DialogProps> = (params) => {
     const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     return <Dialog
-        fullScreen={fullScreen}
         open={visible}
         onClose={()=>onClose(false)}
         aria-labelledby="responsive-dialog-title"
