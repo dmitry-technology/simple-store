@@ -1,10 +1,9 @@
 import { Button, FormControl, IconButton, InputLabel, ListItemText, MenuItem, Select } from '@mui/material';
 import { FC, Fragment, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { Category } from '../../../models/category-type';
 import { ConfirmationData, emptyConfirmationData } from '../../../models/common/confirmation-type';
 import { addCategoryAction, removeCategoryAction, updateCategoryAction } from '../../../redux/actions';
-import { categoriesSelector } from '../../../redux/store';
 import { Delete } from "@mui/icons-material"
 import EditIcon from '@mui/icons-material/Edit';
 import ModalFormCategory from './modal-form-category';

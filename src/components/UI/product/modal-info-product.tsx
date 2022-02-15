@@ -1,19 +1,7 @@
-import { Box, List, ListItem, Modal, Paper, Typography } from '@mui/material';
+import { Modal, Paper } from '@mui/material';
 import { FC } from 'react';
 import { Product } from '../../../models/product';
 import ProductCard from './product-card';
-
-const style = {
-    position: 'absolute' as 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: 600,
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-};
 
 type ModalInfoProductProps = {
     product: Product,
@@ -24,8 +12,6 @@ type ModalInfoProductProps = {
 const ModalInfoProduct: FC<ModalInfoProductProps> = (props) => {
 
     const { product, visible, onClose } = props;
-
-    const { id, title, category, basePrice, description, picture, options, active } = product;
 
     return <Modal
         open={visible}

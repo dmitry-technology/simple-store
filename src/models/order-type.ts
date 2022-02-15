@@ -1,5 +1,4 @@
 import { emptyProduct, ProductBatch } from "./product";
-import { ProductOptionConfigured } from "./product-options";
 import { UserData, userDataSimple } from "./user-data";
 
 

@@ -1,5 +1,5 @@
 import { Box, List, ListItem, Modal, Typography } from '@mui/material';
-import React, { FC, useState } from 'react';
+import { FC } from 'react';
 
 const style = {
     position: 'absolute' as 'absolute',
