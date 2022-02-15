@@ -22,7 +22,7 @@ const OptionButtons: FC<OptionButtonsProps> = props => {
                 setValue(optionConfiguration.optionData.name);
             }
         }
-    }, [])
+    }, [productBatch])
 
     function handleChange(_: any, newValue: string) {
         if (newValue !== null) {

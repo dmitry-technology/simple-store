@@ -1,9 +1,9 @@
-import { Box, Button, FormControl, IconButton,  Modal, Paper } from '@mui/material';
+import { Box, Button, FormControl, IconButton, Modal, Paper } from '@mui/material';
 import React, { FC, Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Order } from '../../../models/order-type';
 import { ProductBatch } from '../../../models/product';
-import { updateOrder } from '../../../redux/actions';
+import { updateOrderAction } from '../../../redux/actions';
 import ProductCard from '../product/product-card';
 import DeleteIcon from '@mui/icons-material/Delete';
 import DialogConfirm from '../common/dialog';
@@ -22,7 +22,7 @@ const FormUpdateOrder: FC<{ order: Order, visible: boolean, callBack: () => void
     const confirmationData = React.useRef<ConfirmationData>(emptyConfirmationData);
     const [orderEditable, setOrderEditable] = useState<Order>(JSON.parse(JSON.stringify(order)));
 
-    //handler form
+    //* handler form confirmation */
     function onSumbitForm(event: any) {
         event.preventDefault();
         confirmationData.current.title = `update order`;
@@ -31,12 +31,16 @@ const FormUpdateOrder: FC<{ order: Order, visible: boolean, callBack: () => void
         setdialogVisible(true);
     }
 
+    useEffect(() => {
+        _.isEqual(orderEditable, order) ? setIsValid(false) : setIsValid(true);
+    }, [orderEditable]);
+
+    //reset form
     function resetForm() {
         setOrderEditable(JSON.parse(JSON.stringify(order)));
-        console.log("reset form");
     }
 
-    //handler remove
+    //* handler remove */
     function btnRemove(prod: ProductBatch) {
         const index = orderEditable.products.findIndex(e => e.productConfigured.base.id === prod.productConfigured.base.id);
         if (index >= 0) {
@@ -46,30 +50,30 @@ const FormUpdateOrder: FC<{ order: Order, visible: boolean, callBack: () => void
             setdialogVisible(true);
         }
     }
-    //remove product from current order
+    //* remove product from current order */
     function handleRemove(index: number, status: boolean) {
         if (status) {
             orderEditable.products.splice(index, 1);
             setOrderEditable(JSON.parse(JSON.stringify(orderEditable)));
         }
-        setIsValid(true)
         setdialogVisible(false);
     }
     //update collection Orders to bd
     function handleUpdate(index: string, status: boolean) {
         if (status) {
-            dispatch(updateOrder(index, orderEditable));
+            dispatch(updateOrderAction(index, orderEditable));
             props.callBack();
         }
     }
-
-    function handlerUpdateOrder(productBatch: ProductBatch) {
+    //handle update options
+    function handlerUpdateOptions(productBatch: ProductBatch) {
         const index = orderEditable.products.findIndex(e => e.productConfigured.base.id === productBatch.productConfigured.base.id)
         if (index >= 0) {
             orderEditable.products.splice(index, 1, productBatch);
-            _.isEqual(orderEditable, order) ? setIsValid(false) : setIsValid(true);
+            setOrderEditable(JSON.parse(JSON.stringify(orderEditable)));
         }
     }
+    //get updating order
     const productCards = useMemo(() => {
         return getProductCards();
     }, [orderEditable]);
@@ -80,7 +84,7 @@ const FormUpdateOrder: FC<{ order: Order, visible: boolean, callBack: () => void
                 <ProductCard
                     product={prod.productConfigured.base}
                     productBatch={prod}
-                    updateOrderFn={handlerUpdateOrder}
+                    updateOrderFn={handlerUpdateOptions}
                 />
                 <IconButton aria-label="delete" onClick={() => btnRemove(prod)}>
                     <DeleteIcon />
@@ -103,9 +107,9 @@ const FormUpdateOrder: FC<{ order: Order, visible: boolean, callBack: () => void
                 </Box>
                 {/* Control buttons */}
                 <FormControl sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center' }}>
-                    <Button type="submit" disabled={!isValid} variant="outlined" startIcon={<SendIcon />} onClick={onSumbitForm} sx={{ m: 1 }}>Submit</Button>
-                    {/* <Button type="reset" variant="outlined" startIcon={<RestartAltIcon />} onClick={() => resetForm()} sx={{ m: 1 }}>Reset</Button> */}
-                    <Button variant="outlined" startIcon={<CloseIcon />} onClick={callBack} sx={{ m: 1 }}>close</Button>
+                    <Button type="submit" color='warning' variant="contained" disabled={!isValid} startIcon={<SendIcon />} onClick={onSumbitForm} sx={{ m: 1 }}>Update</Button>
+                    <Button type="reset" variant="outlined" color='warning' startIcon={<RestartAltIcon />} onClick={() => resetForm()} sx={{ m: 1 }}>Reset</Button>
+                    <Button variant="outlined" color='warning' startIcon={<CloseIcon />} onClick={callBack} sx={{ m: 1 }}>close</Button>
                 </FormControl>
                 <DialogConfirm visible={dialogVisible} title={confirmationData.current.title} message={confirmationData.current.message} onClose={confirmationData.current.handle} />
             </Paper>

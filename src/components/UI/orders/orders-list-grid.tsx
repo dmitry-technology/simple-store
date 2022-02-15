@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { Popper, Box, IconButton, ListItem, Paper, Typography, Button } from '@mui/material';
+import { Popper, Box, Paper, Typography } from '@mui/material';
 import { FC, useMemo, useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Order, orderSimple, OrderStatus } from '../../../models/order-type';
-import { clientsSelector, ordersSelector, productsSelector, userDataSelector } from '../../../redux/store';
+import { Order, orderSimple } from '../../../models/order-type';
+import { ordersSelector, userDataSelector } from '../../../redux/store';
 import { useMediaQuery } from "react-responsive";
 import { DataGrid, GridActionsCellItem, GridCellEditCommitParams, GridColDef, GridRenderCellParams, GridRowHeightParams, GridRowId, GridRowParams, GridRowsProp, GridValueFormatterParams } from '@mui/x-data-grid';
 import { getOrdersListFields, OrderListFields } from '../../../config/orders-list-columns';
@@ -11,53 +11,38 @@ import { Delete } from '@mui/icons-material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditIcon from '@mui/icons-material/Edit';
 import { Product, ProductBatch } from '../../../models/product';
-import { orderStore } from '../../../config/servicesConfig';
-import { setClients, setOrders, updateOrder } from '../../../redux/actions';
+import { orderState } from '../../../config/servicesConfig';
+import { updateOrderAction, removeOrderAction } from '../../../redux/actions';
 import { DeliveryAddress, UserData } from '../../../models/user-data';
-import storeConfig from "../../../config/store-config.json"
 import _ from 'lodash';
 import { ConfirmationData, emptyConfirmationData } from '../../../models/common/confirmation-type';
 import DialogConfirm from '../common/dialog';
-import { getRandomInteger } from '../../../utils/common/random';
 import ModalInfo from '../common/modal-info';
 import { ProductOptionConfigured } from '../../../models/product-options';
 import FormUpdateOrder from './order-update';
 
+//status order from service config
+const arrStatus = Array.from(orderState.keys());
 
-interface GridCellExpandProps {
-    value: string;
-    width: number;
-}
-
-const colotState = new Map([
-    ["waiting", "orange"],
-    ["working", "aqua"],
-    ["complete", "lime"]
-]);
 
 const OrdersListGrid: FC = () => {
 
-    // /* dialog confirmation */
+    //* dialog confirmation */
     const confirmationData = React.useRef<ConfirmationData>(emptyConfirmationData);
     const [dialogVisible, setdialogVisible] = useState(false);
 
-    /* dialog modal */
+    //* dialog modal */
     const textModal = useRef<string[]>(['']);
     const [modalVisible, setModalVisible] = useState(false);
 
-
-    //**form edit order */
+    //* form edit order */
     const [formVisible, setformVisible] = useState(false);
     const [orderUpdate, setOrderUpdate] = useState(orderSimple);
 
     //*************************Redux***************************//
     const dispatch = useDispatch();
     const orders: Order[] = useSelector(ordersSelector);
-    const clients: UserData[] = useSelector(clientsSelector);
-    const products: Product[] = useSelector(productsSelector);
     const userData: UserData = useSelector(userDataSelector);
-
-
 
     //********************Mobile or desktop********************//
     const isMobile = useMediaQuery({ maxWidth: 600, orientation: 'portrait' });
@@ -74,7 +59,11 @@ const OrdersListGrid: FC = () => {
         return 'isDesktop';
     }
 
-    //*****************castom grid cell **********************/
+    //*****************castom grid cell **********************//
+    interface GridCellExpandProps {
+        value: string;
+        width: number;
+    }
 
     function isOverflown(element: Element): boolean {
         return (
@@ -116,9 +105,7 @@ const OrdersListGrid: FC = () => {
                     setShowFullCell(false);
                 }
             }
-
             document.addEventListener('keydown', handleKeyDown);
-
             return () => {
                 document.removeEventListener('keydown', handleKeyDown);
             };
@@ -179,8 +166,8 @@ const OrdersListGrid: FC = () => {
     }
 
 
-    //************************Data Grid*************************//
-    //column data grid
+    //**********************Data Grid************************//
+    //* column data grid */
     const [columns, setColumns] = useState<GridColDef[]>([]);
 
     useEffect(() => {
@@ -204,7 +191,7 @@ const OrdersListGrid: FC = () => {
                 renderCell: renderCellExpand
             },
             {
-                field: "phone", headerName: "Phone", flex: 80, align: 'center', headerAlign: 'center'
+                field: "phone", headerName: "Phone", flex: 40, align: 'center', headerAlign: 'center'
             },
             {
                 field: "products", headerName: "Product", flex: 150, align: 'center', headerAlign: 'center',
@@ -212,15 +199,14 @@ const OrdersListGrid: FC = () => {
             },
             {
                 field: "status", headerName: "Status", flex: 40, align: 'center', headerAlign: 'center',
-                editable: userData.isAdmin, type: "singleSelect", valueOptions: storeConfig.statusOrder,
+                editable: userData.isAdmin, type: "singleSelect", valueOptions: arrStatus,
                 renderCell: (params: GridRenderCellParams) => {
                     return (
-                        <Box sx={{ backgroundColor: colotState.get(params.value), color: 'white', width: '80%', textAlign: 'center' }}>
+                        <Box sx={{ backgroundColor: orderState.get(params.value), color: 'white', width: '80%', textAlign: 'center' }}>
                             <Typography>{params.value}</Typography>
                         </Box>
                     )
                 }
-
             },
             {
                 field: "date", headerName: "Date Time", flex: 50, align: 'center', headerAlign: 'center', type: 'date',
@@ -257,12 +243,10 @@ const OrdersListGrid: FC = () => {
             }
         ];
     }
-
+    //* rows data grid */
     const rows = useMemo(() => getRows(orders), [orders, dialogVisible]);
 
-
     function getRows(orders: Order[]): GridRowsProp {
-
         return orders.filter(order => userData.isAdmin || order.client.id == userData.id)
             .map(order => {
                 return {
@@ -277,7 +261,18 @@ const OrdersListGrid: FC = () => {
     };
 
     //**************************call back actions******************************//
-    //remove
+    //* table action   */
+    //begin form order update
+    function editOrder(id: GridRowId) {
+        const order = getOrder(id.toString());
+        if (!!order) {
+            setOrderUpdate(order);
+            setformVisible(true);
+        } else {
+            console.log("not found " + id)
+        }
+    }
+    //remove order
     function rmOrder(id: GridRowId) {
         const order = getOrder(id.toString());
         if (!!order) {
@@ -287,18 +282,8 @@ const OrdersListGrid: FC = () => {
             setdialogVisible(true);
         }
     }
-
-    function handleRemove(id: string, status: boolean): void {
-        if (status) {
-            try {
-                dispatch(orderStore.remove(id));
-            } catch (err) {
-            }
-        }
-        setdialogVisible(false);
-    }
     //show detail info
-    async function showOrder(id: GridRowId) {
+    function showOrder(id: GridRowId) {
         const order = orders.find(e => e.id === id);
         if (!!order) {
             textModal.current = getInfoOrder(order);
@@ -307,8 +292,18 @@ const OrdersListGrid: FC = () => {
         }
         setModalVisible(true);
     }
+    //handler remove
+    function handleRemove(id: string, status: boolean): void {
+        if (status) {
+            try {
+                dispatch(removeOrderAction(id));
+            } catch (err) {
+            }
+        }
+        setdialogVisible(false);
+    }
 
-    //update order
+    //* update table order */
     function onCellEdit(params: GridCellEditCommitParams) {
         const id: string = params.id.toString();
         const oldOrder = getOrder(id);
@@ -320,37 +315,25 @@ const OrdersListGrid: FC = () => {
             setdialogVisible(true);
         }
     }
-
+    //handler update
     function handleUpdate(order: Order, id: string, status: boolean): void {
         if (status) {
-            dispatch(updateOrder(id, order));
+            dispatch(updateOrderAction(id, order));
         }
         setdialogVisible(false);
     }
 
-    function editOrder(id: GridRowId) {
-        const order = getOrder(id.toString());
-        setformVisible(true);
-        if (!!order) {
-            setOrderUpdate(order);
-            setformVisible(true);
-        } else {
-            console.log("not found " + id)
-        }
-    }
-    //******************************************************************* */
-
-
     //*****************************Utils **********************************/
-
+    //* get information address about client */
     function getClientAddressInfo(deliveryAddress: DeliveryAddress): string {
         let res = `st ${deliveryAddress.street}
         ${deliveryAddress.house ? ` ${deliveryAddress.house}.` : ``}  
         ${deliveryAddress.flat ? ` flat ${deliveryAddress.floor}.` : ``}
-        ${deliveryAddress.floor ? ` floor ${deliveryAddress.floor}.` : ``}`;
+        ${deliveryAddress.floor ? ` floor ${deliveryAddress.floor}.` : ``}
+        ${deliveryAddress.comment ? ` floor ${deliveryAddress.comment}.` : ``}`;
         return res;
     }
-
+    //* get order price */
     function getOrderPrice(products: ProductBatch[]) {
         return products.map(productBatch => {
             let priceOption = 0;
@@ -361,15 +344,15 @@ const OrdersListGrid: FC = () => {
         })
             .reduce((prev, current) => prev + current, 0);
     }
-
+    //* get order */
     function getOrder(id: string): Order | undefined {
         return orders[orders.findIndex(order => order.id === id)];
     }
-    //disable btn in table
+    //* disable button in table */
     function isActiveOrder(id: GridRowId) {
-        return userData.isAdmin ? false : getOrder(id.toString())?.status !== OrderStatus.WAITING;
+        return userData.isAdmin ? false : getOrder(id.toString())?.status !== arrStatus[0];
     }
-
+    //* get information about order */
     function getInfoOrder(order: Order): string[] {
         const res: string[] = [
             `Order ID  : ${order.id}`,
@@ -383,12 +366,12 @@ const OrdersListGrid: FC = () => {
         ];
         return res;
     }
-
+    //* parse date to YYYY:MM:DD HH:MM */
     function formatDate(date: string) {
         const res = date.split("T");
         return `${res[0]} ${res[1].substring(0, 5)}`;
     }
-
+    //* get information about product */
     function getInfoProduct(products: ProductBatch[]) {
         let res = '';
         products.forEach(productOrder => {
@@ -399,7 +382,7 @@ const OrdersListGrid: FC = () => {
         return res;
 
     }
-
+    //* get information about oprtion product */
     function getInfoOptions(options: ProductOptionConfigured[]) {
         let res = '';
         options.forEach(element => {
@@ -412,7 +395,7 @@ const OrdersListGrid: FC = () => {
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
             <Paper sx={{ width: '90vw', height: '80vh', marginTop: '2vh' }}>
-                <DataGrid columns={columns} rows={rows} onCellEditCommit={onCellEdit} />
+                <DataGrid columns={columns} rows={rows} onCellEditCommit={onCellEdit} sortModel={[{ field: "date", sort: 'desc' }]} />
             </Paper>
             <DialogConfirm visible={dialogVisible} title={confirmationData.current.title} message={confirmationData.current.message} onClose={confirmationData.current.handle} />
             <ModalInfo title={"Detailed information about the order"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
