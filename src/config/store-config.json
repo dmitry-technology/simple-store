@@ -5,7 +5,6 @@
     "deliveryCost": 20,
     "primaryColor": "#ff6f04",
     "socialLoginProviders": ["Google", "Facebook", "Twitter"],
-    "statusOrder": ["waiting", "working", "complete"],
     "defaultPictureProductUrl": "logo512.png",
     "productPictureFolder": "images",
     "currencySign": "₪",

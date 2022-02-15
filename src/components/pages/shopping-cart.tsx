@@ -1,6 +1,6 @@
 import { Box, Button } from '@mui/material';
 import { FC, useEffect, useRef, useState } from 'react';
-import { shoppingCartService } from '../../config/servicesConfig';
+import { orderState, shoppingCartService } from '../../config/servicesConfig';
 import { ProductBatch } from '../../models/product';
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -12,10 +12,12 @@ import { userDataSelector } from '../../redux/store';
 import { addOrderAction, setCartItemsCount, setNotificationMessage } from '../../redux/actions';
 import { NotificationType } from '../../models/user-notification';
 import { isCustomerCanOrder } from '../../utils/common/validation-utils';
-import { OrderStatus } from '../../models/order-type';
+// import { OrderStatus } from '../../models/order-type';
 import CartTable from '../UI/orders/cart-table';
 import DialogConfirm from '../UI/common/dialog';
 import { ConfirmationData, emptyConfirmationData } from '../../models/common/confirmation-type';
+
+const arrStatus = Array.from(orderState.keys());
 
 const ShoppingCart: FC = () => {
 
@@ -71,7 +73,7 @@ const ShoppingCart: FC = () => {
                 client: userData,
                 products: shoppingCart,
                 date: new Date().toISOString(),
-                status: OrderStatus.WAITING
+                status: arrStatus[0]
             }))
             dispatch(setNotificationMessage({
                 message: "Thank you for your order!",
