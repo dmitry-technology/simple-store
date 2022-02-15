@@ -23,12 +23,12 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
     const userData: UserData = useSelector(userDataSelector);
     const dispatch = useDispatch();
     const batchId = useRef<string>(getRandomInteger(storeConfig.minId, storeConfig.maxId).toString());
-
-    useEffect(() => {
+    
+    useEffect(() => {    
         if (!!props.productBatch) {
             setCount(props.productBatch.count);
         }
-    },[])
+    },[props.productBatch])
 
     useEffect(() => {
         !!options && options.forEach(option =>

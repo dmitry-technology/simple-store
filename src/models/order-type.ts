@@ -2,13 +2,13 @@ import { emptyProduct, ProductBatch } from "./product";
 import { ProductOptionConfigured } from "./product-options";
 import { UserData, userDataSimple } from "./user-data";
 
-export enum OrderStatus { WAITING = "waiting", WORKING = "working", COMPLETE = "complete" };
+
 
 export type Order = {
     id?: string;
     client: UserData;
     products: ProductBatch[];
-    status: OrderStatus;
+    status: string;
     date: string;
 }
 
@@ -27,6 +27,6 @@ export const orderSimple: Order = {
 
         }
     ],
-    status: OrderStatus.WAITING,
+    status: "waiting",
     date: new Date().toISOString()
 }
