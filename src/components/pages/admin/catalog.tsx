@@ -64,6 +64,7 @@ const Catalog: FC = () => {
             <ModalUploadFileProducts
                 visible={modalUploadProductsFileVisible}
                 onClose={() => setModalUploadProductsFileVisible(false)}
+                categories={categories}
             />
         </Box>
     )

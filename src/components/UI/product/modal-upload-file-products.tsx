@@ -1,14 +1,17 @@
 import { Modal, Paper } from '@mui/material';
 import { FC } from 'react';
+import { Category } from '../../../models/category-type';
+import FormUploadFileProducts from './form-upload-file-products';
 
 type ModalFormProductProps = {
     visible: boolean;
     onClose: () => void;
+    categories: Category[];
 }
 
-const ModalUploadFileProducts:FC<ModalFormProductProps> = (props) => {
+const ModalUploadFileProducts: FC<ModalFormProductProps> = (props) => {
 
-    const { visible, onClose } = props;
+    const { visible, onClose, categories } = props;
 
     return (
         <Modal
@@ -20,7 +23,7 @@ const ModalUploadFileProducts:FC<ModalFormProductProps> = (props) => {
         >
             <Paper
                 sx={{
-                    width: { xs: '100vw', sm: '50vw' },
+                    width: { xs: '90vw', sm: '30vw' },
                     padding: '0 20px',
                     height: 'fit-content',
                     maxHeight: '100%',
@@ -28,13 +31,11 @@ const ModalUploadFileProducts:FC<ModalFormProductProps> = (props) => {
                     overflow: 'auto'
                 }}
             >
-                {/* <FormAddProduct
+                <FormUploadFileProducts
                     categories={categories}
-                    uploadProduct={uploadProduct}
-                    defaultPicture={config.defaultPictureProductUrl}
-                    existId={existId}
-                    product={product}
-                /> */}
+                    uploadFn={() => { }}
+                    onClose={onClose}
+                />
             </Paper>
         </Modal >
     );
