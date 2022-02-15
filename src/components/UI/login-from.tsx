@@ -24,6 +24,7 @@ const LoginForm: FC<LoginFormProps> = (props) => {
   // Activate Login button if user entered email
   useEffect(() => {
     setValid(!!loginData.email && !emailHelperText);
+    if (isAdmin(loginData.email) && !!!loginData.password) setValid(false);
     setLoginErrMsg('');
   }, [loginData])
 
