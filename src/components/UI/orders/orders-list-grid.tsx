@@ -329,7 +329,7 @@ const OrdersListGrid: FC = () => {
         ${deliveryAddress.house ? ` ${deliveryAddress.house}.` : ``}  
         ${deliveryAddress.flat ? ` flat ${deliveryAddress.floor}.` : ``}
         ${deliveryAddress.floor ? ` floor ${deliveryAddress.floor}.` : ``}
-        ${deliveryAddress.comment ? ` floor ${deliveryAddress.comment}.` : ``}`;
+        ${deliveryAddress.comment ? ` comment ${deliveryAddress.comment}.` : ``}`;
         return res;
     }
     //* get order price */
@@ -355,7 +355,7 @@ const OrdersListGrid: FC = () => {
     function getInfoOrder(order: Order): string[] {
         const res: string[] = [
             `Order ID  : ${order.id}`,
-            `Clietn : ${order.client.name}`,
+            `Client : ${order.client.name}`,
             `Phone : ${order.client.phoneNumber}`,
             `${!!order.client.deliveryAddress ? `Address : ${getClientAddressInfo(order.client.deliveryAddress)}` : ''}`,
             `${getInfoProduct(order.products)}`,
@@ -376,7 +376,7 @@ const OrdersListGrid: FC = () => {
         products.forEach(productOrder => {
             const { productConfigured, count } = productOrder;
             const option = getInfoOptions(productConfigured.optionsConfigured);
-            res += `product: ${productConfigured.base.title} ${!!option ? `options: ${option} ` : ``}count: ${count}. `
+            res += `Product name: "${productConfigured.base.title}" ${!!option ? `options: "${option}" ` : ``}count: ${count}.   `
         })
         return res;
 
@@ -385,7 +385,7 @@ const OrdersListGrid: FC = () => {
     function getInfoOptions(options: ProductOptionConfigured[]) {
         let res = '';
         options.forEach(element => {
-            res += `${element.optionTitle} = ${element.optionData.name} `
+            res += ` ${element.optionTitle} = ${element.optionData.name}`
         });
         return res;
     }
