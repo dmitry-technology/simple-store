@@ -14,9 +14,12 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ProductBatch, ProductConfigured } from '../../../models/product';
-import { Avatar, TextField } from '@mui/material';
+import { Avatar } from '@mui/material';
 import storeConfig from '../../../config/store-config.json';
 import { shoppingCartService } from '../../../config/servicesConfig';
+import CountSelector from '../product/count-selector';
+import DialogConfirm from '../common/dialog';
+import { ConfirmationData, emptyConfirmationData } from '../../../models/common/confirmation-type';
 
 function createData(batchId: string, product: ProductConfigured, count: number) {
     return {
@@ -40,14 +43,25 @@ const Row: React.FC<RowProps> = props => {
 
     const { row, updateCartFn } = props;
     const [open, setOpen] = React.useState(false);
+    const confirmationData = React.useRef<ConfirmationData>(emptyConfirmationData);
+    const [dialogVisible, setDialogVisible] = React.useState<boolean>(false);
 
     function removeItemHandler(event: any, batchId: string) {
-        shoppingCartService.remove(batchId);
-        updateCartFn();
+        confirmationData.current.title = "Remove from Shopping Cart";
+        confirmationData.current.message = `Delete product ${batchId} from shopping cart?`;
+        confirmationData.current.handle = removeBatchFn.bind(undefined, batchId);
+        setDialogVisible(true);
     }
 
-    function changeCountHandler(event: any, batchId: string) {
-        const newCount = event.target.value as number;
+    function removeBatchFn(batchId: string, status: boolean) {
+        if (status) {
+            shoppingCartService.remove(batchId);
+            updateCartFn();
+        }
+        setDialogVisible(false);
+    }
+
+    function changeCountHandler(batchId: string, newCount: number) {
         const batch = shoppingCartService.get(batchId);
         batch!.count = newCount;
         shoppingCartService.update(batchId, batch!);
@@ -56,6 +70,10 @@ const Row: React.FC<RowProps> = props => {
 
     return (
         <React.Fragment>
+            <DialogConfirm visible={dialogVisible}
+                title={confirmationData.current.title}
+                message={confirmationData.current.message}
+                onClose={confirmationData.current.handle} />
             <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
                 <TableCell>
                     {row.options.length > 0 && <IconButton
@@ -73,13 +91,9 @@ const Row: React.FC<RowProps> = props => {
                         sx={{ width: 80, height: 80 }} />&nbsp;{row.title}
                 </TableCell>
                 <TableCell align="center">{row.description}</TableCell>
-                <TableCell align="right"><TextField
-                    type='number'
-                    size='small'
-                    value={row.count}
-                    sx={{ width: 70 }}
-                    onChange={event => changeCountHandler(event, row.id)}
-                />
+                <TableCell align="right">
+                    <CountSelector handlerFunc={changeCountHandler.bind(this, row.id)}
+                        value={row.count} />
                 </TableCell>
                 <TableCell align="right">{row.price}{storeConfig.currencySign}</TableCell>
                 <TableCell>
@@ -133,7 +147,7 @@ const CartTable: React.FC<{ batches: ProductBatch[], updateCartFn: () => void }>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {batches.sort((a,b) => a.id.localeCompare(b.id)).map((batch, index) =>
+                    {batches.sort((a, b) => a.id.localeCompare(b.id)).map((batch, index) =>
                         <Row key={index}
                             row={createData(batch.id, batch.productConfigured, batch.count)}
                             updateCartFn={updateCartFn} />)}

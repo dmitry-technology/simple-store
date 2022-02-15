@@ -1,5 +1,5 @@
 import { Box, Button } from '@mui/material';
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import { shoppingCartService } from '../../config/servicesConfig';
 import { ProductBatch } from '../../models/product';
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
@@ -14,6 +14,8 @@ import { NotificationType } from '../../models/user-notification';
 import { isCustomerCanOrder } from '../../utils/common/validation-utils';
 import { OrderStatus } from '../../models/order-type';
 import CartTable from '../UI/orders/cart-table';
+import DialogConfirm from '../UI/common/dialog';
+import { ConfirmationData, emptyConfirmationData } from '../../models/common/confirmation-type';
 
 const ShoppingCart: FC = () => {
 
@@ -21,6 +23,8 @@ const ShoppingCart: FC = () => {
     const [needAuthFl, setNeedAuthFl] = useState<boolean>(false);
     const [needFillProfileFl, setNeedFillProfileFl] = useState<boolean>(false);
     const userData: UserData = useSelector(userDataSelector);
+    const confirmationData = useRef<ConfirmationData>(emptyConfirmationData);
+    const [dialogVisible, setDialogVisible] = useState<boolean>(false);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -28,8 +32,18 @@ const ShoppingCart: FC = () => {
     }, [])
 
     function deleteCartHandler(): void {
-        shoppingCartService.removeAll();
+        confirmationData.current.title = "Clear Shopping Cart";
+        confirmationData.current.message = "Do you want to remove all products from the shopping cart?";
+        confirmationData.current.handle = deleteCartFn.bind(undefined);
+        setDialogVisible(true);
+    }
+
+    function deleteCartFn(status: boolean): void {
+        if (status) {
+            shoppingCartService.removeAll();
         updateCartFn();
+        }
+        setDialogVisible(false);
     }
 
     function updateCartFn(): void {
@@ -69,6 +83,10 @@ const ShoppingCart: FC = () => {
     return <Box sx={{ mt: 1, width: '100%' }}>
         {shoppingCart.length === 0 && `You have 0 products in cart`}
         {shoppingCart.length > 0 && <Box>
+            <DialogConfirm visible={dialogVisible}
+                title={confirmationData.current.title}
+                message={confirmationData.current.message}
+                onClose={confirmationData.current.handle} />
             <CartTable batches={shoppingCart} updateCartFn={updateCartFn} />
             <Box sx={{mt: 1, display: 'flex', width: '100%', justifyContent: 'end'}}>                
                 <Button
