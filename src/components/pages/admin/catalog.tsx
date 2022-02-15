@@ -1,4 +1,4 @@
-import { Box, Button, Paper } from "@mui/material";
+import { Box, Button, Paper, TextField } from "@mui/material";
 import { FC, useMemo, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Category } from "../../../models/category-type";
@@ -15,6 +15,9 @@ const Catalog: FC = () => {
     const products: Product[] = useSelector(productsSelector);
     const categories: Category[] = useSelector(categoriesSelector);
 
+    //**************** search by products *********************//
+    const [serachLine, setSerachLine] = useState<string>('');
+
     //******************** form product ***********************//
     const [modalProductFormVisible, setModalProductFormVisible] = useState(false);
 
@@ -24,7 +27,13 @@ const Catalog: FC = () => {
     //****************** selector categories ******************//
     const [curCatId, setCurCatId] = useState<string>(categories[0]?.id || '');
 
-    const productsByCat = useMemo(() => getProductsByCat(curCatId), [curCatId, products]);
+    const productsByCat = useMemo(() => {
+        let productsByCat = getProductsByCat(curCatId);
+        if (serachLine) {
+            productsByCat = productsByCat.filter(p => p.id.includes(serachLine) || p.title.includes(serachLine));
+        }
+        return productsByCat;
+    }, [curCatId, products, serachLine]);
 
     const dispatch = useDispatch();
 
@@ -45,13 +54,32 @@ const Catalog: FC = () => {
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '1 0 auto', width: '100%' }}>
-            <Paper sx={{ margin: '10px 0', width: '100%' }}>
-                <Button sx={{ margin: '10px' }} variant="outlined" onClick={() => setModalProductFormVisible(true)}>
-                    Create new product
-                </Button>
-                <Button variant="outlined" onClick={() => setModalUploadProductsFileVisible(true)}>
-                    Upload products from file
-                </Button>
+            <Paper
+                sx={{
+                    margin: '10px 0',
+                    width: '100%',
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center'
+                }}
+            >
+                <Box>
+                    <Button sx={{ marginRight: '10px' }} variant="outlined" onClick={() => setModalProductFormVisible(true)}>
+                        Create new product
+                    </Button>
+                    <Button variant="outlined" onClick={() => setModalUploadProductsFileVisible(true)}>
+                        Upload products from file
+                    </Button>
+                </Box>
+                <TextField
+                    value={serachLine}
+                    label="Serach"
+                    variant="outlined"
+                    type="text"
+                    onChange={e => setSerachLine(e.target.value)}
+                // sx={{ height: '30px' }}
+                // margin='normal'
+                />
             </Paper>
             <Categories
                 categories={categories}
