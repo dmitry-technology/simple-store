@@ -3,7 +3,7 @@ import { FC, useMemo, useRef, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Category } from "../../../models/category-type";
 import { Product, UploadProductData } from '../../../models/product';
-import { addCategoryAction, addProductAction, removeCategoryAction, updateCategoryAction } from "../../../redux/actions";
+import { addCategoryAction, addProductAction, removeCategoryAction, updateCategoryAction, uploadProductsCsvAction } from "../../../redux/actions";
 import { categoriesSelector, productsSelector } from "../../../redux/store";
 import DialogConfirm from "../../UI/common/dialog";
 import { ConfirmationData, emptyConfirmationData } from "../../../models/common/confirmation-type";
@@ -12,6 +12,7 @@ import ModalFormProduct from "../../UI/product/modal-form-product";
 import ModalFormCategory from "../../UI/category/modal-form-category";
 import Categories from "../../UI/category/categories";
 import ModalUploadFileProducts from "../../UI/product/modal-upload-file-products";
+import { getProductsFromCSV } from "../../../utils/product-utils";
 
 const Catalog: FC = () => {
 
@@ -33,6 +34,12 @@ const Catalog: FC = () => {
 
     async function addProductFn(uploadProductData: UploadProductData) {
         await dispatch(addProductAction(uploadProductData));
+    }
+
+    //******************* upload products from csv  ***********//
+    async function uploadProductsFromCSV(file: File, catId: string) {
+        await dispatch(uploadProductsCsvAction(file, catId));
+        setModalUploadProductsFileVisible(false);
     }
 
     //*********************** utils **************************//
@@ -64,6 +71,7 @@ const Catalog: FC = () => {
             <ModalUploadFileProducts
                 visible={modalUploadProductsFileVisible}
                 onClose={() => setModalUploadProductsFileVisible(false)}
+                uploadProductsFromCSV={uploadProductsFromCSV}
                 categories={categories}
             />
         </Box>

@@ -6,6 +6,7 @@ import { Category } from "../models/category-type";
 import { Order } from "../models/order-type";
 import { categoriesStore, clientStore, orderStore, productPictureStore, productStore } from "../config/servicesConfig";
 import { NotificationType, UserNotificationMessage } from "../models/user-notification";
+import { getProductsFromCSV } from "../utils/product-utils";
 
 export const SET_USER_DATA = "set_user_data";
 export const SET_PRODUCTS = "set_products";
@@ -112,6 +113,22 @@ export const updateProductAction = function (uploadProductData: UploadProductDat
         } catch (err: any) {
             dispatch(setErrorCode(err))
             dispatch(setNotificationMessage({ message: 'Error: Can`t update product.', type: NotificationType.ERROR }));
+        }
+    }
+}
+
+export const uploadProductsCsvAction = function (file: File, catId: string): (dispath: any) => void {
+    return async dispatch => {
+        try {
+            const products = await getProductsFromCSV(file);
+            for (let i = 0; i < products.length; i++) {
+                await productStore.add({ ...products[i], category: catId });
+            }
+            dispatch(setErrorCode(ErrorType.NO_ERROR));
+            dispatch(setNotificationMessage({ message: 'Products successful uploaded from CSV file', type: NotificationType.SUCCESS }));
+        } catch (err: any) {
+            dispatch(setErrorCode(err))
+            dispatch(setNotificationMessage({ message: 'Error: Can`t upload products from CSV file.', type: NotificationType.ERROR }));
         }
     }
 }

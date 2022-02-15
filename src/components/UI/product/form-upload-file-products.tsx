@@ -1,12 +1,13 @@
 import { Box, Button, FormControl, InputLabel, MenuItem, Select, SxProps, TextField, Theme } from '@mui/material';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { productStore } from '../../../config/servicesConfig';
 import { Category } from '../../../models/category-type';
 import { Product } from '../../../models/product';
+import { OptionData, ProductOption } from '../../../models/product-options';
 
 type Props = {
     categories: Category[];
-    uploadFn: (file: File) => void;
+    uploadFn: (file: File, catId: string) => void;
     onClose: () => void;
 }
 
@@ -14,10 +15,22 @@ const FormUploadFileProducts: FC<Props> = (props) => {
 
     const { categories, uploadFn, onClose } = props;
 
-    const [category, setCategory] = useState<string>(categories[0].id);
+    const [curCatId, setCurCatId] = useState<string>(categories[0].id);
     const [file, setFile] = useState<File>();
 
-    const [flValid, setFlValid] = useState<boolean>(true);
+    const [flValid, setFlValid] = useState<boolean>(false);
+
+    useEffect(() => {
+        validate();
+    }, [curCatId, file])
+
+    function validate(): boolean {
+        const isValid: boolean = (file &&
+            file.type === 'application/vnd.ms-excel' &&
+            categories.findIndex(c => c.id === curCatId) > -1) as boolean;
+        setFlValid(isValid);
+        return isValid;
+    }
 
     function fileHandle(event: any) {
         const file = event.target.files[0];
@@ -28,56 +41,10 @@ const FormUploadFileProducts: FC<Props> = (props) => {
 
     async function onSubmit(event: any) {
         event.preventDefault();
-        const strArr = await getStrArrFromFile(file!);
-        const headers = strArr[0].split(';');
-
-        const rawProducts: any[] = [];
-
-        const corruptedLines: number[] = [];
-
-        for (let i = 1; i < strArr.length; i++) {
-            const prodFieldsArr = strArr[i].split(';');
-            if (prodFieldsArr.length === headers.length) {
-                const rawProd: any = {};
-                for (let j = 0; j < prodFieldsArr.length; j++) {
-                    rawProd[headers[j]] = prodFieldsArr[j];
-                }
-                rawProd.basePrice = +rawProd.basePrice;
-                rawProd.active = rawProd.active === 'true' ? true : false;
-                rawProducts.push(rawProd);
-            } else {
-                corruptedLines.push(i + 1);
-            }
+        if (validate()) {
+            uploadFn(file!, curCatId);
         }
-
-        console.log(rawProducts);
-        console.log(corruptedLines);
-
     }
-
-    function getStrArrFromFile(file: File): Promise<string[]> {
-        return new Promise((resolve, reject) => {
-            let reader = new FileReader();
-            reader.readAsText(file);
-            reader.onload = function () {
-                if (reader.result) {
-                    const rawStr = reader.result.toString();
-                    const clearStr = rawStr.replaceAll(/[\r"]/g, '');
-                    const strArr = clearStr.split('\n').filter(s => s.length > 0);
-                    if (strArr.length < 2) {
-                        reject('empty file');
-                    }
-                    resolve(strArr);
-                } else {
-                    reject('error reading file')
-                }
-            }
-        });
-    }
-
-    // function getProductsFromCSV(file):Product[] {
-
-    // }
 
     const boxButtonStyle: SxProps<Theme> = {
         display: 'flex',
@@ -99,9 +66,9 @@ const FormUploadFileProducts: FC<Props> = (props) => {
             <FormControl margin='normal' fullWidth>
                 <InputLabel>Category</InputLabel>
                 <Select
-                    value={category}
+                    value={curCatId}
                     label="Category"
-                    onChange={e => setCategory(e.target.value)}
+                    onChange={e => setCurCatId(e.target.value)}
                     required
                 >
                     {categories.map(cat => (

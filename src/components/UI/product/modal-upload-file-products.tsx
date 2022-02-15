@@ -6,12 +6,13 @@ import FormUploadFileProducts from './form-upload-file-products';
 type ModalFormProductProps = {
     visible: boolean;
     onClose: () => void;
+    uploadProductsFromCSV: (file: File, catId: string) => void;
     categories: Category[];
 }
 
 const ModalUploadFileProducts: FC<ModalFormProductProps> = (props) => {
 
-    const { visible, onClose, categories } = props;
+    const { visible, onClose, uploadProductsFromCSV, categories } = props;
 
     return (
         <Modal
@@ -33,7 +34,7 @@ const ModalUploadFileProducts: FC<ModalFormProductProps> = (props) => {
             >
                 <FormUploadFileProducts
                     categories={categories}
-                    uploadFn={() => { }}
+                    uploadFn={uploadProductsFromCSV}
                     onClose={onClose}
                 />
             </Paper>
