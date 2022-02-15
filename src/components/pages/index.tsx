@@ -29,7 +29,8 @@ const Index: FC = () => {
                         <Grid item 
                             xs={12} 
                             sm={4} 
-                            md={3} 
+                            md={3}
+                            lg={2} 
                             key={index + prod.title}
                             sx={{display: 'flex', justifyContent: 'center'}}
                             >

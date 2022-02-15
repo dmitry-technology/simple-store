@@ -101,7 +101,7 @@ const ProductCard: FC<{ product: Product, productBatch?: ProductBatch, updateOrd
                 <CardMedia  component="img"  
                             alt={title}
                             sx={{width: '100%', padding: '5px' }}
-                            image={!!picture ? picture : `${window.location.origin}/${storeConfig.defaultPictureProductUrl}`}
+                            image={!!picture ? picture : storeConfig.defaultPictureProductUrl}
                 />
                 <CardContent sx={{ flexGrow: 1, paddingBottom: 0 }}>
                     <Typography gutterBottom variant="h5" sx={{ fontFamily: 'Cooper Std Black' }}>

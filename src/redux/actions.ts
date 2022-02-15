@@ -6,6 +6,7 @@ import { Category } from "../models/category-type";
 import { Order } from "../models/order-type";
 import { categoriesStore, clientStore, orderStore, productPictureStore, productStore } from "../config/servicesConfig";
 import { NotificationType, UserNotificationMessage } from "../models/user-notification";
+import { getProductsFromCSV } from "../utils/product-utils";
 
 export const SET_USER_DATA = "set_user_data";
 export const SET_PRODUCTS = "set_products";
@@ -116,6 +117,22 @@ export const updateProductAction = function (uploadProductData: UploadProductDat
     }
 }
 
+export const uploadProductsCsvAction = function (file: File, catId: string): (dispath: any) => void {
+    return async dispatch => {
+        try {
+            const products = await getProductsFromCSV(file);
+            for (let i = 0; i < products.length; i++) {
+                await productStore.add({ ...products[i], category: catId });
+            }
+            dispatch(setErrorCode(ErrorType.NO_ERROR));
+            dispatch(setNotificationMessage({ message: 'Products successful uploaded from CSV file', type: NotificationType.SUCCESS }));
+        } catch (err: any) {
+            dispatch(setErrorCode(err))
+            dispatch(setNotificationMessage({ message: 'Error: Can`t upload products from CSV file.', type: NotificationType.ERROR }));
+        }
+    }
+}
+
 export const addCategoryAction = function (category: Category): (dispath: any) => void {
     return async dispatch => {
         try {
@@ -142,12 +159,13 @@ export const updateCategoryAction = function (category: Category): (dispath: any
     }
 }
 
-export const removeCategoryAction = function (id: string, products?: Product[]): (dispath: any) => void {
+export const removeCategoryAction = function (id: string): (dispath: any) => void {
     return async dispatch => {
         try {
-            if (products) {
-                for (let i = 0; i < products.length; i++) {
-                    await productStore.remove(products[i].id);
+            const productsByCat = (await productStore.fetch()).filter(p => p.category === id);
+            if (productsByCat.length > 0) {
+                for (let i = 0; i < productsByCat.length; i++) {
+                    await productStore.remove(productsByCat[i].id);
                 }
             }
             await categoriesStore.remove(id);

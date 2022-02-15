@@ -1,4 +1,4 @@
-import { AppBar, Box, Container, IconButton, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, IconButton, Menu, MenuItem, Toolbar, Typography } from "@mui/material";
 import Button from '@mui/material/Button';
 import { RouteType } from "../../models/route-type";
 import { FC, Fragment, useMemo } from 'react';
@@ -6,7 +6,6 @@ import { useLocation } from 'react-router-dom';
 import { HashLink as Link } from 'react-router-hash-link';
 import ProfileMenu from "./common/profile-menu";
 import { PATH_LOGIN } from "../../config/routing";
-import LoginIcon from '@mui/icons-material/Login';
 import MenuIcon from '@mui/icons-material/Menu';
 import React from "react";
 import { useSelector } from "react-redux";
@@ -15,6 +14,7 @@ import { categoriesSelector, userDataSelector } from "../../redux/store";
 import { Category } from "../../models/category-type";
 import ShoppingCartButton from "./cart-button-view";
 import PersonIcon from '@mui/icons-material/Person';
+import config from "../../config/store-config.json";
 
 type NavigatorProps = {
     menuItems: RouteType[];
@@ -50,7 +50,7 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
                     <Box sx={{ width: { xs: '100%', sm: '90%' }, alignSelf: 'center' }}>
                         <Toolbar disableGutters>
                             <Typography variant="h6" noWrap component="a" href="/" sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}>
-                                <img src={`${window.location.origin}/logo_main.png`} height="40px" alt="Logo"></img>
+                                <img src={config.logoPictureUrl} height="40px" alt="Logo"></img>
                             </Typography>
 
                             <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -81,7 +81,7 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
                                 </Menu>
                             </Box>
                             <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                                <img src="logo_main.png" height="35px" alt="Logo"></img>
+                                <img src={config.logoPictureUrl} height="35px" alt="Logo"></img>
                             </Typography>
                             <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                                 {items.map((page) => (
