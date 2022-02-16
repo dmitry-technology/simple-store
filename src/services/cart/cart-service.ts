@@ -14,4 +14,23 @@ export default class ShoppingCartService extends LocalStorageProvider<ProductBat
         }
         return res;
     }
+
+    getBatchPrice(batchId: string): number {
+        const batch = this.get(batchId);
+        if (batch) {
+            return batch.productConfigured.optionsConfigured.reduce((sum, option) =>
+                sum + option.optionData.extraPay, batch.productConfigured.base.basePrice) * batch.count;
+        }
+        return 0;
+    }
+
+    getCartPrice() {
+        const batches = this.getAll();
+        let price = 0;
+        for (let batch of batches) {
+            price += batch.productConfigured.optionsConfigured.reduce((sum, option) =>
+                sum + option.optionData.extraPay, batch.productConfigured.base.basePrice) * batch.count;
+        }
+        return price;
+    }
 }

@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { FC, useEffect, useRef, useState } from 'react';
 import { orderState, shoppingCartService } from '../../config/servicesConfig';
 import { ProductBatch } from '../../models/product';
@@ -15,6 +15,7 @@ import { isCustomerCanOrder } from '../../utils/common/validation-utils';
 import CartTable from '../UI/orders/cart-table';
 import DialogConfirm from '../UI/common/dialog';
 import { ConfirmationData, emptyConfirmationData } from '../../models/common/confirmation-type';
+import storeData from '../../config/store-config.json';
 
 const arrStatus = Array.from(orderState.keys());
 
@@ -27,10 +28,11 @@ const ShoppingCart: FC = () => {
     const userData: UserData = useSelector(userDataSelector);
     const confirmationData = useRef<ConfirmationData>(emptyConfirmationData);
     const [dialogVisible, setDialogVisible] = useState<boolean>(false);
+    const cartPrice = useRef<number>(0);
     const dispatch = useDispatch();
 
     useEffect(() => {
-        setShoppingCart(shoppingCartService.getAll());
+        updateCartFn();
     }, [])
 
     function deleteCartHandler(): void {
@@ -49,7 +51,8 @@ const ShoppingCart: FC = () => {
     }
 
     function updateCartFn(): void {
-        dispatch(setCartItemsCount(shoppingCartService.getItemsCount()));
+        dispatch(setCartItemsCount(shoppingCartService.getItemsCount()));        
+        cartPrice.current = shoppingCartService.getCartPrice();
         setShoppingCart(shoppingCartService.getAll());
     }
 
@@ -93,13 +96,25 @@ const ShoppingCart: FC = () => {
                 message={confirmationData.current.message}
                 onClose={confirmationData.current.handle} />
             <CartTable batches={shoppingCart} updateCartFn={updateCartFn} />
+            <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', width: '100%', 
+                alignItems: 'end' }}>
+                <Typography>
+                    Cost of goods: {cartPrice.current}{storeData.currencySign}                    
+                </Typography>
+                <Typography>
+                    Cost of delivery: {storeData.deliveryCost}{storeData.currencySign}
+                </Typography>
+                <Typography>
+                    <strong>Total price:</strong> {cartPrice.current + storeData.deliveryCost}{storeData.currencySign}
+                </Typography>
+            </Box>
             <Box sx={{ mt: 1, display: 'flex', width: '100%', justifyContent: 'end' }}>
                 <Button
                     variant='outlined'
                     onClick={deleteCartHandler}
                     color='warning'
                     sx={{ mr: 2 }}>
-                    Delete Cart <DeleteForeverIcon />
+                    Remove All <DeleteForeverIcon />
                 </Button>
                 <Button
                     variant='outlined'

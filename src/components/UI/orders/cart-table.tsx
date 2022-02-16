@@ -28,8 +28,7 @@ function createData(batchId: string, product: ProductConfigured, count: number) 
         description: product.base.description,
         picture: product.base.picture,
         count: count,
-        price: product.optionsConfigured.reduce((sum, option) =>
-            sum + option.optionData.extraPay, product.base.basePrice) * count,
+        price: shoppingCartService.getBatchPrice(batchId),
         options: product.optionsConfigured
     };
 }
@@ -46,9 +45,9 @@ const Row: React.FC<RowProps> = props => {
     const confirmationData = React.useRef<ConfirmationData>(emptyConfirmationData);
     const [dialogVisible, setDialogVisible] = React.useState<boolean>(false);
 
-    function removeItemHandler(event: any, batchId: string) {
+    function removeItemHandler(event: any, batchId: string, productName: string) {
         confirmationData.current.title = "Remove from Shopping Cart";
-        confirmationData.current.message = `Delete product ${batchId} from shopping cart?`;
+        confirmationData.current.message = `Remove '${productName}' from shopping cart?`;
         confirmationData.current.handle = removeBatchFn.bind(undefined, batchId);
         setDialogVisible(true);
     }
@@ -97,7 +96,8 @@ const Row: React.FC<RowProps> = props => {
                 </TableCell>
                 <TableCell align="right">{row.price}{storeConfig.currencySign}</TableCell>
                 <TableCell>
-                    <IconButton onClick={event => removeItemHandler(event, row.id)} title='Remove'>
+                    <IconButton onClick={event => removeItemHandler(event, row.id, row.title)}
+                        title='Remove'>
                         <ClearIcon />
                     </IconButton>
                 </TableCell>
