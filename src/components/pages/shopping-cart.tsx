@@ -12,10 +12,11 @@ import { userDataSelector } from '../../redux/store';
 import { addOrderAction, setCartItemsCount, setNotificationMessage } from '../../redux/actions';
 import { NotificationType } from '../../models/user-notification';
 import { isCustomerCanOrder } from '../../utils/common/validation-utils';
-import CartTable from '../UI/orders/cart-table';
+import CartTable from '../UI/cart/cart-table';
 import DialogConfirm from '../UI/common/dialog';
 import { ConfirmationData, emptyConfirmationData } from '../../models/common/confirmation-type';
 import storeData from '../../config/store-config.json';
+import AddressConfirmation from '../UI/cart/address-confirm';
 
 const arrStatus = Array.from(orderState.keys());
 
@@ -28,6 +29,7 @@ const ShoppingCart: FC = () => {
     const userData: UserData = useSelector(userDataSelector);
     const confirmationData = useRef<ConfirmationData>(emptyConfirmationData);
     const [dialogVisible, setDialogVisible] = useState<boolean>(false);
+    const [addressConfirmationFl, setAddressConfirmationFl] = useState<boolean>(false);
     const cartPrice = useRef<number>(0);
     const dispatch = useDispatch();
 
@@ -72,6 +74,12 @@ const ShoppingCart: FC = () => {
             }));
         }
         if (isCustomerCanOrder(userData)) {
+            setAddressConfirmationFl(true);
+        }
+    }
+
+    function sendOrderFn(addressConfirmed: boolean): void {
+        if (addressConfirmed) {
             dispatch(addOrderAction({
                 client: userData,
                 products: shoppingCart,
@@ -85,16 +93,13 @@ const ShoppingCart: FC = () => {
             deleteCartFn(true);
             setShowOrdersFl(true);
         }
+        setAddressConfirmationFl(false);
     }
 
     return <Box sx={{ mt: 1, width: '100%' }}>
         {shoppingCart.length === 0 && `You have 0 products in cart`}
         {showOrdersFl && <Navigate to={PATH_ORDERS} />}
-        {shoppingCart.length > 0 && <Box>
-            <DialogConfirm visible={dialogVisible}
-                title={confirmationData.current.title}
-                message={confirmationData.current.message}
-                onClose={confirmationData.current.handle} />
+        {shoppingCart.length > 0 && <Box>            
             <CartTable batches={shoppingCart} updateCartFn={updateCartFn} />
             <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', width: '100%', 
                 alignItems: 'end' }}>
@@ -129,6 +134,11 @@ const ShoppingCart: FC = () => {
                     Send Order &nbsp;<DeliveryDiningIcon />
                 </Button>
             </Box>
+            <AddressConfirmation visible={addressConfirmationFl} onClose={sendOrderFn} />
+            <DialogConfirm visible={dialogVisible}
+                title={confirmationData.current.title}
+                message={confirmationData.current.message}
+                onClose={confirmationData.current.handle} />
             {needAuthFl && <Navigate to={PATH_LOGIN} />}
             {needFillProfileFl && <Navigate to={PATH_PROFILE} />}            
         </Box>}
