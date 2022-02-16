@@ -34,10 +34,10 @@ const AddressConfirmation: FC<AddressConfirmationProps> = props => {
         <AddressForm userData={userData} callBack={changeAddressHandler} />
     </DialogContent>
     <DialogActions>
-        <Button autoFocus onClick={() => onClose(false)}>
+        <Button color='warning' onClick={() => onClose(false)}>
             Back to Cart
         </Button>
-        <Button onClick={() => onClose(true)} autoFocus>
+        <Button color='warning' onClick={() => onClose(true)} autoFocus>
             Confirm
         </Button>
     </DialogActions>

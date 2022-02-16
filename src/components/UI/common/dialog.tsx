@@ -5,8 +5,6 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 
 
 type DialogProps = {
@@ -17,9 +15,6 @@ type DialogProps = {
 }
 const DialogConfirm: FC<DialogProps> = (params) => {
     const { visible, title, message, onClose } = { ...params };
-
-    const theme = useTheme();
-    const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
 
     return <Dialog
         open={visible}
@@ -35,10 +30,10 @@ const DialogConfirm: FC<DialogProps> = (params) => {
             </DialogContentText>
         </DialogContent>
         <DialogActions>
-            <Button autoFocus onClick={() => onClose(false)}>
+            <Button onClick={() => onClose(false)} color='warning'>
                 Cancel
             </Button>
-            <Button onClick={() => onClose(true)} autoFocus>
+            <Button autoFocus onClick={() => onClose(true)} color='warning'>
                 Ok
             </Button>
         </DialogActions>
