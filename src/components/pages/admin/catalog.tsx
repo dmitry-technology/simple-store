@@ -1,4 +1,4 @@
-import { Box, Button, Paper, TextField } from "@mui/material";
+import { Box, Button, Paper, TextField, SxProps, Theme } from "@mui/material";
 import { FC, useMemo, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Category } from "../../../models/category-type";
@@ -59,6 +59,19 @@ const Catalog: FC = () => {
         return products.filter(p => p.category === id);
     }
 
+    const buttonStyle: SxProps<Theme> = {
+        margin: { xs: '0 0 5px 0', sm: '0 5px' },
+
+        width: { xs: '100%', sm: 'fit-content' }
+    }
+
+    function downloadProductsCsv() {
+        const blob = new Blob(['asd']);
+        const url = URL.createObjectURL(blob);
+        
+
+    }
+
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: '1 0 auto', width: '100%' }}>
             <Paper
@@ -67,15 +80,31 @@ const Catalog: FC = () => {
                     width: '100%',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    flexDirection: { xs: 'column', sm: 'row' }
                 }}
             >
                 <Box>
-                    <Button sx={{ marginRight: '10px' }} variant="outlined" onClick={() => setModalProductFormVisible(true)}>
+                    <Button
+                        sx={buttonStyle}
+                        variant="outlined"
+                        onClick={() => setModalProductFormVisible(true)}
+                    >
                         Create new product
                     </Button>
-                    <Button variant="outlined" onClick={() => setModalUploadProductsFileVisible(true)}>
+                    <Button
+                        sx={buttonStyle}
+                        variant="outlined"
+                        onClick={() => setModalUploadProductsFileVisible(true)}
+                    >
                         Upload products from file
+                    </Button>
+                    <Button
+                        sx={buttonStyle}
+                        variant="outlined"
+                        onClick={() => downloadProductsCsv()}
+                    >
+                        Download products as CSV
                     </Button>
                 </Box>
                 <TextField
@@ -83,6 +112,7 @@ const Catalog: FC = () => {
                     label="Search"
                     variant="outlined"
                     type="text"
+                    sx={{ width: { xs: '100%', sm: 'fit-content' } }}
                     onChange={e => setSearchLine(e.target.value)}
                 />
             </Paper>
