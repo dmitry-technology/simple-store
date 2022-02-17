@@ -170,7 +170,7 @@ const OrdersListGrid: FC = () => {
 
     function renderCellExpand(params: GridRenderCellParams<string>) {
         return (
-            <GridCellExpand value={params.value || ''} width={params.colDef.computedWidth} />
+            <GridCellExpand key={new Date().getTime()} value={params.value || ''} width={params.colDef.computedWidth} />
         );
     }
 
@@ -405,8 +405,8 @@ const OrdersListGrid: FC = () => {
 
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
-            <Paper sx={{ width: '90vw', height: '80vh', marginTop: '2vh' }}>
+        <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            <Paper sx={{ flex: '1 0 auto', marginTop: '2vh' }}>
                 <DataGrid columns={columns} rows={rows} onCellEditCommit={onCellEdit}
                     sortModel={sortModel}
                     onSortModelChange={(newSortModel) => !!newSortModel.length && setSortModel(newSortModel)}
@@ -416,7 +416,6 @@ const OrdersListGrid: FC = () => {
             <ModalInfo title={"Detailed information about the order"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
             {!!formVisible && <FormUpdateOrder callBack={() => setformVisible(false)} visible={formVisible} order={orderUpdate} />}
         </Box>
-
     )
 }
 
