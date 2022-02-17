@@ -26,7 +26,7 @@ const AddressForm: FC<{userData: UserData, callBack: Function}> = (props) => {
     }
 
     function fieldHandler(field: string, event: any) {
-        setAddress({...address, [field]: event.target.value});
+        setAddress({...address, [field]: event.target.value});        
     }
 
     return (
