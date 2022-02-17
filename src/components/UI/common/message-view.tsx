@@ -14,7 +14,7 @@ const MessageView: FC<{data: UserNotificationMessage}> = (props) => {
         dispatch(setNotificationMessage(emptyMessage));
     }
     
-    return  <Snackbar open={display} autoHideDuration={4000} onClose={close} anchorOrigin={{ vertical: 'top', horizontal: 'right' }}>
+    return  <Snackbar open={display} autoHideDuration={4000} onClose={close} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
                 <Alert onClose={close} severity={props.data.type} sx={{ width: '100%' }}>
                     {props.data.message}
                 </Alert>
