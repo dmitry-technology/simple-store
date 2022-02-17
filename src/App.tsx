@@ -1,19 +1,17 @@
-import { Alert, AlertTitle, Box, LinearProgress, Paper } from '@mui/material';
+import { Alert, AlertTitle, Box, LinearProgress } from '@mui/material';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Subscription } from 'rxjs';
 import { authRoutes, menuRoutes, PATH_REDIRECT, routes } from './config/routing';
-import { authService, categoriesStore, clientStore, productStore, orderStore } from './config/servicesConfig';
-import { Category } from './models/category-type';
+import { authService, categoriesStore, productStore } from './config/servicesConfig';
 import ErrorType from './models/error-types';
-import { emptyProduct, Product } from './models/product';
+import { Product } from './models/product';
 import { RouteType } from './models/route-type';
-import { nonAuthorisedUser, UserData, userDataSimple } from './models/user-data';
-import { setCategories, setErrorCode, setProducts, setUserData, setClients, setOrders } from './redux/actions';
+import { nonAuthorisedUser, UserData} from './models/user-data';
+import { setCategories, setErrorCode, setProducts, setUserData } from './redux/actions';
 import { errorCodeSelector, notificationSelector, userDataSelector } from './redux/store';
 import Navigator from './components/UI/main-navigator';
-import { Order, orderSimple } from './models/order-type';
 import { emptyMessage, UserNotificationMessage } from './models/user-notification';
 import MessageView from './components/UI/common/message-view';
 
@@ -51,11 +49,7 @@ function App() {
 
   function subscribeToUserToken() {
     return authService.getUserData().subscribe({
-      next(ud) {
-
-        console.log("next");
-        console.log(ud);
-        
+      next(ud) {        
         if (ud.id === '') {
           if (userData.id) { dispatch(setErrorCode(ErrorType.AUTH_ERROR)) }
           dispatch(setUserData(nonAuthorisedUser));
