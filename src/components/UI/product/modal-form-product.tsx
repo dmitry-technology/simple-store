@@ -6,7 +6,6 @@ import { categoriesSelector } from '../../../redux/store';
 import FormAddProduct from './form-add-product';
 import config from "../../../config/store-config.json"
 import { Product, UploadProductData } from '../../../models/product';
-import { productStore } from '../../../config/servicesConfig';
 import CloseIcon from '@mui/icons-material/Close';
 
 type ModalFormProductProps = {

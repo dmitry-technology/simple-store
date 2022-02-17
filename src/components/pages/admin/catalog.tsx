@@ -29,7 +29,7 @@ const Catalog: FC = () => {
     const [modalUploadProductsFileVisible, setModalUploadProductsFileVisible] = useState(false);
 
     //****************** selector categories ******************//
-    const [curCatId, setCurCatId] = useState<string>(categories[0]?.id || '');
+    const [curCatId, setCurCatId] = useState<string>('-1');
 
     const productsByCat = useMemo(() => {
         let productsByCat = getProductsByCat(curCatId);
@@ -53,6 +53,9 @@ const Catalog: FC = () => {
 
     //*********************** utils **************************//
     function getProductsByCat(id: string) {
+        if (id === '-1') {
+            return products;
+        }
         return products.filter(p => p.category === id);
     }
 

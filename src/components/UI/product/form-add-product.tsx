@@ -1,4 +1,7 @@
-import { Box, Button, FormControl, FormGroup, InputLabel, Select, TextField, SxProps, Theme, MenuItem, RadioGroup, FormControlLabel, Radio, FormLabel, Typography, TextareaAutosize, IconButton, List, ListItem, ListItemText, ListSubheader } from '@mui/material';
+import {
+    Box, Button, FormControl, FormGroup, InputLabel, Select, TextField, SxProps, Theme, MenuItem, RadioGroup,
+    FormControlLabel, Radio, FormLabel, TextareaAutosize, IconButton, List, ListItem, ListItemText, ListSubheader
+} from '@mui/material';
 import { CSSProperties, FC, Fragment, useEffect, useRef, useState } from 'react';
 import { Product, UploadProductData } from '../../../models/product';
 import { Category } from '../../../models/category-type';
@@ -250,6 +253,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         <img
                             style={{ width: '300px', height: '300px' }}
                             src={previewPath}
+                            alt={'product'}
                         />
                     </Box>
                     <TextField

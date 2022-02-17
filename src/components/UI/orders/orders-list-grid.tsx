@@ -252,7 +252,7 @@ const OrdersListGrid: FC = () => {
     const rows = useMemo(() => getRows(orders), [orders, dialogVisible]);
 
     function getRows(orders: Order[]): GridRowsProp {
-        return orders.filter(order => userData.isAdmin || order.client.id == userData.id)
+        return orders.filter(order => userData.isAdmin || order.client.id === userData.id)
             .map(order => {
                 return {
                     ...order,
@@ -313,7 +313,7 @@ const OrdersListGrid: FC = () => {
         const id: string = params.id.toString();
         const oldOrder = getOrder(id);
         const newOrder = { ...oldOrder, [params.field]: params.value };
-        if (oldOrder != newOrder) {
+        if (oldOrder !== newOrder) {
             confirmationData.current.title = `update order`;
             confirmationData.current.message = `Do you want update ${params.field} order ID ${oldOrder?.id} from ${(oldOrder as any)[params.field]} at ${params.value}`;
             confirmationData.current.handle = handleUpdate.bind(undefined, newOrder as Order, id);
