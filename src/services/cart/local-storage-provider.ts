@@ -4,7 +4,7 @@ import storeConfig from '../../config/store-config.json';
 
 export default class LocalStorageProvider<T> implements LocalProvider<T> {
 
-    constructor(private localStorageName: string) {}
+    private localStorageName = 'my_cart';
     
     add(item: T): T {
         item = {...item, id: this.getRandomId()};

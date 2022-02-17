@@ -16,34 +16,38 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { ProductBatch, ProductConfigured } from '../../../models/product';
 import { Avatar } from '@mui/material';
 import storeConfig from '../../../config/store-config.json';
-import { shoppingCartService } from '../../../config/servicesConfig';
 import CountSelector from '../product/count-selector';
 import DialogConfirm from '../common/dialog';
 import { ConfirmationData, emptyConfirmationData } from '../../../models/common/confirmation-type';
+import { useDispatch, useSelector } from 'react-redux';
+import { shoppingCartSelector } from '../../../redux/store';
+import { removeBatchFromCartAction, updateBatchInCartAction } from '../../../redux/actions';
+import { getBatchPrice } from '../../../utils/cart-utils';
 
-function createData(batchId: string, product: ProductConfigured, count: number) {
+function createData(batchId: string, product: ProductConfigured, count: number, price: number) {
     return {
         id: batchId,
         title: product.base.title,
         description: product.base.description,
         picture: product.base.picture,
         count: count,
-        price: shoppingCartService.getBatchPrice(batchId),
+        price: price,
         options: product.optionsConfigured
     };
 }
 
 type RowProps = {
-    row: ReturnType<typeof createData>,
-    updateCartFn: () => void
+    row: ReturnType<typeof createData>
 }
 
 const Row: React.FC<RowProps> = props => {
 
-    const { row, updateCartFn } = props;
+    const { row } = props;
     const [open, setOpen] = React.useState(false);
     const confirmationData = React.useRef<ConfirmationData>(emptyConfirmationData);
     const [dialogVisible, setDialogVisible] = React.useState<boolean>(false);
+    const shoppingCart: ProductBatch[] = useSelector(shoppingCartSelector);
+    const dispatch = useDispatch();
 
     function removeItemHandler(event: any, batchId: string, productName: string) {
         confirmationData.current.title = "Remove from Shopping Cart";
@@ -54,17 +58,15 @@ const Row: React.FC<RowProps> = props => {
 
     function removeBatchFn(batchId: string, status: boolean) {
         if (status) {
-            shoppingCartService.remove(batchId);
-            updateCartFn();
+            dispatch(removeBatchFromCartAction(batchId));
         }
         setDialogVisible(false);
     }
 
     function changeCountHandler(batchId: string, newCount: number) {
-        const batch = shoppingCartService.get(batchId);
+        const batch = shoppingCart.find(b => b.id === batchId);
         batch!.count = newCount;
-        shoppingCartService.update(batchId, batch!);
-        updateCartFn();
+        dispatch(updateBatchInCartAction(batchId, batch!));
     }
 
     return (
@@ -129,9 +131,9 @@ const Row: React.FC<RowProps> = props => {
     );
 }
 
-const CartTable: React.FC<{ batches: ProductBatch[], updateCartFn: () => void }> = props => {
+const CartTable: React.FC<{ batches: ProductBatch[] }> = props => {
 
-    const { batches, updateCartFn } = props;
+    const { batches } = props;
 
     return (
         <TableContainer component={Paper}>
@@ -149,8 +151,8 @@ const CartTable: React.FC<{ batches: ProductBatch[], updateCartFn: () => void }>
                 <TableBody>
                     {batches.sort((a, b) => a.id.localeCompare(b.id)).map((batch, index) =>
                         <Row key={index}
-                            row={createData(batch.id, batch.productConfigured, batch.count)}
-                            updateCartFn={updateCartFn} />)}
+                            row={createData(batch.id, batch.productConfigured, batch.count, 
+                                getBatchPrice(batch.id, batches))} />)}
                 </TableBody>
             </Table>
         </TableContainer>

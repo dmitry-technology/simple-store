@@ -2,11 +2,10 @@ import { PayloadAction } from "@reduxjs/toolkit";
 import { Category } from "../models/category-type";
 import ErrorType from "../models/error-types";
 import { Order } from "../models/order-type";
-import { Product } from "../models/product";
+import { Product, ProductBatch } from "../models/product";
 import { nonAuthorisedUser, UserData } from "../models/user-data";
 import { emptyMessage, UserNotificationMessage } from "../models/user-notification";
-import { shoppingCartService } from "../config/servicesConfig";
-import { SET_CATEGORIES, SET_ERROR_CODE, SET_PRODUCTS, SET_USER_DATA, SET_CLIENT_DATA, SET_ORDER_DATA, SET_USER_NOTIFICATION, SET_CART_ITEMS_COUNT  } from "./actions";
+import { SET_CATEGORIES, SET_ERROR_CODE, SET_PRODUCTS, SET_USER_DATA, SET_CLIENT_DATA, SET_ORDER_DATA, SET_USER_NOTIFICATION, SET_SHOPPING_CART } from "./actions";
 
 export const userDataReducer = (userData: UserData = nonAuthorisedUser, action: PayloadAction<UserData>): UserData => {
     return action.type === SET_USER_DATA ? action.payload : userData;
@@ -36,6 +35,6 @@ export const notificationReducer = (message: UserNotificationMessage = emptyMess
     return action.type === SET_USER_NOTIFICATION ? action.payload : message;
 }
 
-export const cartItemCountReducer = (count: number = shoppingCartService.getItemsCount(), action: PayloadAction<number>): number => {
-    return action.type === SET_CART_ITEMS_COUNT ? action.payload : count;
+export const cartReducer = (shoppingCart: ProductBatch[] = [], action: PayloadAction<ProductBatch[]>): ProductBatch[] => {
+    return action.type === SET_SHOPPING_CART ? action.payload : shoppingCart;
 }
