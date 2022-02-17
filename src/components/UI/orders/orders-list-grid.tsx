@@ -155,11 +155,13 @@ const OrdersListGrid: FC = () => {
                             style={{ minHeight: wrapper.current!.offsetHeight - 3 }}
                         >
                             {value.split('Product name:').map((e, index) => {
-                                return <List>
-                                    <ListItem>
-                                        <Typography key={index} variant="body2"> {e} </Typography>
-                                    </ListItem>
-                                </List>
+                                return (
+                                    <List key={index}>
+                                        <ListItem>
+                                            <Typography variant="body2"> {e} </Typography>
+                                        </ListItem>
+                                    </List>
+                                )
                             })}
                         </Paper>
                     </Popper>
@@ -170,7 +172,7 @@ const OrdersListGrid: FC = () => {
 
     function renderCellExpand(params: GridRenderCellParams<string>) {
         return (
-            <GridCellExpand key={new Date().getTime()} value={params.value || ''} width={params.colDef.computedWidth} />
+            <GridCellExpand value={params.value || ''} width={params.colDef.computedWidth} />
         );
     }
 
