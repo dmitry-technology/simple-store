@@ -11,7 +11,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { userDataSelector } from '../../redux/store';
 import { addOrderAction, setCartItemsCount, setNotificationMessage } from '../../redux/actions';
 import { NotificationType } from '../../models/user-notification';
-import { isCustomerCanOrder } from '../../utils/common/validation-utils';
+import { getProfileStatus, ProfileStatus } from '../../utils/common/validation-utils';
 import CartTable from '../UI/cart/cart-table';
 import DialogConfirm from '../UI/common/dialog';
 import { ConfirmationData, emptyConfirmationData } from '../../models/common/confirmation-type';
@@ -66,14 +66,14 @@ const ShoppingCart: FC = () => {
                 type: NotificationType.INFO
             }));
         }
-        if (!!userData.id && !isCustomerCanOrder(userData)) {
+        if (!!userData.id && getProfileStatus(userData) === ProfileStatus.BAD_PROFILE) {
             setNeedFillProfileFl(true);
             dispatch(setNotificationMessage({
                 message: "Please, fill neccessary info to continue",
                 type: NotificationType.INFO
             }));
         }
-        if (isCustomerCanOrder(userData)) {
+        if (getProfileStatus(userData) !== ProfileStatus.BAD_PROFILE) {
             setAddressConfirmationFl(true);
         }
     }

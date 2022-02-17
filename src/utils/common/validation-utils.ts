@@ -1,7 +1,7 @@
 import { localPhoneValidationRegex } from "../../config/servicesConfig";
 import { UserData } from "../../models/user-data";
 
-export enum CustomerType { OK, NO_ADDRESS, BAD_PROFILE }
+export enum ProfileStatus { OK, NO_ADDRESS, BAD_PROFILE }
 
 export function isEmailValid(email: string | undefined): boolean {
     if (email === undefined) return false;
@@ -15,8 +15,8 @@ export function isPhoneNumberValid(tel: string | undefined): boolean {
     return tel.match(regularExpression) ? true : false;
 }
 
-export function isCustomerCanOrder(client: UserData): CustomerType {
-    if (!client.name || !client.email || !client.phoneNumber) return CustomerType.BAD_PROFILE;
-    if (!client.deliveryAddress?.street || !client.deliveryAddress?.house) return CustomerType.NO_ADDRESS;
-    return CustomerType.OK;
+export function getProfileStatus(client: UserData): ProfileStatus {
+    if (!client.name || !client.email || !client.phoneNumber) return ProfileStatus.BAD_PROFILE;
+    if (!client.deliveryAddress?.street || !client.deliveryAddress?.house) return ProfileStatus.NO_ADDRESS;
+    return ProfileStatus.OK;
 }

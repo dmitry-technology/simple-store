@@ -1,7 +1,5 @@
 import _ from "lodash";
 
-     
-    
 export function getStatistics(objects: object[], interval: number, field: string) {
     
     let objCnt = _.countBy(objects, e => {
