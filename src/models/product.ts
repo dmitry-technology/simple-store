@@ -28,9 +28,12 @@ export type UploadProductData = {
 }
 
 export const emptyProduct: Product ={
-    id: '456032',
-    title: 'empty title',
-    category: '123321',
-    basePrice: 50,
-    active: true    
+    id: '',
+    title: '',
+    category: '',
+    picture: '',
+    description: '',
+    basePrice: 0,
+    options: [],
+    active: false
 }

@@ -96,6 +96,13 @@ const Categories: FC<CategoriesProps> = (props) => {
         return categories.find(c => c.id === id);
     }
 
+    function getCatName(id: string) {
+        if (id === '-1') {
+            return 'All products'
+        }
+        return getCategory(id)?.name || '';
+    }
+
     return (
         <Fragment>
             <FormControl
@@ -111,9 +118,15 @@ const Categories: FC<CategoriesProps> = (props) => {
                     value={activeCatId}
                     label="Category"
                     onChange={e => setCurCatId(e.target.value)}
-                    renderValue={curCatId => getCategory(curCatId)!.name}
+                    renderValue={curCatId => getCatName(curCatId)}
                     sx={{ flex: '1 0 auto' }}
                 >
+                    <MenuItem
+                        value={'-1'}
+                        key={'-1'}
+                    >
+                        <ListItemText primary={'All products'} />
+                    </MenuItem>
                     {categories.map(cat => (
                         <MenuItem
                             value={cat.id}

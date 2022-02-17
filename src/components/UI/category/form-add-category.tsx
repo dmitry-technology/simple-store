@@ -1,4 +1,7 @@
-import { Box, FormControl, FormGroup, TextField, FormLabel, RadioGroup, FormControlLabel, Radio, Button, SxProps, Theme } from '@mui/material';
+import {
+    Box, FormControl, FormGroup, TextField, FormLabel,
+    RadioGroup, FormControlLabel, Radio, Button, SxProps, Theme
+} from '@mui/material';
 import { FC, useEffect, useState } from 'react';
 import { Category } from '../../../models/category-type';
 

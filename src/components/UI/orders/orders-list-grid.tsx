@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Order, orderSimple } from '../../../models/order-type';
 import { ordersSelector, userDataSelector } from '../../../redux/store';
 import { useMediaQuery } from "react-responsive";
-import { DataGrid, GridActionsCellItem, GridCellEditCommitParams, GridColDef, GridRenderCellParams, GridRowId, GridRowParams, GridRowsProp, GridValueFormatterParams } from '@mui/x-data-grid';
+import { DataGrid, GridActionsCellItem, GridCellEditCommitParams, GridColDef, GridRenderCellParams, GridRowId, GridRowParams, GridRowsProp, GridSortItem, GridValueFormatterParams } from '@mui/x-data-grid';
 import { getOrdersListFields, OrderListFields } from '../../../config/orders-list-columns';
 import { Delete } from '@mui/icons-material';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -19,6 +19,7 @@ import DialogConfirm from '../common/dialog';
 import ModalInfo from '../common/modal-info';
 import { ProductOptionConfigured } from '../../../models/product-options';
 import FormUpdateOrder from './order-update';
+
 
 //status order from service config
 const arrStatus = Array.from(orderState.keys());
@@ -37,6 +38,9 @@ const OrdersListGrid: FC = () => {
     //* form edit order */
     const [formVisible, setformVisible] = useState(false);
     const [orderUpdate, setOrderUpdate] = useState(orderSimple);
+
+    //*state sorting table */
+    const [sortModel, setSortModel] = useState<GridSortItem[]>([{ field: "date", sort: 'desc' }]);
 
     //*************************Redux***************************//
     const dispatch = useDispatch();
@@ -144,18 +148,20 @@ const OrdersListGrid: FC = () => {
                     <Popper
                         open={showFullCell && anchorEl !== null}
                         anchorEl={anchorEl}
-                        style={{ width: '50vw'}}
+                        style={{ width: '50vw' }}
                     >
                         <Paper
                             elevation={1}
                             style={{ minHeight: wrapper.current!.offsetHeight - 3 }}
                         >
                             {value.split('Product name:').map((e, index) => {
-                               return <List>
-                                    <ListItem>
-                                    <Typography key={index} variant="body2"> {e} </Typography>
-                                    </ListItem>
-                                </List>
+                                return (
+                                    <List key={index}>
+                                        <ListItem>
+                                            <Typography variant="body2"> {e} </Typography>
+                                        </ListItem>
+                                    </List>
+                                )
                             })}
                         </Paper>
                     </Popper>
@@ -214,7 +220,7 @@ const OrdersListGrid: FC = () => {
                 }
             },
             {
-                field: "date", headerName: "Date Time", flex: 50, align: 'center', headerAlign: 'center', type: 'date',
+                field: "date", headerName: "Date Time", flex: 50, align: 'center', headerAlign: 'center',
                 valueFormatter: (params: GridValueFormatterParams) => {
                     return formatDate(params.value!.toString());
                 }
@@ -252,7 +258,7 @@ const OrdersListGrid: FC = () => {
     const rows = useMemo(() => getRows(orders), [orders, dialogVisible]);
 
     function getRows(orders: Order[]): GridRowsProp {
-        return orders.filter(order => userData.isAdmin || order.client.id == userData.id)
+        return orders.filter(order => userData.isAdmin || order.client.id === userData.id)
             .map(order => {
                 return {
                     ...order,
@@ -313,7 +319,7 @@ const OrdersListGrid: FC = () => {
         const id: string = params.id.toString();
         const oldOrder = getOrder(id);
         const newOrder = { ...oldOrder, [params.field]: params.value };
-        if (oldOrder != newOrder) {
+        if (oldOrder !== newOrder) {
             confirmationData.current.title = `update order`;
             confirmationData.current.message = `Do you want update ${params.field} order ID ${oldOrder?.id} from ${(oldOrder as any)[params.field]} at ${params.value}`;
             confirmationData.current.handle = handleUpdate.bind(undefined, newOrder as Order, id);
@@ -397,16 +403,21 @@ const OrdersListGrid: FC = () => {
     }
     ///********************************************************************** */
 
+
+
+
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'start' }}>
-            <Paper sx={{ width: '90vw', height: '80vh', marginTop: '2vh' }}>
-                <DataGrid columns={columns} rows={rows} onCellEditCommit={onCellEdit} sortModel={[{ field: "date", sort: 'desc' }]} />
+        <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+            <Paper sx={{ flex: '1 0 auto', marginTop: '2vh' }}>
+                <DataGrid columns={columns} rows={rows} onCellEditCommit={onCellEdit}
+                    sortModel={sortModel}
+                    onSortModelChange={(newSortModel) => !!newSortModel.length && setSortModel(newSortModel)}
+                />
             </Paper>
             <DialogConfirm visible={dialogVisible} title={confirmationData.current.title} message={confirmationData.current.message} onClose={confirmationData.current.handle} />
             <ModalInfo title={"Detailed information about the order"} message={textModal.current} visible={modalVisible} callBack={() => setModalVisible(false)} />
             {!!formVisible && <FormUpdateOrder callBack={() => setformVisible(false)} visible={formVisible} order={orderUpdate} />}
         </Box>
-
     )
 }
 

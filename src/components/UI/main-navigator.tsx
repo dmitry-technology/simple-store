@@ -110,7 +110,7 @@ const MainNavigator: FC<NavigatorProps> = (props) => {
                         </Toolbar>
                     </Box>
                 </AppBar>
-                <Box sx={{ marginBottom: '70px' }}></Box>
+                <Box sx={{ marginBottom: { xs: '57px', sm: '70px' } }}></Box>
             </Fragment>}
         </Fragment>
     )

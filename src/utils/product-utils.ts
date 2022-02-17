@@ -1,6 +1,5 @@
-import { Product } from "../models/product";
+import { emptyProduct, Product } from "../models/product";
 import { OptionData, ProductOption } from "../models/product-options";
-
 
 export async function getProductsFromCSV(file: File): Promise<Product[]> {
     const strArr = await getStrArrFromFile(file!);
@@ -29,6 +28,19 @@ export async function getProductsFromCSV(file: File): Promise<Product[]> {
         }
     }
     return products as Product[];
+}
+
+export function downloadProductsCsv(fileName: string, products: Product[]) {
+    const header = `${getHeaderArr().join(';')}\r\n`;
+    const productsCsv = productsToCsv(products);
+    var universalBOM = "\uFEFF";
+    const data = encodeURIComponent(universalBOM + header + productsCsv)
+    let a = document.createElement("a");
+    a.href = 'data:text/csv; charset=utf-8,' + data;
+    a.download = fileName.replaceAll(/[\s]/g, '-');
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
 
 function getStrArrFromFile(file: File): Promise<string[]> {
@@ -81,4 +93,34 @@ function strToOptions(str: string): ProductOption[] {
         return (options);
     }
     throw new Error('string for options is empty');
+}
+
+function getHeaderArr() {
+    let product: any = { ...emptyProduct };
+    delete product.category;
+    return Object.keys(product);
+}
+
+function productsToCsv(products: Product[]) {
+    const headerArr = getHeaderArr();
+    let productsArr = [...products];
+    const productsCsv = productsArr.map((p: any) => {
+        let fieldsArr: any[] = [];
+        headerArr.forEach(h => {
+            if (h === 'options') {
+                fieldsArr.push(optionsToCsv(p[h]));
+            } else {
+                fieldsArr.push(p[h]);
+            }
+        });
+        return fieldsArr.join(';');
+    });
+    return productsCsv.join('\r\n');
+}
+
+function optionsToCsv(option: ProductOption[]) {
+    return option.map(option => {
+        const optionItems = option.optionData.map(opItem => `${opItem.name}=${opItem.extraPay}`);
+        return `${option.optionTitle}:${optionItems.join(',')}`
+    }).join('|');
 }

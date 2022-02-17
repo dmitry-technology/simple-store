@@ -1,4 +1,4 @@
-import { Box, Button, Paper, TextField } from "@mui/material";
+import { Box, Button, Paper, TextField, SxProps, Theme } from "@mui/material";
 import { FC, useMemo, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Category } from "../../../models/category-type";
@@ -9,6 +9,7 @@ import ProductListGrid from "../../UI/product/product-list-grid";
 import ModalFormProduct from "../../UI/product/modal-form-product";
 import Categories from "../../UI/category/categories";
 import ModalUploadFileProducts from "../../UI/product/modal-upload-file-products";
+import ModalDownloadProductsCsv from "../../UI/product/modal-download-products-csv";
 
 const Catalog: FC = () => {
 
@@ -21,11 +22,18 @@ const Catalog: FC = () => {
     //******************** form product ***********************//
     const [modalProductFormVisible, setModalProductFormVisible] = useState(false);
 
+    function existId(id: string): boolean {
+        return !!products.find(p => p.id === id);
+    }
+
     //************* modal upload file products ****************//
     const [modalUploadProductsFileVisible, setModalUploadProductsFileVisible] = useState(false);
 
+    //************* modal download file products ****************//
+    const [modalDownloadProductsFileVisible, setModalDownloadProductsFileVisible] = useState(false);
+
     //****************** selector categories ******************//
-    const [curCatId, setCurCatId] = useState<string>(categories[0]?.id || '');
+    const [curCatId, setCurCatId] = useState<string>('-1');
 
     const productsByCat = useMemo(() => {
         let productsByCat = getProductsByCat(curCatId);
@@ -49,7 +57,15 @@ const Catalog: FC = () => {
 
     //*********************** utils **************************//
     function getProductsByCat(id: string) {
+        if (id === '-1') {
+            return products;
+        }
         return products.filter(p => p.category === id);
+    }
+
+    const buttonStyle: SxProps<Theme> = {
+        margin: { xs: '0 0 5px 0', sm: '0 5px' },
+        width: { xs: '100%', sm: 'fit-content' }
     }
 
     return (
@@ -60,15 +76,31 @@ const Catalog: FC = () => {
                     width: '100%',
                     display: 'flex',
                     justifyContent: 'space-between',
-                    alignItems: 'center'
+                    alignItems: 'center',
+                    flexDirection: { xs: 'column', sm: 'row' }
                 }}
             >
                 <Box>
-                    <Button sx={{ marginRight: '10px' }} variant="outlined" onClick={() => setModalProductFormVisible(true)}>
+                    <Button
+                        sx={buttonStyle}
+                        variant="outlined"
+                        onClick={() => setModalProductFormVisible(true)}
+                    >
                         Create new product
                     </Button>
-                    <Button variant="outlined" onClick={() => setModalUploadProductsFileVisible(true)}>
+                    <Button
+                        sx={buttonStyle}
+                        variant="outlined"
+                        onClick={() => setModalUploadProductsFileVisible(true)}
+                    >
                         Upload products from file
+                    </Button>
+                    <Button
+                        sx={buttonStyle}
+                        variant="outlined"
+                        onClick={() => setModalDownloadProductsFileVisible(true)}
+                    >
+                        Download products as CSV
                     </Button>
                 </Box>
                 <TextField
@@ -76,6 +108,7 @@ const Catalog: FC = () => {
                     label="Search"
                     variant="outlined"
                     type="text"
+                    sx={{ width: { xs: '100%', sm: 'fit-content' } }}
                     onChange={e => setSearchLine(e.target.value)}
                 />
             </Paper>
@@ -84,17 +117,27 @@ const Catalog: FC = () => {
                 activeCatId={curCatId}
                 setCurCatId={setCurCatId}
             />
-            <ProductListGrid products={productsByCat} />
+            <ProductListGrid
+                products={productsByCat}
+                existId={existId}
+            />
             <ModalFormProduct
                 visible={modalProductFormVisible}
                 uploadProductFn={addProductFn}
                 onClose={() => setModalProductFormVisible(false)}
+                existId={existId}
             />
             <ModalUploadFileProducts
                 visible={modalUploadProductsFileVisible}
                 onClose={() => setModalUploadProductsFileVisible(false)}
                 uploadProductsFromCSV={uploadProductsFromCSV}
                 categories={categories}
+            />
+            <ModalDownloadProductsCsv
+                visible={modalDownloadProductsFileVisible}
+                products={products}
+                categories={categories}
+                onClose={() => setModalDownloadProductsFileVisible(false)}
             />
         </Box>
     )

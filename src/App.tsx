@@ -131,7 +131,7 @@ export default App;
 
 // Routes managment
 function getRoutes(routes: RouteType[]): React.ReactNode[] {
-  return routes.map(el => <Route key={el.label} path={el.path} element={el.element} ></Route>)
+  return routes.map(el => <Route key={el.path} path={el.path} element={el.element} ></Route>)
 }
 
 function getRelevantRoutes(items: RouteType[], userData: UserData): RouteType[] {
