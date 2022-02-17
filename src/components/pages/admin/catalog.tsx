@@ -21,11 +21,15 @@ const Catalog: FC = () => {
     //******************** form product ***********************//
     const [modalProductFormVisible, setModalProductFormVisible] = useState(false);
 
+    function existId(id: string): boolean {
+        return !!products.find(p => p.id === id);
+    }
+
     //************* modal upload file products ****************//
     const [modalUploadProductsFileVisible, setModalUploadProductsFileVisible] = useState(false);
 
     //****************** selector categories ******************//
-    const [curCatId, setCurCatId] = useState<string>(categories[0]?.id || '');
+    const [curCatId, setCurCatId] = useState<string>('-1');
 
     const productsByCat = useMemo(() => {
         let productsByCat = getProductsByCat(curCatId);
@@ -49,6 +53,9 @@ const Catalog: FC = () => {
 
     //*********************** utils **************************//
     function getProductsByCat(id: string) {
+        if (id === '-1') {
+            return products;
+        }
         return products.filter(p => p.category === id);
     }
 
@@ -84,11 +91,15 @@ const Catalog: FC = () => {
                 activeCatId={curCatId}
                 setCurCatId={setCurCatId}
             />
-            <ProductListGrid products={productsByCat} />
+            <ProductListGrid
+                products={productsByCat}
+                existId={existId}
+            />
             <ModalFormProduct
                 visible={modalProductFormVisible}
                 uploadProductFn={addProductFn}
                 onClose={() => setModalProductFormVisible(false)}
+                existId={existId}
             />
             <ModalUploadFileProducts
                 visible={modalUploadProductsFileVisible}
