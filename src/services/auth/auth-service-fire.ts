@@ -105,7 +105,7 @@ export default class AuthServiceFire implements AuthService {
                 .catch((error) => {
                     window.localStorage.removeItem('emailForSignIn');
                     const errorCode = error.code;
-                    return (errorCode === 'auth/invalid-email') ? AuthErrorType.INVALID_EMAIL : AuthErrorType.SERVER_UNAVAILABLE
+                    return (errorCode === 'auth/invalid-email') ? AuthErrorType.INVALID_EMAIL : AuthErrorType.INVALID_CREDENTIAL
                 });
     }
 
@@ -122,7 +122,7 @@ export default class AuthServiceFire implements AuthService {
             case LoginType.WITH_PASSWORD: return this.loginWithPassword(loginData);
             case LoginType.WITH_EMAIL_LINK: return this.loginWithEmailLink(loginData);
             case LoginType.WITH_SOCIAL_PROVIDER: return this.loginWithSocialProvider(loginData);
-            default: return AuthErrorType.SERVER_UNAVAILABLE;
+            default: return AuthErrorType.INVALID_CREDENTIAL;
         }
     }
 

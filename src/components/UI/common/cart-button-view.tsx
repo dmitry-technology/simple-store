@@ -1,9 +1,9 @@
 import { Badge, IconButton } from '@mui/material';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import { Link } from 'react-router-dom';
-import { PATH_SHOPPING_CART } from '../../config/routing';
+import { PATH_SHOPPING_CART } from '../../../config/routing';
 import { useSelector } from 'react-redux';
-import { cartCountItemsSelector } from '../../redux/store';
+import { cartCountItemsSelector } from '../../../redux/store';
 
 const ShoppingCartButton = () => {
 

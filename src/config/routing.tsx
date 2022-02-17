@@ -1,7 +1,7 @@
 import { RouteType } from "../models/route-type";
 import Index from "../components/pages";
 import Catalog from "../components/pages/admin/catalog";
-import OrdersList from "../components/pages/admin/ordersList";
+import OrdersList from "../components/pages/orders";
 import Login from "../components/pages/auth/login";
 import Logout from "../components/pages/auth/logout";
 import Profile from "../components/pages/profile";

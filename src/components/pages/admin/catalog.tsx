@@ -77,8 +77,6 @@ const Catalog: FC = () => {
                     variant="outlined"
                     type="text"
                     onChange={e => setSearchLine(e.target.value)}
-                // sx={{ height: '30px' }}
-                // margin='normal'
                 />
             </Paper>
             <Categories

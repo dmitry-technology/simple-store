@@ -3,9 +3,8 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import { FC, Fragment, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DeliveryAddress, UserData } from '../../models/user-data';
-import { setNotificationMessage, setUserData, updateProfile } from '../../redux/actions';
+import { setUserData, updateProfile } from '../../redux/actions';
 import { userDataSelector } from '../../redux/store';
-import { NotificationType } from '../../models/user-notification';
 import { isEmailValid, isPhoneNumberValid } from '../../utils/common/validation-utils';
 import AddressForm from '../UI/common/address-form';
 
