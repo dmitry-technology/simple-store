@@ -12,23 +12,20 @@ import CloseIcon from '@mui/icons-material/Close';
 type ModalFormProductProps = {
     visible: boolean;
     uploadProductFn: (uploadProductData: UploadProductData) => void;
+    existId: (id:string)=>boolean;
     product?: Product;
     onClose: () => void;
 }
 
 const ModalFormProduct: FC<ModalFormProductProps> = (props) => {
 
-    const { visible, uploadProductFn, product, onClose } = props;
+    const { visible, uploadProductFn, existId, product, onClose } = props;
 
     const categories: Category[] = useSelector(categoriesSelector);
 
     async function uploadProduct(uploadProductData: UploadProductData) {
         await uploadProductFn(uploadProductData);
         onClose();
-    }
-
-    async function existId(id: string): Promise<boolean> {
-        return await productStore.exists(id);
     }
 
     return (

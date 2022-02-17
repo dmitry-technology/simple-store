@@ -19,11 +19,12 @@ import ModalFormProduct from './modal-form-product';
 
 type ProductListGridProps = {
     products: Product[];
+    existId: (id: string) => boolean;
 }
 
 const ProductListGrid: FC<ProductListGridProps> = (props) => {
 
-    const {products} = props;
+    const { products, existId } = props;
 
     //**************** dialog confirmation ********************//
     const confirmationData = useRef<ConfirmationData>(emptyConfirmationData);
@@ -273,6 +274,7 @@ const ProductListGrid: FC<ProductListGridProps> = (props) => {
                 uploadProductFn={onFormProductEdit}
                 onClose={() => setModaFormlVisible(false)}
                 product={productEditable.current}
+                existId={existId}
             />
         </Fragment>
     );
