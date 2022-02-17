@@ -9,6 +9,7 @@ import ProductListGrid from "../../UI/product/product-list-grid";
 import ModalFormProduct from "../../UI/product/modal-form-product";
 import Categories from "../../UI/category/categories";
 import ModalUploadFileProducts from "../../UI/product/modal-upload-file-products";
+import ModalDownloadProductsCsv from "../../UI/product/modal-download-products-csv";
 
 const Catalog: FC = () => {
 
@@ -27,6 +28,9 @@ const Catalog: FC = () => {
 
     //************* modal upload file products ****************//
     const [modalUploadProductsFileVisible, setModalUploadProductsFileVisible] = useState(false);
+
+    //************* modal download file products ****************//
+    const [modalDownloadProductsFileVisible, setModalDownloadProductsFileVisible] = useState(false);
 
     //****************** selector categories ******************//
     const [curCatId, setCurCatId] = useState<string>('-1');
@@ -61,15 +65,7 @@ const Catalog: FC = () => {
 
     const buttonStyle: SxProps<Theme> = {
         margin: { xs: '0 0 5px 0', sm: '0 5px' },
-
         width: { xs: '100%', sm: 'fit-content' }
-    }
-
-    function downloadProductsCsv() {
-        const blob = new Blob(['asd']);
-        const url = URL.createObjectURL(blob);
-        
-
     }
 
     return (
@@ -102,7 +98,7 @@ const Catalog: FC = () => {
                     <Button
                         sx={buttonStyle}
                         variant="outlined"
-                        onClick={() => downloadProductsCsv()}
+                        onClick={() => setModalDownloadProductsFileVisible(true)}
                     >
                         Download products as CSV
                     </Button>
@@ -136,6 +132,12 @@ const Catalog: FC = () => {
                 onClose={() => setModalUploadProductsFileVisible(false)}
                 uploadProductsFromCSV={uploadProductsFromCSV}
                 categories={categories}
+            />
+            <ModalDownloadProductsCsv
+                visible={modalDownloadProductsFileVisible}
+                products={products}
+                categories={categories}
+                onClose={() => setModalDownloadProductsFileVisible(false)}
             />
         </Box>
     )

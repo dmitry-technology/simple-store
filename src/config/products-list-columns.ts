@@ -18,7 +18,7 @@ export function getProductsListFields(): Map<string, ProductListFields[]> {
         ["isMobile", [
             ProductListFields.id,
             ProductListFields.title,
-            ProductListFields.options,
+            ProductListFields.actions,
         ]],
         ["isLaptop", [
             ProductListFields.id,
