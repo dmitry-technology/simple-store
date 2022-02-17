@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Popper, Box, Paper, Typography, ListItem, List, ListItemText } from '@mui/material';
+import { Popper, Box, Paper, Typography, ListItem, List } from '@mui/material';
 import { FC, useMemo, useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Order, orderSimple } from '../../../models/order-type';
@@ -19,7 +19,6 @@ import DialogConfirm from '../common/dialog';
 import ModalInfo from '../common/modal-info';
 import { ProductOptionConfigured } from '../../../models/product-options';
 import FormUpdateOrder from './order-update';
-import _ from 'lodash';
 
 //status order from service config
 const arrStatus = Array.from(orderState.keys());

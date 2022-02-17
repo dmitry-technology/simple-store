@@ -12,7 +12,7 @@ import { useSelector } from "react-redux";
 import { UserData } from "../../models/user-data";
 import { categoriesSelector, userDataSelector } from "../../redux/store";
 import { Category } from "../../models/category-type";
-import ShoppingCartButton from "./cart-button-view";
+import ShoppingCartButton from "./common/cart-button-view";
 import PersonIcon from '@mui/icons-material/Person';
 import config from "../../config/store-config.json";
 

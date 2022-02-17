@@ -36,7 +36,6 @@ const NavigatorTabs: FC<NavigatorTabsProps> = ({ orientation, items }) => {
                     component={Link}
                     to={item.path}
                     label={item.label}
-                    // icon={item.icon}
                     iconPosition='start'
                     sx={{ display: 'flex' }}
                 />

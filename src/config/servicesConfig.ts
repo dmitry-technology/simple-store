@@ -41,4 +41,4 @@ export const clientStore = new ClientStore(clientProvider);
 const productPictureProvider = new StorageProviderFire(config.productPictureFolder);
 export const productPictureStore = new StorageProcessor(productPictureProvider);
 
-export const shoppingCartService = new ShoppingCartService('my-cart');
+export const shoppingCartService = new ShoppingCartService();
