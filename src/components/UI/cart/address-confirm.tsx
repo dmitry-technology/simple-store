@@ -33,7 +33,7 @@ const AddressConfirmation: FC<AddressConfirmationProps> = props => {
     <DialogContent>
         <AddressForm userData={userData} callBack={changeAddressHandler} />
     </DialogContent>
-    <DialogActions>
+    <DialogActions sx={{marginRight: '30px'}}>
         <Button color='warning' onClick={() => onClose(false)}>
             Back to Cart
         </Button>

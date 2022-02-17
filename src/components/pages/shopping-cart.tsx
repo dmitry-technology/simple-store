@@ -1,6 +1,6 @@
 import { Box, Button, Typography } from '@mui/material';
-import { FC, useEffect, useRef, useState } from 'react';
-import { orderState, shoppingCartService } from '../../config/servicesConfig';
+import { FC, useMemo, useRef, useState } from 'react';
+import { orderState } from '../../config/servicesConfig';
 import { ProductBatch } from '../../models/product';
 import DeliveryDiningIcon from '@mui/icons-material/DeliveryDining';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -8,8 +8,8 @@ import { Navigate } from 'react-router-dom';
 import { PATH_LOGIN, PATH_ORDERS, PATH_PROFILE } from '../../config/routing';
 import { UserData } from '../../models/user-data';
 import { useDispatch, useSelector } from 'react-redux';
-import { userDataSelector } from '../../redux/store';
-import { addOrderAction, setCartItemsCount, setNotificationMessage } from '../../redux/actions';
+import { shoppingCartSelector, userDataSelector } from '../../redux/store';
+import { addOrderAction, clearShoppingCartAction, setNotificationMessage } from '../../redux/actions';
 import { NotificationType } from '../../models/user-notification';
 import { getProfileStatus, ProfileStatus } from '../../utils/common/validation-utils';
 import CartTable from '../UI/cart/cart-table';
@@ -17,12 +17,12 @@ import DialogConfirm from '../UI/common/dialog';
 import { ConfirmationData, emptyConfirmationData } from '../../models/common/confirmation-type';
 import storeData from '../../config/store-config.json';
 import AddressConfirmation from '../UI/cart/address-confirm';
+import { getCartPrice } from '../../utils/cart-utils';
 
 const arrStatus = Array.from(orderState.keys());
 
 const ShoppingCart: FC = () => {
 
-    const [shoppingCart, setShoppingCart] = useState<ProductBatch[]>([]);
     const [needAuthFl, setNeedAuthFl] = useState<boolean>(false);
     const [needFillProfileFl, setNeedFillProfileFl] = useState<boolean>(false);
     const [showOrdersFl, setShowOrdersFl] = useState<boolean>(false);
@@ -30,12 +30,11 @@ const ShoppingCart: FC = () => {
     const confirmationData = useRef<ConfirmationData>(emptyConfirmationData);
     const [dialogVisible, setDialogVisible] = useState<boolean>(false);
     const [addressConfirmationFl, setAddressConfirmationFl] = useState<boolean>(false);
-    const cartPrice = useRef<number>(0);
+    const shoppingCart: ProductBatch[] = useSelector(shoppingCartSelector);
     const dispatch = useDispatch();
-
-    useEffect(() => {
-        updateCartFn();
-    }, [])
+    const cartPrice = useMemo(() => {
+        return getCartPrice(shoppingCart);
+    }, [shoppingCart]);
 
     function deleteCartHandler(): void {
         confirmationData.current.title = "Clear Shopping Cart";
@@ -46,16 +45,9 @@ const ShoppingCart: FC = () => {
 
     function deleteCartFn(status: boolean): void {
         if (status) {
-            shoppingCartService.removeAll();
-            updateCartFn();
+            dispatch(clearShoppingCartAction());
         }
         setDialogVisible(false);
-    }
-
-    function updateCartFn(): void {
-        dispatch(setCartItemsCount(shoppingCartService.getItemsCount()));        
-        cartPrice.current = shoppingCartService.getCartPrice();
-        setShoppingCart(shoppingCartService.getAll());
     }
 
     function checkoutHandler(): void {
@@ -100,17 +92,17 @@ const ShoppingCart: FC = () => {
         {shoppingCart.length === 0 && `You have 0 products in cart`}
         {showOrdersFl && <Navigate to={PATH_ORDERS} />}
         {shoppingCart.length > 0 && <Box>            
-            <CartTable batches={shoppingCart} updateCartFn={updateCartFn} />
+            <CartTable batches={shoppingCart} />
             <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', width: '100%', 
                 alignItems: 'end' }}>
                 <Typography>
-                    Cost of goods: {cartPrice.current}{storeData.currencySign}                    
+                    Cost of goods: {cartPrice}{storeData.currencySign}                    
                 </Typography>
                 <Typography>
                     Cost of delivery: {storeData.deliveryCost}{storeData.currencySign}
                 </Typography>
                 <Typography>
-                    <strong>Total price:</strong> {cartPrice.current + storeData.deliveryCost}{storeData.currencySign}
+                    <strong>Total price:</strong> {cartPrice + storeData.deliveryCost}{storeData.currencySign}
                 </Typography>
             </Box>
             <Box sx={{ mt: 1, display: 'flex', width: '100%', justifyContent: 'end' }}>

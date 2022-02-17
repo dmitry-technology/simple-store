@@ -3,10 +3,10 @@ import thunk from "redux-thunk";
 import { Category } from "../models/category-type";
 import ErrorType from "../models/error-types";
 import { Order } from "../models/order-type";
-import { Product } from "../models/product";
+import { Product, ProductBatch } from "../models/product";
 import { UserData } from "../models/user-data";
 import { UserNotificationMessage } from "../models/user-notification";
-import { categoriesReducer, errorCodeReducer, productsReducer, userDataReducer, ordersReducer, clientsReducer, notificationReducer, cartItemCountReducer } from "./reducers";
+import { categoriesReducer, errorCodeReducer, productsReducer, userDataReducer, ordersReducer, clientsReducer, notificationReducer, cartReducer } from "./reducers";
 
 type StoreType = {
     userData: UserData,
@@ -16,7 +16,7 @@ type StoreType = {
     orders: Order[],
     clients: UserData[],
     notification: UserNotificationMessage,
-    cartCount: number
+    shoppingCart: ProductBatch[]
 };
 
 const reducers = combineReducers<StoreType>({
@@ -27,7 +27,7 @@ const reducers = combineReducers<StoreType>({
     orders: ordersReducer,
     clients: clientsReducer,
     notification: notificationReducer,
-    cartCount: cartItemCountReducer
+    shoppingCart: cartReducer
 });
 
 // Create store
@@ -41,4 +41,4 @@ export const categoriesSelector = (state: StoreType): Category[] => state.catego
 export const ordersSelector = (state: StoreType): Order[] => state.orders;
 export const clientsSelector = (state: StoreType): UserData[] => state.clients;
 export const notificationSelector = (state: StoreType): UserNotificationMessage => state.notification;
-export const cartCountItemsSelector = (state: StoreType): number => state.cartCount;
+export const shoppingCartSelector = (state: StoreType): ProductBatch[] => state.shoppingCart;

@@ -4,12 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { Subscription } from 'rxjs';
 import { authRoutes, menuRoutes, PATH_REDIRECT, routes } from './config/routing';
-import { authService, categoriesStore, productStore } from './config/servicesConfig';
+import { authService, cartProcessor, categoriesStore, productStore } from './config/servicesConfig';
 import ErrorType from './models/error-types';
 import { Product } from './models/product';
 import { RouteType } from './models/route-type';
 import { nonAuthorisedUser, UserData} from './models/user-data';
-import { setCategories, setErrorCode, setProducts, setUserData } from './redux/actions';
+import { setCategories, setErrorCode, setProducts, setShoppingCart, setUserData } from './redux/actions';
 import { errorCodeSelector, notificationSelector, userDataSelector } from './redux/store';
 import Navigator from './components/UI/main-navigator';
 import { emptyMessage, UserNotificationMessage } from './models/user-notification';
@@ -79,6 +79,11 @@ function App() {
       }
     })
   }
+
+  // get cart on mounting
+  useEffect(() => {
+    dispatch(setShoppingCart(cartProcessor.getShoppingCart()));
+  }, []);
 
   return (
     <BrowserRouter>

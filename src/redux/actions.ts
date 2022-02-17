@@ -1,10 +1,10 @@
 import { UserData } from "../models/user-data";
 import { PayloadAction } from "@reduxjs/toolkit";
 import ErrorType from "../models/error-types";
-import { Product, UploadProductData } from "../models/product";
+import { Product, ProductBatch, UploadProductData } from "../models/product";
 import { Category } from "../models/category-type";
 import { Order } from "../models/order-type";
-import { categoriesStore, clientStore, orderStore, productPictureStore, productStore } from "../config/servicesConfig";
+import { categoriesStore, clientStore, orderStore, productPictureStore, productStore, cartProcessor } from "../config/servicesConfig";
 import { NotificationType, UserNotificationMessage } from "../models/user-notification";
 import { getProductsFromCSV } from "../utils/product-utils";
 
@@ -15,7 +15,7 @@ export const SET_CATEGORIES = "set_categories";
 export const SET_ORDER_DATA = "set_order_data";
 export const SET_CLIENT_DATA = "set_client_data";
 export const SET_USER_NOTIFICATION = "set_user_notification";
-export const SET_CART_ITEMS_COUNT = "set_cart_items_count";
+export const SET_SHOPPING_CART = "set_shopping_cart";
 
 type ActionType<T> = (data: T) => PayloadAction<T>;
 
@@ -47,8 +47,8 @@ export const setNotificationMessage: ActionType<UserNotificationMessage> = messa
     { payload: message, type: SET_USER_NOTIFICATION }
 )
 
-export const setCartItemsCount: ActionType<number> = count => (
-    { payload: count, type: SET_CART_ITEMS_COUNT }
+export const setShoppingCart: ActionType<ProductBatch[]> = cart => (
+    { payload: cart, type: SET_SHOPPING_CART }
 )
 
 export const updateProfile = function (userdata: UserData): (dispatch: any) => void {
@@ -220,3 +220,30 @@ export const removeOrderAction = function (id: string): (dispath: any) => void {
     }
 }
 
+export const addBatchToCartAction = function (batch: ProductBatch): (dispath: any) => void {
+    return dispath => {
+        cartProcessor.addBatchToCart(batch);
+        dispath(setShoppingCart(cartProcessor.getShoppingCart()));
+    }
+}
+
+export const removeBatchFromCartAction = function (batchId: string): (dispath: any) => void {
+    return dispath => {
+        cartProcessor.removeBatchFromCart(batchId);
+        dispath(setShoppingCart(cartProcessor.getShoppingCart()));
+    }
+}
+
+export const clearShoppingCartAction = function (): (dispath: any) => void {
+    return dispath => {
+        cartProcessor.clearShoppingCart();
+        dispath(setShoppingCart(cartProcessor.getShoppingCart()));
+    }
+}
+
+export const updateBatchInCartAction = function (batchId: string, newBatch: ProductBatch): (dispath: any) => void {
+    return dispath => {
+        cartProcessor.updateBatchInCart(batchId, newBatch);
+        dispath(setShoppingCart(cartProcessor.getShoppingCart()));
+    }
+}

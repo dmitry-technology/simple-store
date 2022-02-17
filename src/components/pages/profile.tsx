@@ -108,6 +108,7 @@ const Profile: FC = () => {
                     <Box sx={{display: 'flex', justifyContent: 'right', margin: '0 20px'}}>
                         <Button type="submit" 
                                 variant='contained'
+                                color='warning'
                                 sx={{width: {xs: '100%', md: '200px'}}} 
                                 disabled={!isValid}>
                             Update
