@@ -21,6 +21,10 @@ const Catalog: FC = () => {
     //******************** form product ***********************//
     const [modalProductFormVisible, setModalProductFormVisible] = useState(false);
 
+    function existId(id: string): boolean {
+        return !!products.find(p => p.id === id);
+    }
+
     //************* modal upload file products ****************//
     const [modalUploadProductsFileVisible, setModalUploadProductsFileVisible] = useState(false);
 
@@ -84,11 +88,15 @@ const Catalog: FC = () => {
                 activeCatId={curCatId}
                 setCurCatId={setCurCatId}
             />
-            <ProductListGrid products={productsByCat} />
+            <ProductListGrid
+                products={productsByCat}
+                existId={existId}
+            />
             <ModalFormProduct
                 visible={modalProductFormVisible}
                 uploadProductFn={addProductFn}
                 onClose={() => setModalProductFormVisible(false)}
+                existId={existId}
             />
             <ModalUploadFileProducts
                 visible={modalUploadProductsFileVisible}

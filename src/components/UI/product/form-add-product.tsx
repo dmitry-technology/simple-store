@@ -11,7 +11,7 @@ type FormAddProductProps = {
     uploadProduct: (uploadProductData: UploadProductData) => void;
     categories: Category[];
     defaultPicture: string;
-    existId: (id: string) => Promise<boolean>;
+    existId: (id: string) => boolean;
     product?: Product;
 }
 
@@ -44,7 +44,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
         if (product) {
             const newProduct = JSON.parse(JSON.stringify(product));
             setButtonSubmitName('Edit');
-            const {id, title, category, basePrice, active, picture, description, options} = newProduct;
+            const { id, title, category, basePrice, active, picture, description, options } = newProduct;
             setId(id);
             setIdEditable(false);
             setTitle(title);
@@ -73,7 +73,9 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
     function idHandle(event: any) {
         const id = event.target.value;
         setId(id);
-        setIdError(id < 1 ? 'id must be greater than 0' : '');
+        if (idError) {
+            setIdError('');
+        }
     }
 
     function priceHandle(event: any) {
@@ -120,9 +122,9 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
 
     async function onSubmit(event: any) {
         event.preventDefault();
-        if (!product){
+        if (!product) {
             const idIsExist = await existId(id.toString());
-            if (idIsExist){
+            if (idIsExist) {
                 setIdError('such id alredy exist');
                 return;
             }
@@ -131,7 +133,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
         if (product && product.picture) {
             newProduct.picture = product.picture;
         }
-        await uploadProduct({product: newProduct, picture: picture as File});
+        await uploadProduct({ product: newProduct, picture: picture as File });
     }
 
     function onReset() {
@@ -196,7 +198,7 @@ const FormAddProduct: FC<FormAddProductProps> = (props) => {
                         value={id}
                         label="Id"
                         variant="outlined"
-                        type="number"
+                        type="text"
                         error={!!idError}
                         helperText={idError}
                         onChange={idHandle}
