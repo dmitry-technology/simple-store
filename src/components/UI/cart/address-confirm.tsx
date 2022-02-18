@@ -2,7 +2,7 @@ import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/
 import {FC, useRef} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DeliveryAddress, UserData } from '../../../models/user-data';
-import { setUserData, updateProfile } from '../../../redux/actions';
+import { setUserData } from '../../../redux/actions';
 import { userDataSelector } from '../../../redux/store';
 import AddressForm from '../common/address-form';
 
@@ -19,13 +19,8 @@ const AddressConfirmation: FC<AddressConfirmationProps> = props => {
     const dispatch = useDispatch();
 
     function changeAddressHandler(address: DeliveryAddress): void {
-        newUserData.current = {...userData, deliveryAddress: address};        
-    }
-
-    function confirmAddressHandler() {
-        dispatch(updateProfile(newUserData.current));
+        newUserData.current = {...userData, deliveryAddress: address};
         dispatch(setUserData(newUserData.current));
-        onClose(true);
     }
 
     return <Dialog
@@ -43,7 +38,7 @@ const AddressConfirmation: FC<AddressConfirmationProps> = props => {
         <Button color='warning' onClick={() => onClose(false)}>
             Back to Cart
         </Button>
-        <Button color='warning' onClick={confirmAddressHandler} autoFocus>
+        <Button color='warning' onClick={() => onClose(true)} autoFocus>
             Confirm
         </Button>
     </DialogActions>
