@@ -35,16 +35,21 @@ const Row: React.FC<RowProps> = props => {
     const [dialogVisible, setDialogVisible] = React.useState<boolean>(false);
     const shoppingCart: ProductBatch[] = useSelector(shoppingCartSelector);
     const dispatch = useDispatch();
-    const isBigScreen = useMediaQuery({ query: "(min-width: 670px)" }, undefined, () => getRowData());
+    const isBigScreen = useMediaQuery({ query: "(min-width: 740px)" }, undefined, () => getRowData());
 
     function getRowData(): React.ReactFragment {
 
         return <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-            <TableCell sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <TableCell sx={{
+                display: 'flex', flexDirection: 'column', height: '100%',
+                alignItems: 'center', justifyContent: 'center'
+            }}>
                 <Tooltip title={row.title}>
                     <Avatar src={!!row.picture ? row.picture :
                         `${window.location.origin}/${storeConfig.defaultPictureProductUrl}`}
-                        sx={{ width: 80, height: 80 }} />
+                        sx={isBigScreen
+                            ? { width: 140, height: 'auto', p: 2 }
+                            : { width: '100%', height: 'auto', p: 1 }} />
                 </Tooltip>
                 {!isBigScreen && <Typography>{row.title}</Typography>}
             </TableCell>
@@ -103,7 +108,7 @@ const Row: React.FC<RowProps> = props => {
 const CartTable: React.FC<{ batches: ProductBatch[] }> = props => {
 
     const { batches } = props;
-    const isBigScreen = useMediaQuery({ query: "(min-width: 670px)" });
+    const isBigScreen = useMediaQuery({ query: "(min-width: 740px)" });
 
     return (
         <TableContainer component={Paper}>
