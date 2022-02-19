@@ -18,6 +18,7 @@ export const orderState = new Map([
     ["waiting", "orange"],
     ["cooking", "aqua"],
     ["delivering", "maroon"],
+    ["paid", "green"],
     ["complete", "lime"]
 ]);
 

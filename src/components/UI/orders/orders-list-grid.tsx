@@ -19,6 +19,7 @@ import DialogConfirm from '../common/dialog';
 import ModalInfo from '../common/modal-info';
 import { ProductOptionConfigured } from '../../../models/product-options';
 import FormUpdateOrder from './order-update';
+import storeData from '../../../config/store-config.json';
 
 
 //status order from service config
@@ -226,7 +227,7 @@ const OrdersListGrid: FC = () => {
                 }
             },
             {
-                field: "price", headerName: "Price", flex: 20, align: 'center', headerAlign: 'center', editable: "true"
+                field: "price", headerName: "Price", flex: 20, align: 'center', headerAlign: 'center'
             },
             {
                 field: "actions", type: 'actions', flex: 40, align: 'center', headerAlign: 'center',
@@ -346,14 +347,15 @@ const OrdersListGrid: FC = () => {
     }
     //* get order price */
     function getOrderPrice(products: ProductBatch[]) {
-        return products.map(productBatch => {
+        const price = products.map(productBatch => {
             let priceOption = 0;
             productBatch.productConfigured.optionsConfigured.forEach(option => {
                 priceOption += option.optionData.extraPay;
             })
             return (productBatch.productConfigured.base.basePrice + priceOption) * productBatch.count;
         })
-            .reduce((prev, current) => prev + current, 0);
+            .reduce((prev, current) => prev + current, storeData.deliveryCost);
+        return `${price} ${storeData.currencySign}`
     }
     //* get order */
     function getOrder(id: string): Order | undefined {
@@ -361,7 +363,7 @@ const OrdersListGrid: FC = () => {
     }
     //* disable button in table */
     function isActiveOrder(id: GridRowId) {
-        return userData.isAdmin ? false : getOrder(id.toString())?.status !== arrStatus[0];
+        return getOrder(id.toString())?.status !== arrStatus[0];
     }
     //* get information about order */
     function getInfoOrder(order: Order): string[] {
