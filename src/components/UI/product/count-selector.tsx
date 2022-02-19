@@ -21,7 +21,7 @@ const CountSelector: FC<{handlerFunc: Function, value: number}> = (props) => {
 
     return (
         <React.Fragment>
-            <Box sx={{display: 'flex', flexDirection: 'row', alignItems: 'center'}}>
+            <Box sx={{display: 'flex', justifyContent: 'center'}}>
                 <IconButton onClick={ _ => handleChanges(_, SelectorType.DECREASE)}><RemoveIcon /></IconButton>
                 <Typography variant='h6' sx={{m: '0 5px 0 5px'}}>{count}</Typography>
                 <IconButton onClick={ _ => handleChanges(_, SelectorType.INCREASE)}><AddIcon /></IconButton>

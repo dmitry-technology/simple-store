@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material';
+import { Avatar, Box, Button, Typography } from '@mui/material';
 import { FC, useMemo, useRef, useState } from 'react';
 import { orderState } from '../../config/servicesConfig';
 import { ProductBatch } from '../../models/product';
@@ -18,6 +18,7 @@ import { ConfirmationData, emptyConfirmationData } from '../../models/common/con
 import storeData from '../../config/store-config.json';
 import AddressConfirmation from '../UI/cart/address-confirm';
 import { getCartPrice } from '../../utils/cart-utils';
+import RemoveShoppingCartIcon from '@mui/icons-material/RemoveShoppingCart';
 
 const arrStatus = Array.from(orderState.keys());
 
@@ -89,23 +90,31 @@ const ShoppingCart: FC = () => {
     }
 
     return <Box sx={{ mt: 1, width: '100%' }}>
-        {shoppingCart.length === 0 && `You have 0 products in cart`}
+        {shoppingCart.length === 0 && <Box sx={{
+            width: '100%', height: '100%', display: 'flex',
+            flexDirection: 'column', alignItems: 'center', justifyContent: 'center'
+        }}>
+            <Avatar sx={{ width: 120, height: 120 }}><RemoveShoppingCartIcon sx={{width: '80%', height: 'auto'}} /></Avatar>
+            <Typography variant='h6'>You have 0 products in shopping cart</Typography>
+        </Box>}
         {showOrdersFl && <Navigate to={PATH_ORDERS} />}
-        {shoppingCart.length > 0 && <Box>            
+        {shoppingCart.length > 0 && <Box>
             <CartTable batches={shoppingCart} />
-            <Box sx={{ mt: 1, display: 'flex', flexDirection: 'column', width: '100%', 
-                alignItems: 'end' }}>
-                <Typography>
-                    Cost of goods: {cartPrice}{storeData.currencySign}                    
+            <Box sx={{
+                mt: 1, display: 'flex', flexDirection: 'column', width: '100%',
+                alignItems: 'end'
+            }}>
+                <Typography sx={{ marginRight: 1 }}>
+                    Cost of goods: {cartPrice}{storeData.currencySign}
                 </Typography>
-                <Typography>
+                <Typography sx={{ marginRight: 1 }}>
                     Cost of delivery: {storeData.deliveryCost}{storeData.currencySign}
                 </Typography>
-                <Typography>
+                <Typography sx={{ marginRight: 1 }}>
                     <strong>Total price:</strong> {cartPrice + storeData.deliveryCost}{storeData.currencySign}
                 </Typography>
             </Box>
-            <Box sx={{ mt: 1, display: 'flex', width: '100%', justifyContent: 'end' }}>
+            <Box sx={{ mt: 1, mb: 1, display: 'flex', width: '100%', justifyContent: 'end' }}>
                 <Button
                     variant='outlined'
                     onClick={deleteCartHandler}
@@ -117,11 +126,14 @@ const ShoppingCart: FC = () => {
                     variant='outlined'
                     onClick={checkoutHandler}
                     sx={{
-                        color: '#ff6f04', borderColor: '#ff6f04', ':hover': {
+                        color: '#ff6f04',
+                        borderColor: '#ff6f04',
+                        ':hover': {
                             borderColor: '#ff6f04',
                             backgroundColor: '#ff6f04',
                             color: '#FFFFFF'
-                        }
+                        },
+                        marginRight: 1
                     }}>
                     Send Order &nbsp;<DeliveryDiningIcon />
                 </Button>
@@ -132,7 +144,7 @@ const ShoppingCart: FC = () => {
                 message={confirmationData.current.message}
                 onClose={confirmationData.current.handle} />
             {needAuthFl && <Navigate to={PATH_LOGIN} />}
-            {needFillProfileFl && <Navigate to={PATH_PROFILE} />}            
+            {needFillProfileFl && <Navigate to={PATH_PROFILE} />}
         </Box>}
     </Box>;
 }

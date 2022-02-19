@@ -1,20 +1,7 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Collapse from '@mui/material/Collapse';
-import IconButton from '@mui/material/IconButton';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Typography from '@mui/material/Typography';
-import Paper from '@mui/material/Paper';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import { IconButton, Table, TableBody, TableCell, TableRow, TableContainer, TableHead, Paper, Avatar, Typography, Tooltip } from '@mui/material';
 import ClearIcon from '@mui/icons-material/Clear';
 import { ProductBatch, ProductConfigured } from '../../../models/product';
-import { Avatar } from '@mui/material';
 import storeConfig from '../../../config/store-config.json';
 import CountSelector from '../product/count-selector';
 import DialogConfirm from '../common/dialog';
@@ -23,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { shoppingCartSelector } from '../../../redux/store';
 import { removeBatchFromCartAction, updateBatchInCartAction } from '../../../redux/actions';
 import { getBatchPrice } from '../../../utils/cart-utils';
+import { useMediaQuery } from 'react-responsive';
 
 function createData(batchId: string, product: ProductConfigured, count: number, price: number) {
     return {
@@ -43,11 +31,48 @@ type RowProps = {
 const Row: React.FC<RowProps> = props => {
 
     const { row } = props;
-    const [open, setOpen] = React.useState(false);
     const confirmationData = React.useRef<ConfirmationData>(emptyConfirmationData);
     const [dialogVisible, setDialogVisible] = React.useState<boolean>(false);
     const shoppingCart: ProductBatch[] = useSelector(shoppingCartSelector);
     const dispatch = useDispatch();
+    const isBigScreen = useMediaQuery({ query: "(min-width: 740px)" }, undefined, () => getRowData());
+
+    function getRowData(): React.ReactFragment {
+
+        return <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+            <TableCell sx={{
+                display: 'flex', flexDirection: 'column', height: '100%',
+                alignItems: 'center', justifyContent: 'center'
+            }}>
+                <Tooltip title={row.title}>
+                    <Avatar src={!!row.picture ? row.picture :
+                        `${window.location.origin}/${storeConfig.defaultPictureProductUrl}`}
+                        sx={isBigScreen
+                            ? { width: 140, height: 'auto', p: 2 }
+                            : { width: '100%', height: 'auto', p: 1 }} />
+                </Tooltip>
+                {!isBigScreen && <Typography>{row.title}</Typography>}
+            </TableCell>
+            {isBigScreen && <TableCell align="center">
+                <strong>{row.title}</strong><br />{row.description}<br />
+                <i key={row.id}>{row.options
+                    .map(o => `${o.optionTitle}: ${o.optionData.name}`)
+                    .join('; ')}</i>
+            </TableCell>}
+            <TableCell align="center">
+                <CountSelector handlerFunc={changeCountHandler.bind(undefined, row.id)}
+                    value={row.count} />
+            </TableCell>
+            <TableCell align="center">{row.price}{storeConfig.currencySign}</TableCell>
+            <TableCell>
+                <Tooltip title='Remove'>
+                    <IconButton onClick={event => removeItemHandler(event, row.id, row.title)}>
+                        <ClearIcon />
+                    </IconButton>
+                </Tooltip>
+            </TableCell>
+        </TableRow>
+    }
 
     function removeItemHandler(event: any, batchId: string, productName: string) {
         confirmationData.current.title = "Remove from Shopping Cart";
@@ -75,58 +100,7 @@ const Row: React.FC<RowProps> = props => {
                 title={confirmationData.current.title}
                 message={confirmationData.current.message}
                 onClose={confirmationData.current.handle} />
-            <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                <TableCell>
-                    {row.options.length > 0 && <IconButton
-                        aria-label="expand row"
-                        size="small"
-                        onClick={() => setOpen(!open)}
-                        title='Show options'
-                    >
-                        {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                    </IconButton>}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                    <Avatar src={!!row.picture ? row.picture :
-                        `${window.location.origin}/${storeConfig.defaultPictureProductUrl}`}
-                        sx={{ width: 80, height: 80 }} />&nbsp;{row.title}
-                </TableCell>
-                <TableCell align="center">{row.description}</TableCell>
-                <TableCell align="right">
-                    <CountSelector handlerFunc={changeCountHandler.bind(this, row.id)}
-                        value={row.count} />
-                </TableCell>
-                <TableCell align="right">{row.price}{storeConfig.currencySign}</TableCell>
-                <TableCell>
-                    <IconButton onClick={event => removeItemHandler(event, row.id, row.title)}
-                        title='Remove'>
-                        <ClearIcon />
-                    </IconButton>
-                </TableCell>
-            </TableRow>
-            <TableRow>
-                <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
-                    <Collapse in={open} timeout="auto" unmountOnExit>
-                        <Box sx={{ margin: 1 }}>
-                            <Typography variant='body2' gutterBottom component="div">
-                                <strong>Options</strong>
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                                <TableHead>
-                                    <TableRow>{row.options.map(option =>
-                                        <TableCell key={row.title}>{option.optionTitle}</TableCell>)}
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    <TableRow>{row.options.map(option =>
-                                        <TableCell key={row.id}>{option.optionData.name}</TableCell>)}
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
-                        </Box>
-                    </Collapse>
-                </TableCell>
-            </TableRow>
+            {getRowData()}
         </React.Fragment>
     );
 }
@@ -134,15 +108,15 @@ const Row: React.FC<RowProps> = props => {
 const CartTable: React.FC<{ batches: ProductBatch[] }> = props => {
 
     const { batches } = props;
+    const isBigScreen = useMediaQuery({ query: "(min-width: 740px)" });
 
     return (
         <TableContainer component={Paper}>
             <Table aria-label="collapsible table">
                 <TableHead>
                     <TableRow>
-                        <TableCell />
-                        <TableCell align='center'><strong>Title</strong></TableCell>
-                        <TableCell align='center'><strong>Description</strong></TableCell>
+                        <TableCell align='center'><strong>Product</strong></TableCell>
+                        {isBigScreen && <TableCell align='center'><strong>Description</strong></TableCell>}
                         <TableCell align='center'><strong>Count</strong></TableCell>
                         <TableCell align='center'><strong>Price</strong></TableCell>
                         <TableCell />
@@ -151,7 +125,7 @@ const CartTable: React.FC<{ batches: ProductBatch[] }> = props => {
                 <TableBody>
                     {batches.sort((a, b) => a.id.localeCompare(b.id)).map((batch, index) =>
                         <Row key={index}
-                            row={createData(batch.id, batch.productConfigured, batch.count, 
+                            row={createData(batch.id, batch.productConfigured, batch.count,
                                 getBatchPrice(batch.id, batches))} />)}
                 </TableBody>
             </Table>
