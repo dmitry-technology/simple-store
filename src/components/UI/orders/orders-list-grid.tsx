@@ -25,7 +25,6 @@ import storeData from '../../../config/store-config.json';
 //status order from service config
 const arrStatus = Array.from(orderState.keys());
 
-
 const OrdersListGrid: FC = () => {
 
     //* dialog confirmation */
@@ -187,23 +186,17 @@ const OrdersListGrid: FC = () => {
     }, [mode, orders, userData]);
 
     function getFilteredColumns(fields: OrderListFields[]): any[] {
-        return getColums().filter(column => fields.includes(column.field as any));
+        const columns = getColums();
+        if (userData.isAdmin) {
+            columns.splice(1, 0, ...getAdminColumns());
+        }
+        return columns.filter(column => fields.includes(column.field as any));
     }
 
     function getColums(): any[] {
         return [
             {
                 field: "id", headerName: "Id order", flex: 20, align: 'center', headerAlign: 'center'
-            },
-            userData.isAdmin && {
-                field: "client", headerName: "Client", flex: 80, align: 'center', headerAlign: 'center'
-            },
-            userData.isAdmin && {
-                field: "address", headerName: "Address", flex: 100, align: 'center', headerAlign: 'center',
-                renderCell: renderCellExpand
-            },
-            userData.isAdmin && {
-                field: "phone", headerName: "Phone", flex: 40, align: 'center', headerAlign: 'center'
             },
             {
                 field: "products", headerName: "Product", flex: 150, align: 'center', headerAlign: 'center',
@@ -254,6 +247,21 @@ const OrdersListGrid: FC = () => {
                 }
             }
         ];
+    }
+
+    function getAdminColumns(): any[] {
+        return [
+            {
+                field: "client", headerName: "Client", flex: 80, align: 'center', headerAlign: 'center'
+            },
+            {
+                field: "address", headerName: "Address", flex: 100, align: 'center', headerAlign: 'center',
+                renderCell: renderCellExpand
+            },
+            {
+                field: "phone", headerName: "Phone", flex: 40, align: 'center', headerAlign: 'center'
+            },
+        ]
     }
     //* rows data grid */
     const rows = useMemo(() => getRows(orders), [orders, dialogVisible]);
