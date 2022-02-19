@@ -20,6 +20,7 @@ const FormUpdateOrder: FC<{ order: Order, visible: boolean, callBack: () => void
     const [dialogVisible, setdialogVisible] = useState(false);
     const confirmationData = React.useRef<ConfirmationData>(emptyConfirmationData);
     const [orderEditable, setOrderEditable] = useState<Order>(JSON.parse(JSON.stringify(order)));
+    const [btnRemoveDisable, setbtnRemoveDisable] = useState(false);
 
     //* handler form confirmation */
     function onSumbitForm(event: any) {
@@ -29,9 +30,10 @@ const FormUpdateOrder: FC<{ order: Order, visible: boolean, callBack: () => void
         confirmationData.current.handle = handleUpdate.bind(undefined, orderEditable.id as string);
         setdialogVisible(true);
     }
-
+    
     useEffect(() => {
         _.isEqual(orderEditable, order) ? setIsValid(false) : setIsValid(true);
+        orderEditable.products.length > 1 ? setbtnRemoveDisable(false) : setbtnRemoveDisable(true);
     }, [orderEditable]);
 
     //reset form
@@ -76,7 +78,7 @@ const FormUpdateOrder: FC<{ order: Order, visible: boolean, callBack: () => void
     //get updating order
     const productCards = useMemo(() => {
         return getProductCards();
-    }, [orderEditable]);
+    }, [orderEditable, btnRemoveDisable]);
 
     function getProductCards() {
         return orderEditable.products.map((prod, index) => {
@@ -86,7 +88,7 @@ const FormUpdateOrder: FC<{ order: Order, visible: boolean, callBack: () => void
                     productBatch={prod}
                     updateOrderFn={handlerUpdateOptions}
                 />
-                <IconButton aria-label="delete" onClick={() => btnRemove(prod)}>
+                <IconButton aria-label="delete" onClick={() => btnRemove(prod)} disabled={btnRemoveDisable}>
                     <DeleteIcon />
                 </IconButton>
             </Box>
