@@ -19,7 +19,8 @@ const providersList = new Map([
 
 // Callback URL for verify email-link
 const actionCodeSettings = {
-    url: 'http://localhost:3000/login/verify',
+    // url: 'http://localhost:3000/login/verify',
+    url: 'https://simple-store-fbe1f.firebaseapp.com/login/verify',
     handleCodeInApp: true,
     dynamicLinkDomain: 'backlinkb7.page.link'
 };
